@@ -8,33 +8,33 @@ export function SiteFooter() {
   const common = useTranslations("common");
 
   return (
-    <footer className="bg-[#0A0A0A] text-neutral-300 border-t border-neutral-800 pt-16 pb-8">
+    <footer className="bg-[#0A0A0A] text-neutral-300 border-t border-neutral-900 pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Brand Info */}
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded bg-[#DC2626] flex items-center justify-center text-white font-extrabold text-lg">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-7 h-7 rounded bg-[#DC2626] flex items-center justify-center text-white font-extrabold text-sm">
                 PM
               </div>
-              <span className="font-heading text-xl font-bold tracking-tight text-white uppercase">
+              <span className="font-heading text-lg font-bold tracking-tight text-white uppercase">
                 PRESTY <span className="text-[#DC2626]">MOTORS</span>
               </span>
             </div>
-            <p className="text-sm text-neutral-400 mb-6 leading-relaxed">
+            <p className="text-xs text-neutral-400 mb-5 leading-relaxed max-w-xs">
               {t("description")}
             </p>
-            <div className="space-y-2.5 text-xs text-neutral-400">
+            <div className="space-y-2 text-xs text-neutral-400">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#DC2626] shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
                 <span>128 Avenue des Sports Motorisés, Paris</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#DC2626] shrink-0" />
+                <Phone className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
                 <span>+33 1 45 67 89 00</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-[#DC2626] shrink-0" />
+                <Mail className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
                 <span>contact@presty-motors.com</span>
               </div>
             </div>
@@ -42,10 +42,10 @@ export function SiteFooter() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-heading text-base font-bold uppercase tracking-wider text-white mb-4">
+            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
               {t("quickLinks")}
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/" className="hover:text-[#DC2626] transition-colors">
                   {nav("home")}
@@ -76,10 +76,10 @@ export function SiteFooter() {
 
           {/* Categories */}
           <div>
-            <h4 className="font-heading text-base font-bold uppercase tracking-wider text-white mb-4">
+            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
               {t("categories")}
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/shop?category=kids-motorcycles" className="hover:text-[#DC2626] transition-colors">
                   {nav("motorcycles")} — Kids
@@ -105,10 +105,10 @@ export function SiteFooter() {
 
           {/* Legal / Policies */}
           <div>
-            <h4 className="font-heading text-base font-bold uppercase tracking-wider text-white mb-4">
+            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
               {t("legal")}
             </h4>
-            <ul className="space-y-2.5 text-sm">
+            <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/terms" className="hover:text-[#DC2626] transition-colors">
                   {t("terms")}
@@ -134,9 +134,9 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-neutral-800 text-xs text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-6 border-t border-neutral-900 text-[11px] text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} {common("brandName")}. {t("rights")}</p>
-          <div className="flex items-center gap-6 text-neutral-400">
+          <div className="flex items-center gap-4 text-neutral-400">
             <span>Racing Performance</span>
             <span>•</span>
             <span>Showroom Certifié</span>

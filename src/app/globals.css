@@ -75,6 +75,28 @@ body {
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading);
   letter-spacing: -0.01em;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Technical Hairline Borders */
+.border-hairline {
+  border-width: 1px;
+}
+
+/* Clean Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #DC2626;
 }
 
 /* RTL layout adjustments for Arabic */

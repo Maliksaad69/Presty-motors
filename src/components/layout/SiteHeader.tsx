@@ -49,35 +49,35 @@ export function SiteHeader() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+        <div className="flex items-center justify-between h-16 gap-4">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-10 h-10 rounded bg-[#DC2626] flex items-center justify-center text-white font-extrabold text-xl tracking-tighter shadow-md"
+              className="w-8 h-8 rounded bg-[#DC2626] flex items-center justify-center text-white font-extrabold text-base tracking-tighter shadow-xs"
             >
               PM
             </motion.div>
             <div className="flex flex-col">
-              <span className="font-heading text-2xl font-black tracking-tight text-[#0A0A0A] uppercase leading-none">
+              <span className="font-heading text-lg font-black tracking-tight text-[#0A0A0A] uppercase leading-none">
                 PRESTY <span className="text-[#DC2626]">MOTORS</span>
               </span>
-              <span className="text-[10px] tracking-widest uppercase font-semibold text-neutral-500">
+              <span className="text-[9px] tracking-widest uppercase font-semibold text-neutral-400 mt-0.5">
                 Motorsport & Showroom
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links with animated hover line */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-bold text-[#0A0A0A] uppercase tracking-wide">
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-bold text-[#0A0A0A] uppercase tracking-wider">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative py-2 text-neutral-800 hover:text-[#DC2626] transition-colors duration-200"
+                  className="relative py-1.5 text-neutral-700 hover:text-[#DC2626] transition-colors duration-200"
                 >
                   <span>{link.label}</span>
                   {isActive ? (

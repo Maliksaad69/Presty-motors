@@ -24,7 +24,7 @@ export function AnnouncementBar() {
   }, [announcements.length]);
 
   return (
-    <div className="bg-[#0A0A0A] text-neutral-300 text-xs py-2 px-4 border-b border-neutral-800 relative z-40 overflow-hidden">
+    <div className="bg-[#0A0A0A] text-neutral-300 text-[11px] py-1.5 px-4 border-b border-neutral-900 relative z-40 overflow-hidden">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Animated Announcement Carousel */}
         <div className="flex-1 min-w-0 flex items-center gap-2">
@@ -33,11 +33,11 @@ export function AnnouncementBar() {
             <AnimatePresence mode="wait">
               <motion.p
                 key={currentIndex}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="font-medium text-neutral-300 truncate text-[11px] sm:text-xs tracking-wide"
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="font-medium text-neutral-300 truncate text-[11px] tracking-wide"
               >
                 {announcements[currentIndex]}
               </motion.p>
@@ -46,7 +46,7 @@ export function AnnouncementBar() {
         </div>
 
         {/* Quick Contact & Showroom */}
-        <div className="hidden md:flex items-center gap-6 text-[11px] text-neutral-400 font-medium shrink-0">
+        <div className="hidden md:flex items-center gap-5 text-[11px] text-neutral-400 font-medium shrink-0">
           <a
             href="tel:+33145678900"
             className="flex items-center gap-1.5 hover:text-white transition-colors duration-200"
@@ -54,10 +54,10 @@ export function AnnouncementBar() {
             <Phone className="w-3 h-3 text-[#DC2626]" />
             <span>+33 1 45 67 89 00</span>
           </a>
-          <span className="text-neutral-700">|</span>
+          <span className="text-neutral-800">|</span>
           <div className="flex items-center gap-1.5 text-neutral-300">
             <MapPin className="w-3 h-3 text-[#DC2626]" />
-            <span>Paris Showroom</span>
+            <span>Showroom Paris 16e</span>
           </div>
         </div>
       </div>
