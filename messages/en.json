@@ -1,0 +1,73 @@
+{
+  "common": {
+    "brandName": "Presty Motors",
+    "tagline": "Premier Motorcycle & Quad Showroom",
+    "shopNow": "Shop Catalog",
+    "visitShowroom": "Visit Showroom",
+    "contactUs": "Contact Us",
+    "addToCart": "Add to Cart",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "lowStock": "Only {count} left",
+    "price": "Price",
+    "viewDetails": "Vehicle Details",
+    "specs": "Technical Specifications",
+    "requestQuote": "Request a Quote",
+    "searchPlaceholder": "Search bikes, quads, riding gear...",
+    "allCategories": "All Categories"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "Shop",
+    "motorcycles": "Motorcycles",
+    "quads": "Quads",
+    "equipment": "Riding Gear",
+    "showroom": "Showroom",
+    "contact": "Contact",
+    "about": "About",
+    "account": "My Account",
+    "cart": "Cart"
+  },
+  "announcement": {
+    "text": "Free delivery on gear orders over €500 | Showroom test rides available by appointment"
+  },
+  "hero": {
+    "badge": "2025 Model Lineup Now Available",
+    "title": "POWER. ADRENALINE. PRECISION.",
+    "subtitle": "Discover our premier lineup of youth and adult motocross bikes, utility and sport quads, and certified safety gear.",
+    "ctaShop": "Explore Vehicles",
+    "ctaShowroom": "Visit Our Showroom"
+  },
+  "categories": {
+    "title": "Vehicle Categories",
+    "subtitle": "From beginner riders to veteran racers, find the machine engineered for your style.",
+    "kidsMotorcycles": "Kids' Motorcycles",
+    "adultMotorcycles": "Adult Motorcycles",
+    "quadBikes": "Quad Bikes",
+    "ridingEquipment": "Protective Gear"
+  },
+  "featured": {
+    "title": "Featured Machines & Gear",
+    "subtitle": "Hand-picked high-performance selections from our showroom floor."
+  },
+  "trust": {
+    "showroomTitle": "Premier Showroom",
+    "showroomDesc": "Experience our machines in person and speak with experienced motorsport technicians.",
+    "deliveryTitle": "Secure Delivery",
+    "deliveryDesc": "Domestic door-to-door freight or free pickup at our physical showroom.",
+    "quoteTitle": "Worldwide Shipping Quotes",
+    "quoteDesc": "Bespoke international crating and shipping quotes with transparent pricing.",
+    "supportTitle": "Expert Technical Advice",
+    "supportDesc": "Full after-sales support, parts, and maintenance consultation."
+  },
+  "footer": {
+    "description": "Presty Motors — Specialized showroom dealership for competition & recreational motorcycles, quads, and rider gear.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "legal": "Legal Information",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "shipping": "Shipping & Returns",
+    "rights": "All rights reserved."
+  }
+}

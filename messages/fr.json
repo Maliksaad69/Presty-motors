@@ -1,0 +1,73 @@
+{
+  "common": {
+    "brandName": "Presty Motors",
+    "tagline": "Showroom Motos & Quads d'Excellence",
+    "shopNow": "Voir le catalogue",
+    "visitShowroom": "Visiter le Showroom",
+    "contactUs": "Nous contacter",
+    "addToCart": "Ajouter au panier",
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "lowStock": "Plus que {count} exemplaires",
+    "price": "Prix",
+    "viewDetails": "Détails du véhicule",
+    "specs": "Spécifications techniques",
+    "requestQuote": "Demander un devis",
+    "searchPlaceholder": "Rechercher une moto, un quad, un équipement...",
+    "allCategories": "Toutes les catégories"
+  },
+  "nav": {
+    "home": "Accueil",
+    "catalog": "Boutique",
+    "motorcycles": "Motos",
+    "quads": "Quads",
+    "equipment": "Équipements",
+    "showroom": "Showroom",
+    "contact": "Contact",
+    "about": "À propos",
+    "account": "Mon compte",
+    "cart": "Panier"
+  },
+  "announcement": {
+    "text": "Livraison offerte dès 500€ d'achats d'équipement | Essais showroom sur rendez-vous"
+  },
+  "hero": {
+    "badge": "Collection 2025 disponible",
+    "title": "PUISSANCE. ADRENALINE. PRECISION.",
+    "subtitle": "Découvrez notre sélection exclusive de motos pour enfants et adultes, quads tout-terrain et équipements homologués.",
+    "ctaShop": "Explorer les Véhicules",
+    "ctaShowroom": "Découvrir le Showroom"
+  },
+  "categories": {
+    "title": "Univers & Catégories",
+    "subtitle": "Du jeune pilote au compétiteur expérimenté, trouvez la machine taillée pour vous.",
+    "kidsMotorcycles": "Motos Enfants",
+    "adultMotorcycles": "Motos Adultes",
+    "quadBikes": "Quads Tout-Terrain",
+    "ridingEquipment": "Équipements & Protections"
+  },
+  "featured": {
+    "title": "Véhicules & Équipements Vedettes",
+    "subtitle": "Les meilleures performances sélectionnées par nos experts."
+  },
+  "trust": {
+    "showroomTitle": "Showroom d'Exception",
+    "showroomDesc": "Venez essayer nos machines et rencontrer notre équipe passionnée.",
+    "deliveryTitle": "Livraison & Expédition",
+    "deliveryDesc": "Livraison nationale sécurisée ou retrait gratuit en showroom.",
+    "quoteTitle": "Devis International",
+    "quoteDesc": "Expédition internationale sur mesure avec cotation transparente.",
+    "supportTitle": "Conseils d'Experts",
+    "supportDesc": "Support technique et SAV assuré par des professionnels du motorsport."
+  },
+  "footer": {
+    "description": "Presty Motors — Concessionnaire et showroom spécialisé en motos, quads et équipements de compétition et loisir.",
+    "quickLinks": "Navigation rapide",
+    "categories": "Catégories",
+    "legal": "Informations légales",
+    "terms": "Conditions Générales de Vente",
+    "privacy": "Politique de Confidentialité",
+    "shipping": "Livraison & Retours",
+    "rights": "Tous droits réservés."
+  }
+}

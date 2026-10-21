@@ -1,0 +1,73 @@
+{
+  "common": {
+    "brandName": "Presty Motors",
+    "tagline": "Showroom de Motos y Quads de Élite",
+    "shopNow": "Ver Catálogo",
+    "visitShowroom": "Visitar Showroom",
+    "contactUs": "Contáctenos",
+    "addToCart": "Añadir a la cesta",
+    "inStock": "En stock",
+    "outOfStock": "Agotado",
+    "lowStock": "Solo quedan {count} unidades",
+    "price": "Precio",
+    "viewDetails": "Detalles del vehículo",
+    "specs": "Especificaciones técnicas",
+    "requestQuote": "Solicitar presupuesto",
+    "searchPlaceholder": "Buscar motos, quads, equipamiento...",
+    "allCategories": "Todas las categorías"
+  },
+  "nav": {
+    "home": "Inicio",
+    "catalog": "Tienda",
+    "motorcycles": "Motos",
+    "quads": "Quads",
+    "equipment": "Equipamiento",
+    "showroom": "Showroom",
+    "contact": "Contacto",
+    "about": "Nosotros",
+    "account": "Mi Cuenta",
+    "cart": "Cesta"
+  },
+  "announcement": {
+    "text": "Envío gratis en equipos a partir de 500€ | Pruebas en showroom con cita previa"
+  },
+  "hero": {
+    "badge": "Gama 2025 ya disponible",
+    "title": "POTENCIA. ADRENALINA. PRECISIÓN.",
+    "subtitle": "Descubra nuestra selección exclusiva de motos para niños y adultos, quads todoterreno y equipamiento homologado.",
+    "ctaShop": "Explorar Vehículos",
+    "ctaShowroom": "Conocer el Showroom"
+  },
+  "categories": {
+    "title": "Categorías y Modelos",
+    "subtitle": "Desde jóvenes promesas hasta pilotos expertos, encuentre la máquina perfecta para su aventura.",
+    "kidsMotorcycles": "Motos para Niños",
+    "adultMotorcycles": "Motos para Adultos",
+    "quadBikes": "Quads y Cuatrimotos",
+    "ridingEquipment": "Equipamiento de Protección"
+  },
+  "featured": {
+    "title": "Modelos y Equipos Destacados",
+    "subtitle": "El mejor rendimiento seleccionado por nuestros especialistas."
+  },
+  "trust": {
+    "showroomTitle": "Showroom Exclusivo",
+    "showroomDesc": "Venga a probar nuestras máquinas y asesorarse con nuestro equipo técnico.",
+    "deliveryTitle": "Envío Seguro",
+    "deliveryDesc": "Entrega nacional garantizada o recogida gratuita en nuestras instalaciones.",
+    "quoteTitle": "Presupuesto Internacional",
+    "quoteDesc": "Envíos internacionales con cotización personalizada y transparente.",
+    "supportTitle": "Soporte Especializado",
+    "supportDesc": "Asistencia posventa, repuestos y mantenimiento con profesionales del motorsport."
+  },
+  "footer": {
+    "description": "Presty Motors — Concesionario y showroom especializado en motos, quads y accesorios de competición.",
+    "quickLinks": "Navegación",
+    "categories": "Categorías",
+    "legal": "Información Legal",
+    "terms": "Condiciones Generales",
+    "privacy": "Política de Privacidad",
+    "shipping": "Envíos y Devoluciones",
+    "rights": "Todos los derechos reservados."
+  }
+}

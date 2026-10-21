@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F7F8F5;
+  --foreground: #171A18;
+  
+  --primary: #16803C;
+  --primary-foreground: #FFFFFF;
+  
+  --accent: #27C85A;
+  --accent-foreground: #171A18;
+  
+  --secondary: #E9ECE8;
+  --secondary-foreground: #171A18;
+  
+  --muted: #E9ECE8;
+  --muted-foreground: #5B635A;
+  
+  --border: #D7DDD7;
+  --destructive: #D92D20;
+  --destructive-foreground: #FFFFFF;
+  
+  --card: #FFFFFF;
+  --card-foreground: #171A18;
+
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-racing-green: #16803C;
+  --color-racing-green-dark: #0E5C2A;
+  --color-vivid-green: #27C85A;
+  --color-vivid-green-hover: #22B550;
+  --color-off-white: #F7F8F5;
+  --color-near-black: #171A18;
+  --color-secondary-grey: #E9ECE8;
+  --color-border-grey: #D7DDD7;
+  --color-sale-red: #D92D20;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --font-heading: var(--font-barlow-condensed), "Barlow Condensed", "Oswald", sans-serif;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* RTL layout adjustments for Arabic */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .font-heading {
+  font-family: var(--font-sans);
+  letter-spacing: normal;
+}
