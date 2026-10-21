@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { MapPin, Mail, Phone } from "lucide-react";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function SiteFooter() {
   const t = useTranslations("footer");
@@ -137,6 +138,8 @@ export function SiteFooter() {
         <div className="pt-6 border-t border-neutral-900 text-[11px] text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} {common("brandName")}. {t("rights")}</p>
           <div className="flex items-center gap-4 text-neutral-400">
+            <LanguageSwitcher />
+            <span>•</span>
             <span>Racing Performance</span>
             <span>•</span>
             <span>Showroom Certifié</span>

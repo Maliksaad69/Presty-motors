@@ -369,6 +369,13 @@ export function SiteHeader() {
                 </Link>
               </nav>
 
+              <div className="pt-3 pb-1 border-t border-neutral-100 flex items-center justify-between">
+                <span className="text-[11px] text-neutral-500 font-semibold uppercase tracking-wider">
+                  Langue
+                </span>
+                <LanguageSwitcher />
+              </div>
+
               <div className="pt-2 flex items-center justify-between border-t border-neutral-100">
                 <Link
                   href="/account"
