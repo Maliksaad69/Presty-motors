@@ -43,14 +43,12 @@ Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [PLANNED]
   - Successful initial migration via `prisma migrate dev --name init`
   - Singleton Prisma client instance with PostgreSQL driver adapter
   - Comprehensive seed script with store settings, default categories, initial products & specs, and admin/customer accounts
-- [x] **Design Tokens & Theme:**
-  - Tailwind CSS v4 configured with brand palette:
-    - Racing Green (`#16803C`)
-    - Vivid Green CTA (`#27C85A`)
-    - Off-white background (`#F7F8F5`)
-    - Dark text (`#171A18`)
-    - Warning/Sale Red (`#D92D20`)
-  - Typography: Barlow Condensed heading typography & Inter body typography
+- [x] **Motorsport Visual Design System (Tailwind CSS v4):**
+  - High-contrast **White, Black, and Racing Red** palette (`#FFFFFF`, `#0A0A0A`, `#DC2626`).
+  - Strict no-badge clean aesthetic.
+  - Light header micro-animations (entry reveal, scroll-responsive glass blur, animated nav underlines, expandable search, and animated cart micro-interactions).
+  - Client interactivity: Cart context provider with interactive slide-over cart drawer (`CartDrawer`), interactive live category filtering without page reloads.
+  - Typography: Barlow Condensed heading typography & Inter body typography.
 - [x] **Multilingual Support (i18n):**
   - Locale-based routing `/[locale]` supporting French (`fr`, default), English (`en`), Spanish (`es`), and Arabic (`ar`)
   - Native directional support (`dir="ltr"` / `dir="rtl"`)
