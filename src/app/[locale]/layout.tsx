@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { routing, Locale } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { CartProvider } from "@/lib/cart-context";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -54,12 +56,15 @@ export default async function LocaleLayout({
       dir={isRtl ? "rtl" : "ltr"}
       className={`${barlowCondensed.variable} ${inter.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-[#F7F8F5] text-[#171A18] font-sans antialiased">
+      <body className="min-h-screen flex flex-col bg-white text-[#0A0A0A] font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
-          <AnnouncementBar />
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <CartProvider>
+            <AnnouncementBar />
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+            <CartDrawer />
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,41 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F7F8F5;
-  --foreground: #171A18;
+  --background: #FFFFFF;
+  --foreground: #0A0A0A;
   
-  --primary: #16803C;
+  --primary: #DC2626; /* Precision Racing Red */
+  --primary-hover: #B91C1C;
   --primary-foreground: #FFFFFF;
   
-  --accent: #27C85A;
-  --accent-foreground: #171A18;
+  --accent: #E10600; /* Formula 1 / Motorsport Red */
+  --accent-foreground: #FFFFFF;
+
+  --surface-dark: #0A0A0A;
+  --surface-dark-elevated: #141414;
+  --surface-dark-border: #262626;
   
-  --secondary: #E9ECE8;
-  --secondary-foreground: #171A18;
+  --secondary: #F4F4F5;
+  --secondary-foreground: #0A0A0A;
   
-  --muted: #E9ECE8;
-  --muted-foreground: #5B635A;
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
   
-  --border: #D7DDD7;
-  --destructive: #D92D20;
+  --border: #E4E4E7;
+  --border-subtle: #F4F4F5;
+  --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
   
   --card: #FFFFFF;
-  --card-foreground: #171A18;
+  --card-foreground: #0A0A0A;
 
-  --radius: 0.5rem;
+  --radius: 0.375rem;
 }
 
 @theme inline {
-  --color-racing-green: #16803C;
-  --color-racing-green-dark: #0E5C2A;
-  --color-vivid-green: #27C85A;
-  --color-vivid-green-hover: #22B550;
-  --color-off-white: #F7F8F5;
-  --color-near-black: #171A18;
-  --color-secondary-grey: #E9ECE8;
-  --color-border-grey: #D7DDD7;
-  --color-sale-red: #D92D20;
+  --color-racing-red: #DC2626;
+  --color-racing-red-hover: #B91C1C;
+  --color-racing-red-bright: #EF4444;
+  --color-pitch-black: #0A0A0A;
+  --color-surface-black: #121212;
+  --color-border-dark: #262626;
+  --color-pure-white: #FFFFFF;
+  --color-neutral-grey: #F4F4F5;
+  --color-border-grey: #E4E4E7;
+  --color-text-muted: #71717A;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -67,7 +74,7 @@ body {
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 /* RTL layout adjustments for Arabic */
