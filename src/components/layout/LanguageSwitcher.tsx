@@ -2,15 +2,23 @@
 
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
-import { Globe } from "lucide-react";
+import { Globe, Check, ChevronDown } from "lucide-react";
 import { useTransition } from "react";
-import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const languages = [
-  { code: "fr", label: "Français" },
-  { code: "en", label: "English" },
-  { code: "es", label: "Español" },
-  { code: "ar", label: "العربية" },
+  { code: "fr", label: "Français (FR)" },
+  { code: "en", label: "English (US)" },
+  { code: "es", label: "Español (ES)" },
+  { code: "ar", label: "العربية (AR)" },
 ] as const;
 
 export function LanguageSwitcher() {
@@ -25,36 +33,41 @@ export function LanguageSwitcher() {
     });
   };
 
+  const activeLang = languages.find((l) => l.code === currentLocale) || languages[0];
+
   return (
-    <div className="relative inline-flex items-center gap-1.5 text-xs font-medium">
-      <Globe className="w-3.5 h-3.5 text-neutral-400" />
-      <div className="flex items-center gap-0.5 bg-neutral-100 p-0.5 rounded border border-neutral-200">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2.5 text-xs font-bold uppercase tracking-wider text-neutral-700 hover:text-black gap-1.5 focus-visible:ring-0"
+        >
+          <Globe className="w-3.5 h-3.5 text-neutral-500" />
+          <span>{activeLang.code.toUpperCase()}</span>
+          <ChevronDown className="w-3 h-3 text-neutral-400" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40 bg-white">
+        <DropdownMenuLabel className="text-[10px]">Langue / Language</DropdownMenuLabel>
+        <DropdownMenuSeparator />
         {languages.map((lang) => {
           const isActive = currentLocale === lang.code;
           return (
-            <button
+            <DropdownMenuItem
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
               disabled={isPending}
-              className={`relative px-2 py-0.5 text-[11px] font-bold rounded transition-colors duration-150 ${
-                isActive
-                  ? "text-white"
-                  : "text-neutral-600 hover:text-black hover:bg-neutral-200/50"
-              }`}
-              title={lang.label}
+              className="flex items-center justify-between text-xs py-1.5 cursor-pointer"
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeLang"
-                  className="absolute inset-0 bg-[#DC2626] rounded shadow-xs"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10">{lang.code.toUpperCase()}</span>
-            </button>
+              <span className={isActive ? "font-bold text-[#DC2626]" : "text-neutral-700"}>
+                {lang.label}
+              </span>
+              {isActive && <Check className="w-3.5 h-3.5 text-[#DC2626]" />}
+            </DropdownMenuItem>
           );
         })}
-      </div>
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
