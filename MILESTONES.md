@@ -16,10 +16,10 @@ Milestone 2: Product Catalog, Showroom & Public Storefront            [COMPLETED
 Milestone 3: Cart, Multi-step Checkout, Orders & Customer Account     [COMPLETED]
      │
      ▼
-Milestone 4: Admin Dashboard, Inventory & Quotation Management        [UP NEXT]
+Milestone 4: Admin Dashboard, Inventory & Quotation Management        [COMPLETED]
      │
      ▼
-Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [PLANNED]
+Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [UP NEXT]
 ```
 
 ---
@@ -139,27 +139,29 @@ Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [PLANNED]
 ---
 
 ## Milestone 4: Admin Dashboard, Inventory & Quotation Management
-**Status:** Planned  
+**Status:** ✅ Completed  
 **Objective:** Create an administrative control panel (`/[locale]/admin`) allowing staff to manage catalog products, stock levels, images, incoming orders, and international shipping quotes.
 
 ### Deliverables:
-- **Admin Layout & Role-Based Access Control:**
-  - Protected admin routes with authentication check
-  - Admin sidebar, summary metrics (products, orders, revenue, low stock)
-- **Product Management:**
-  - Product creation & editing with multi-language tabbed inputs
-  - Technical specification editor for vehicles & gear
-  - Media upload management (Cloudflare R2 integration stub)
-- **Inventory & Movement Auditing:**
-  - Real-time stock adjustment table
-  - Transactional inventory updates with audit log (`InventoryMovement`)
-  - Low-stock threshold alerts
-- **Order & Quote Processing:**
-  - Order management table with status transitions (Pending, Processing, Shipped, Ready for Pickup, Delivered, Cancelled)
-  - International quotation review & price quote dispatch
-- **Store Settings & Promotions:**
-  - Announcement bar text, contact information, showroom hours
-  - Promo code creation & discount percentage/fixed amount rules
+- [x] **Admin Layout & Role-Based Access Control:**
+  - [x] Protected admin portal layout (`/[locale]/admin`) with responsive navigation sidebar
+  - [x] Dashboard KPI metrics (Total revenue, active catalog machines, pending orders, low stock alerts)
+  - [x] Quick navigation to Catalog, Inventory, Orders, Quotes, Promotions, and Site Settings
+- [x] **Product Management (`/[locale]/admin/products`):**
+  - [x] Complete product catalog table with live status badges, categories, prices, and stock
+  - [x] Create & Edit product modals / forms with multi-lingual inputs (FR, EN, ES, AR)
+  - [x] Vehicle technical specifications editor (displacement, power, transmission, seat height, weight)
+  - [x] Media & image URL management
+- [x] **Inventory & Movement Auditing (`/[locale]/admin/inventory`):**
+  - [x] Real-time stock adjustment interface
+  - [x] Low-stock threshold alerts (< threshold)
+  - [x] Immutable inventory movement history with audit logs (`InventoryMovement`)
+- [x] **Order & Quote Processing (`/[locale]/admin/orders` & `/[locale]/admin/quotes`):**
+  - [x] Order fulfillment management with state machine transitions (`PENDING` → `PROCESSING` → `READY_FOR_PICKUP` / `SHIPPED` → `DELIVERED` / `CANCELLED`)
+  - [x] International quotation review interface with rate input & status transitions (`REQUESTED` → `REVIEWING` → `QUOTED` → `ACCEPTED`)
+- [x] **Marketing & Store Settings (`/[locale]/admin/settings`):**
+  - [x] Live store setting management (announcement banner text, showroom opening hours, contact details)
+  - [x] Promotional coupon creation & status management (percentage / fixed discount, minimum order, usage limits)
 
 ---
 
