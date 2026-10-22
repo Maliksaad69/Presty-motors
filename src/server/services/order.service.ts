@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { FulfillmentType, OrderStatus, PaymentStatus, QuoteStatus, ShipmentStatus } from "@prisma/client";
 import { validatePromoCode } from "./cart.service";
+import { createOrderSchema } from "@/lib/validations/checkout";
 
 export interface CreateOrderItemInput {
   id: string; // product id, sku, or slug
@@ -74,6 +75,12 @@ export type OrderResult =
  * inventory reservation, audit logging, and shipping quote support.
  */
 export async function createOrder(input: CreateOrderInput): Promise<OrderResult> {
+  const parsed = createOrderSchema.safeParse(input);
+  if (!parsed.success) {
+    const errorMsg = parsed.error.issues.map((i) => i.message).join(", ");
+    return { success: false as const, errorMessage: `Validation error: ${errorMsg}` };
+  }
+
   const { customer, fulfillmentType, items, promoCode, paymentMethod, notes } = input;
 
   if (!items || items.length === 0) {
@@ -187,21 +194,35 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderResult>
         paymentStatus = PaymentStatus.AUTHORIZED;
       }
 
-      // 7. Decrement inventory and record audit movements
+      // 7. Decrement inventory and record audit movements with atomic conditional lock
       for (const item of orderItemsData) {
         if (item.inventoryId) {
-          const newQty = item.currentStock - item.quantity;
-          await tx.inventory.update({
-            where: { id: item.inventoryId },
-            data: { quantity: newQty },
+          // Atomic decrement with condition preventing race conditions and negative inventory
+          const updateResult = await tx.inventory.updateMany({
+            where: {
+              id: item.inventoryId,
+              quantity: { gte: item.quantity },
+            },
+            data: {
+              quantity: { decrement: item.quantity },
+            },
           });
+
+          if (updateResult.count === 0) {
+            throw new Error(`Insufficient stock for "${item.productTitle}". Stock was reserved by another buyer during checkout.`);
+          }
+
+          const currentInv = await tx.inventory.findUnique({
+            where: { id: item.inventoryId },
+          });
+          const newQty = currentInv?.quantity ?? (item.currentStock - item.quantity);
 
           await tx.inventoryMovement.create({
             data: {
               inventoryId: item.inventoryId,
               type: "PURCHASE",
               quantityChange: -item.quantity,
-              previousQuantity: item.currentStock,
+              previousQuantity: newQty + item.quantity,
               newQuantity: newQty,
               reason: `Order purchase #${orderNumber}`,
               referenceId: orderNumber,

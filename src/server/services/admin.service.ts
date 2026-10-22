@@ -8,6 +8,7 @@ import {
   InventoryMovementType,
   ShipmentStatus,
 } from "@prisma/client";
+import { createProductSchema } from "@/lib/validations/product";
 
 export interface CreateProductInput {
   slug: string;
@@ -190,6 +191,12 @@ export async function getAdminProducts() {
 }
 
 export async function createAdminProduct(input: CreateProductInput) {
+  const parsed = createProductSchema.safeParse(input);
+  if (!parsed.success) {
+    const errorMsg = parsed.error.issues.map((i) => i.message).join(", ");
+    throw new Error(`Product validation error: ${errorMsg}`);
+  }
+
   return db.$transaction(async (tx) => {
     // 1. Create the product
     const product = await tx.product.create({
