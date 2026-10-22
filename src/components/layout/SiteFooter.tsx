@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
-import { MapPin, Mail, Phone } from "lucide-react";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MapPin, Mail, Phone, ShieldCheck, Zap } from "lucide-react";
 
 export function SiteFooter() {
   const t = useTranslations("footer");
@@ -9,67 +8,73 @@ export function SiteFooter() {
   const common = useTranslations("common");
 
   return (
-    <footer className="bg-[#0A0A0A] text-neutral-300 border-t border-neutral-900 pt-12 pb-8">
+    <footer className="bg-[#0B0B0B] text-neutral-300 border-t border-[#171717] pt-14 pb-8 select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-          {/* Brand Info */}
-          <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-7 h-7 rounded bg-[#DC2626] flex items-center justify-center text-white font-extrabold text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-12">
+          
+          {/* Brand & Showroom Information */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded bg-[#E10600] flex items-center justify-center text-white font-heading font-black text-sm shadow-md">
                 PM
               </div>
-              <span className="font-heading text-lg font-bold tracking-tight text-white uppercase">
-                PRESTY <span className="text-[#DC2626]">MOTORS</span>
+              <span className="font-heading text-lg font-black tracking-tight text-white uppercase">
+                PRESTY <span className="text-[#E10600]">MOTORS</span>
               </span>
             </div>
-            <p className="text-xs text-neutral-400 mb-5 leading-relaxed max-w-xs">
+            <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
               {t("description")}
             </p>
-            <div className="space-y-2 text-xs text-neutral-400">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
-                <span>128 Avenue des Sports Motorisés, Paris</span>
+            <div className="space-y-2.5 text-xs text-neutral-300">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-3.5 h-3.5 text-[#E10600] shrink-0 mt-0.5" />
+                <span>128 Avenue des Sports Motorisés, 75016 Paris</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
-                <span>+33 1 45 67 89 00</span>
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-3.5 h-3.5 text-[#E10600] shrink-0" />
+                <span className="font-mono">+33 1 45 67 89 00</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#DC2626] shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-3.5 h-3.5 text-[#E10600] shrink-0" />
                 <span>contact@presty-motors.com</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Navigation Links */}
           <div>
-            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
+            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
               {t("quickLinks")}
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/" className="hover:text-[#DC2626] transition-colors">
-                  {nav("home")}
+                <Link href="/" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("home")}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-[#DC2626] transition-colors">
-                  {nav("catalog")}
+                <Link href="/shop" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("catalog")}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/showroom" className="hover:text-[#DC2626] transition-colors">
-                  {nav("showroom")}
+                <Link href="/showroom" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("showroom")}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#DC2626] transition-colors">
-                  {nav("contact")}
+                <Link href="/contact" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("contact")}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-[#DC2626] transition-colors">
-                  {nav("about")}
+                <Link href="/account" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("account")}</span>
                 </Link>
               </li>
             </ul>
@@ -77,72 +82,70 @@ export function SiteFooter() {
 
           {/* Categories */}
           <div>
-            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
+            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
               {t("categories")}
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/shop?category=kids-motorcycles" className="hover:text-[#DC2626] transition-colors">
-                  {nav("motorcycles")} — Kids
+                <Link href="/shop?category=kids-motorcycles" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("motorcycles")} — Kids</span>
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=adult-motorcycles" className="hover:text-[#DC2626] transition-colors">
-                  {nav("motorcycles")} — Adult
+                <Link href="/shop?category=adult-motorcycles" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("motorcycles")} — Adult</span>
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=quad-bikes" className="hover:text-[#DC2626] transition-colors">
-                  {nav("quads")}
+                <Link href="/shop?category=quad-bikes" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("quads")}</span>
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=riding-equipment" className="hover:text-[#DC2626] transition-colors">
-                  {nav("equipment")}
+                <Link href="/shop?category=riding-equipment" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
+                  <span className="text-[#E10600] text-[10px]">›</span>
+                  <span>{nav("equipment")}</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal / Policies */}
+          {/* Motorsport Assurance & Support */}
           <div>
-            <h4 className="font-heading text-xs font-bold uppercase tracking-wider text-white mb-3">
-              {t("legal")}
+            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
+              Motorsport Assurance
             </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <Link href="/terms" className="hover:text-[#DC2626] transition-colors">
-                  {t("terms")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-[#DC2626] transition-colors">
-                  {t("privacy")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/shipping" className="hover:text-[#DC2626] transition-colors">
-                  {t("shipping")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:text-[#DC2626] transition-colors">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
+            <div className="space-y-3 text-xs text-neutral-400">
+              <div className="flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-[#E10600] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-heading uppercase text-xs">Official Warranty</strong>
+                  <span className="text-[11px]">Manufacturer backing on all new vehicles and parts.</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Zap className="w-4 h-4 text-[#E10600] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-heading uppercase text-xs">PDI Preparation</strong>
+                  <span className="text-[11px]">Every machine undergoes rigorous dynamometer and workshop setup.</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-neutral-900 text-[11px] text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-6 border-t border-[#171717] text-[11px] text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} {common("brandName")}. {t("rights")}</p>
           <div className="flex items-center gap-4 text-neutral-400">
-            <LanguageSwitcher />
+            <span className="text-[#E10600] font-heading font-black tracking-wider uppercase">F1 & Motocross Inspired</span>
             <span>•</span>
-            <span>Racing Performance</span>
+            <span>Paris Showroom</span>
             <span>•</span>
-            <span>Showroom Certifié</span>
+            <span>Worldwide Crating</span>
           </div>
         </div>
       </div>

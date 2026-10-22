@@ -10,8 +10,8 @@ export function AnnouncementBar() {
 
   const announcements = [
     t("text"),
-    "Showroom ouvert du Mardi au Samedi — 128 Avenue des Sports Motorisés, Paris",
-    "Expédition internationale sécurisée & cotation sur mesure disponible",
+    t("hours"),
+    t("shipping"),
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,11 +24,11 @@ export function AnnouncementBar() {
   }, [announcements.length]);
 
   return (
-    <div className="bg-[#0A0A0A] text-neutral-300 text-[11px] py-1.5 px-4 border-b border-neutral-900 relative z-40 overflow-hidden">
+    <div className="bg-[#0B0B0B] text-neutral-300 text-[11px] py-1.5 px-4 border-b border-[#171717] relative z-40 overflow-hidden select-none">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Animated Announcement Carousel */}
         <div className="flex-1 min-w-0 flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#DC2626] shrink-0" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E10600] shrink-0 animate-pulse" />
           <div className="h-4 overflow-hidden relative w-full">
             <AnimatePresence mode="wait">
               <motion.p
@@ -49,14 +49,14 @@ export function AnnouncementBar() {
         <div className="hidden md:flex items-center gap-5 text-[11px] text-neutral-400 font-medium shrink-0">
           <a
             href="tel:+33145678900"
-            className="flex items-center gap-1.5 hover:text-white transition-colors duration-200"
+            className="flex items-center gap-1.5 hover:text-white transition-colors duration-150"
           >
-            <Phone className="w-3 h-3 text-[#DC2626]" />
-            <span>+33 1 45 67 89 00</span>
+            <Phone className="w-3 h-3 text-[#E10600]" />
+            <span className="font-mono">+33 1 45 67 89 00</span>
           </a>
           <span className="text-neutral-800">|</span>
           <div className="flex items-center gap-1.5 text-neutral-300">
-            <MapPin className="w-3 h-3 text-[#DC2626]" />
+            <MapPin className="w-3 h-3 text-[#E10600]" />
             <span>Showroom Paris 16e</span>
           </div>
         </div>

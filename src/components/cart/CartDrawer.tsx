@@ -24,28 +24,30 @@ export function CartDrawer() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={closeCart}
-            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/75 backdrop-blur-xs"
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+          <div className="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="w-screen max-w-md bg-white border-l border-neutral-200 text-[#0A0A0A] flex flex-col shadow-2xl"
+              className="w-screen max-w-md bg-white border-l border-[#E2E2E2] text-[#0B0B0B] flex flex-col shadow-2xl"
             >
               {/* Header */}
-              <div className="p-4 border-b border-neutral-800 flex items-center justify-between bg-black text-white">
+              <div className="p-4 border-b border-[#171717] flex items-center justify-between bg-[#0B0B0B] text-white">
                 <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-[#DC2626]" />
-                  <h3 className="font-heading text-sm font-bold uppercase tracking-wider">
+                  <div className="w-7 h-7 rounded bg-[#E10600] flex items-center justify-center text-white">
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                  </div>
+                  <h3 className="font-heading text-sm font-black uppercase tracking-wider">
                     {nav("cart")} ({totalCount})
                   </h3>
                 </div>
                 <button
                   onClick={closeCart}
-                  className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded transition-colors"
+                  className="p-1.5 text-neutral-400 hover:text-white hover:bg-[#171717] rounded transition-colors cursor-pointer"
                   aria-label="Fermer le panier"
                 >
                   <X className="w-4 h-4" />
@@ -53,19 +55,24 @@ export function CartDrawer() {
               </div>
 
               {/* Items List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#F5F5F5]">
                 {items.length === 0 ? (
                   <div className="text-center py-16 text-neutral-500 space-y-3">
-                    <div className="w-12 h-12 mx-auto rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400">
-                      <ShoppingBag className="w-6 h-6" />
+                    <div className="w-14 h-14 mx-auto rounded-full bg-white border border-[#E2E2E2] flex items-center justify-center text-neutral-400">
+                      <ShoppingBag className="w-6 h-6 text-neutral-400" />
                     </div>
-                    <p className="text-xs font-medium">Votre panier est actuellement vide</p>
-                    <button
+                    <p className="text-xs font-semibold text-[#0B0B0B]">{t("cartEmpty")}</p>
+                    <p className="text-[11px] text-neutral-500 max-w-xs mx-auto">
+                      Explore our competition motorcycles, quads, and rider gear in the showroom catalog.
+                    </p>
+                    <Link
+                      href="/shop"
                       onClick={closeCart}
-                      className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#DC2626] hover:underline"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-[#E10600] hover:bg-[#B80500] text-white text-xs font-heading font-black uppercase tracking-wider transition-colors mt-2"
                     >
-                      {t("shopNow")} →
-                    </button>
+                      <span>{t("shopNow")}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 ) : (
                   items.map((item) => (
@@ -75,10 +82,10 @@ export function CartDrawer() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       key={item.id}
-                      className="flex gap-3 p-3 rounded border border-neutral-200 bg-neutral-50"
+                      className="flex gap-3 p-3 rounded border border-[#E2E2E2] bg-white shadow-2xs"
                     >
-                      {item.image && (
-                        <div className="relative w-16 h-16 rounded bg-white overflow-hidden shrink-0 border border-neutral-200">
+                      {item.image ? (
+                        <div className="relative w-16 h-16 rounded bg-[#0B0B0B] overflow-hidden shrink-0 border border-[#E2E2E2]">
                           <Image
                             src={item.image}
                             alt={item.title}
@@ -86,43 +93,51 @@ export function CartDrawer() {
                             className="object-cover"
                           />
                         </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded bg-neutral-100 flex items-center justify-center text-[10px] text-neutral-400 font-heading">
+                          PM
+                        </div>
                       )}
                       <div className="flex-1 min-w-0 flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-1">
-                            <h4 className="font-heading text-sm font-bold text-[#0A0A0A] uppercase truncate">
+                            <h4 className="font-heading text-xs font-bold text-[#0B0B0B] uppercase truncate leading-tight">
                               {item.title}
                             </h4>
                             <button
                               onClick={() => removeItem(item.id)}
-                              className="text-neutral-400 hover:text-[#DC2626] transition-colors p-0.5"
+                              className="text-neutral-400 hover:text-[#E10600] transition-colors p-1 cursor-pointer"
+                              title="Supprimer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <p className="text-[10px] text-neutral-500">SKU: {item.sku}</p>
+                          <p className="text-[10px] font-mono text-neutral-400">REF: {item.sku}</p>
                         </div>
 
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center border border-neutral-300 rounded bg-white">
+                        <div className="flex items-center justify-between mt-2 pt-1 border-t border-neutral-100">
+                          {/* Quantity selector */}
+                          <div className="flex items-center border border-[#E2E2E2] rounded bg-[#F5F5F5]">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="px-1.5 py-0.5 text-xs text-neutral-600 hover:text-black transition-colors"
+                              className="px-2 py-0.5 text-xs text-neutral-600 hover:text-[#0B0B0B] transition-colors cursor-pointer"
+                              aria-label="Diminuer la quantité"
                             >
                               <Minus className="w-2.5 h-2.5" />
                             </button>
-                            <span className="px-1.5 text-[11px] font-bold text-[#0A0A0A]">
+                            <span className="px-2 text-[11px] font-bold text-[#0B0B0B]">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="px-1.5 py-0.5 text-xs text-neutral-600 hover:text-black transition-colors"
+                              className="px-2 py-0.5 text-xs text-neutral-600 hover:text-[#0B0B0B] transition-colors cursor-pointer"
+                              aria-label="Augmenter la quantité"
                             >
                               <Plus className="w-2.5 h-2.5" />
                             </button>
                           </div>
 
-                          <span className="font-heading text-base font-black text-[#DC2626]">
+                          <span className="font-heading text-sm font-black text-[#E10600]">
                             {(item.price * item.quantity).toLocaleString("fr-FR", {
                               style: "currency",
                               currency: "EUR",
@@ -135,14 +150,14 @@ export function CartDrawer() {
                 )}
               </div>
 
-              {/* Footer */}
+              {/* Drawer Footer & Checkout CTA */}
               {items.length > 0 && (
-                <div className="p-4 border-t border-neutral-200 bg-white space-y-3">
+                <div className="p-4 border-t border-[#E2E2E2] bg-white space-y-3">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-neutral-500 uppercase tracking-wider text-[11px] font-semibold">
-                      Sous-total
+                    <span className="text-[#737373] uppercase tracking-wider text-[11px] font-bold font-heading">
+                      {t("subtotal")}
                     </span>
-                    <span className="font-heading text-xl font-black text-[#0A0A0A]">
+                    <span className="font-heading text-xl font-black text-[#0B0B0B]">
                       {subtotal.toLocaleString("fr-FR", {
                         style: "currency",
                         currency: "EUR",
@@ -153,14 +168,22 @@ export function CartDrawer() {
                   <Link
                     href="/checkout"
                     onClick={closeCart}
-                    className="w-full py-3 rounded bg-[#DC2626] hover:bg-[#B91C1C] text-white font-heading font-black text-center text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md shadow-red-600/20"
+                    className="w-full py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-center text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-red-600/20 cursor-pointer active:scale-[0.98]"
                   >
-                    <span>Commander</span>
+                    <span>{t("checkout")}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
 
-                  <p className="text-[10px] text-neutral-400 text-center">
-                    TVA incluse. Frais de port calculés à l'étape suivante.
+                  <Link
+                    href="/cart"
+                    onClick={closeCart}
+                    className="w-full py-2.5 rounded border border-[#0B0B0B] hover:bg-[#0B0B0B] hover:text-white text-[#0B0B0B] font-heading font-black text-center text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>View & Manage Full Cart</span>
+                  </Link>
+
+                  <p className="text-[10px] text-[#737373] text-center">
+                    {t("taxIncludedNotice")}
                   </p>
                 </div>
               )}

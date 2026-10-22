@@ -10,13 +10,13 @@ Based on the [Technical Specification (Plan.md)](./Plan.md), the project is stru
 Milestone 1: Foundation, DB (PostgreSQL + Prisma), i18n & Core Theme  [COMPLETED]
      │
      ▼
-Milestone 2: Product Catalog, Showroom & Public Storefront            [UP NEXT]
+Milestone 2: Product Catalog, Showroom & Public Storefront            [COMPLETED]
      │
      ▼
-Milestone 3: Cart, Multi-step Checkout, Orders & Customer Account     [PLANNED]
+Milestone 3: Cart, Multi-step Checkout, Orders & Customer Account     [COMPLETED]
      │
      ▼
-Milestone 4: Admin Dashboard, Inventory & Quotation Management        [PLANNED]
+Milestone 4: Admin Dashboard, Inventory & Quotation Management        [UP NEXT]
      │
      ▼
 Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [PLANNED]
@@ -62,61 +62,79 @@ Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [PLANNED]
 ---
 
 ## Milestone 2: Product Catalog, Showroom & Public Storefront
-**Status:** Planned  
+**Status:** ✅ Completed  
 **Objective:** Implement the public-facing storefront featuring the motorsport visual identity, category browsing, multi-attribute product filters, detailed vehicle specs, showroom presentation, and supporting company pages.
 
 ### Deliverables:
-- **Core UI Components:**
-  - `SiteHeader`, `AnnouncementBar`, `LanguageSwitcher`, `SearchBar`, `SiteFooter`
-  - `ProductCard`, `ProductGrid`, `PriceDisplay`, `StockBadge`, `QuantitySelector`
-  - `CategoryCard`, `Breadcrumbs`, `Pagination`
-- **Home Page (`/[locale]`):**
-  - High-impact Hero section with dual CTAs ("Shop Now", "Visit Our Showroom")
-  - Featured Categories carousel/grid (Motorcycles, Kids', Adults, Quads, Gear)
-  - Featured Products showcase with stock badges & pricing
-  - Promotional Banner component
-  - Showroom introduction teaser & Trust & Service badges
-- **Shop & Catalog Page (`/[locale]/shop`):**
-  - Responsive catalog grid with server-side queries
-  - Multi-attribute filtering (Category, Age Group, Engine Capacity, Price range, In-stock)
-  - Mobile filter drawer
-  - Sort options (Featured, Price: Low-to-High, Price: High-to-Low, Newest)
-- **Product Detail Page (`/[locale]/products/[slug]`):**
-  - Image gallery with zoom
-  - Vehicle specifications breakdown (displacement, transmission, dimensions, power)
-  - Multilingual localized content
-  - Stock availability & quantity selector
-  - Add to cart trigger & related products slider
-- **Showroom & Contact Pages:**
-  - `/[locale]/showroom`: Gallery, Google Maps link, address, opening hours, WhatsApp direct link
-  - `/[locale]/contact`: Anti-spam contact form, showroom details, contact numbers
-- **Content Pages:**
-  - About Us, Shipping Policy, Returns & Warranty, Privacy, Terms, FAQ
+- [x] **Motorsport Color Tokens & Design System (Tailwind CSS v4):**
+  - Primary black: `#0B0B0B`
+  - Secondary black: `#171717`
+  - Racing red: `#E10600`
+  - Hover red: `#B80500`
+  - Pure white: `#FFFFFF`
+  - Off-white background: `#F5F5F5`
+  - Border grey: `#E2E2E2`
+  - Muted text: `#737373`
+  - Success / in-stock: `#16803C`
+- [x] **Core Motorsport Layout Components:**
+  - `SiteHeader`: Deep black background (`#0B0B0B`), white navigation text, racing red active/hover states, live search, cart indicator with badge, responsive mobile menu drawer.
+  - `AnnouncementBar`: Sleek black and red carousel banner for promotions and showroom hours.
+  - `LanguageSwitcher`: Accessible segmented selector with full 4-language support (FR, EN, ES, AR).
+  - `SiteFooter`: Black background (`#0B0B0B`), white headings, organized columns, legal links.
+  - `CartDrawer`: Persistent slide-out cart with quantity controls, subtotal, and checkout link.
+- [x] **Home Page (`/[locale]`):**
+  - Dynamic Hero Showcase with live vehicle telemetry HUD and quick add-to-cart.
+  - Product Categories grid with red racing accents and model counters.
+  - Featured Products interactive showcase with category filters, live search, and quick view specs modal.
+  - Motorsport Promotional Banner with season opening campaign highlights and CTA.
+  - Paris Flagship Showroom section with interactive test ride modal booking and Google Maps link.
+  - Trust & Service pillars (Premier showroom, secure delivery, international quotes, technical support).
+- [x] **Shop & Catalog Page (`/[locale]/shop`):**
+  - Responsive catalog grid (4 cols wide, 3 cols desktop, 2 cols tablet/mobile, 1 col narrow).
+  - Multi-attribute filtering (Category, Vehicle Type, In-stock only, Price sorting, live search).
+  - Mobile Filter Drawer for seamless narrow viewport UX.
+- [x] **Product Detail Page (`/[locale]/products/[slug]`):**
+  - Responsive image gallery with switching thumbnails and zoom.
+  - Detailed technical specifications sheet (Engine, transmission, weight, seat height, etc.).
+  - Price display with promotional sale badges, stock counter, and quantity stepper.
+  - Direct Add to Cart action and Paris Showroom Test Ride booking trigger.
+  - Related models and gear recommendations.
+- [x] **Showroom & Contact Pages:**
+  - `/[locale]/showroom`: Comprehensive showroom guide, gallery, opening hours, facilities breakdown.
+  - `/[locale]/contact`: Interactive quote and message transmission form, direct WhatsApp, and phone contacts.
+- [x] **Checkout & Account Pages:**
+  - `/[locale]/checkout`: Step-by-step customer details, fulfillment choice (Paris Pickup vs Domestic Freight), payment choices, sticky order summary.
+  - `/[locale]/account`: Customer order history, fulfillment tracking, profile details.
 
 ---
 
 ## Milestone 3: Cart, Multi-Step Checkout, Orders & Customer Account
-**Status:** Planned  
+**Status:** ✅ Completed  
 **Objective:** Deliver the e-commerce purchase lifecycle, including persistent shopping cart, domestic delivery rules, international quotation requests, and customer order history.
 
 ### Deliverables:
-- **Shopping Cart (`/[locale]/cart`):**
-  - Cart drawer & dedicated cart page
-  - Real-time stock validation
-  - Subtotal, promotional code validation, shipping estimate
-- **Step-by-Step Checkout Workflow (`/[locale]/checkout`):**
-  1. Customer Contact & Identification (Guest vs Registered)
-  2. Fulfillment Selection: Showroom Pickup vs Domestic Delivery vs International Quote Request
-  3. Shipping / Pickup Address
-  4. Payment Method (Stripe integration stub / provider gateway)
-  5. Order Review & Submission with server-side price validation
-  6. Order Confirmation page with order reference
-- **International Shipping Quotation System:**
-  - Quote request form for overseas destinations
-  - Pending-quotation order state
-- **Customer Portal (`/[locale]/account`):**
-  - Order history & real-time status tracking
-  - Saved shipping addresses & profile management
+- [x] **Shopping Cart (`/[locale]/cart`):**
+  - [x] Dedicated full-width cart management page with interactive quantity modifiers & item deletion
+  - [x] Real-time server-side stock availability verification
+  - [x] Dynamic promotional coupon code redemption (Prisma `Promotion` model)
+  - [x] Estimated fulfillment breakdown (Showroom collection vs Domestic carrier)
+  - [x] Enhanced Cart Drawer with direct link to full Cart review
+- [x] **Step-by-Step Checkout Workflow (`/[locale]/checkout`):**
+  - [x] Step 1: Customer Contact & Identification (Guest vs Registered)
+  - [x] Step 2: Fulfillment Selection (Showroom Pickup vs Domestic Express vs International Quote)
+  - [x] Step 3: Shipping & Billing Address with validation
+  - [x] Step 4: Payment Method (Credit Card simulation, Bank Wire Transfer instructions, Direct Showroom Settlement)
+  - [x] Step 5: Server-side atomic order creation with price tampering protection, inventory reduction (`InventoryMovement` audit log), and database persistence
+  - [x] Step 6: Dynamic Order Confirmation screen with order reference, fulfillment details, and direct print/lookup action
+- [x] **International Shipping Quotation System:**
+  - [x] Seamless overseas quote submission integrated in checkout workflow
+  - [x] Database persistence with `PENDING_QUOTE` status & `ShippingQuote` record generation (`PM-QUOTE-XXXX`)
+  - [x] Quote acknowledgment view with international logistics guidance
+- [x] **Customer Portal (`/[locale]/account`):**
+  - [x] Live database order lookup (lookup by Order Number + Email)
+  - [x] Order status tracking timeline (`PENDING`, `PROCESSING`, `READY_FOR_PICKUP`, `SHIPPED`, `DELIVERED`, `PENDING_QUOTE`)
+  - [x] Order detail view with itemized snapshot pricing and delivery tracking
+  - [x] Saved shipping addresses management
 
 ---
 

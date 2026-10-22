@@ -11,10 +11,17 @@
     "lowStock": "Plus que {count} exemplaires",
     "price": "Prix",
     "viewDetails": "Détails du véhicule",
-    "specs": "Spécifications techniques",
+    "specs": "Spécifications",
     "requestQuote": "Demander un devis",
     "searchPlaceholder": "Rechercher une moto, un quad, un équipement...",
-    "allCategories": "Toutes les catégories"
+    "allCategories": "Toutes les catégories",
+    "allModels": "Tous les modèles",
+    "added": "Ajouté !",
+    "viewFullSpecs": "Fiche complète",
+    "cartEmpty": "Votre panier est actuellement vide",
+    "checkout": "Commander",
+    "subtotal": "Sous-total",
+    "taxIncludedNotice": "TVA incluse. Frais de port calculés à l'étape suivante."
   },
   "nav": {
     "home": "Accueil",
@@ -26,21 +33,54 @@
     "contact": "Contact",
     "about": "À propos",
     "account": "Mon compte",
-    "cart": "Panier"
+    "cart": "Panier",
+    "language": "Langue",
+    "kidsMotorcycles": "Motos Enfants",
+    "adultMotorcycles": "Motos Adultes",
+    "quadBikes": "Quads Tout-Terrain"
   },
   "announcement": {
-    "text": "Livraison offerte dès 500€ d'achats d'équipement | Essais showroom sur rendez-vous"
+    "text": "Livraison offerte dès 500€ d'achats d'équipement | Essais showroom sur rendez-vous",
+    "hours": "Showroom ouvert du Mardi au Samedi — 128 Avenue des Sports Motorisés, Paris",
+    "shipping": "Expédition internationale sécurisée & cotation sur mesure disponible"
   },
   "hero": {
-    "badge": "Collection 2025 disponible",
-    "title": "PUISSANCE. ADRENALINE. PRECISION.",
-    "subtitle": "Découvrez notre sélection exclusive de motos pour enfants et adultes, quads tout-terrain et équipements homologués.",
-    "ctaShop": "Explorer les Véhicules",
-    "ctaShowroom": "Découvrir le Showroom"
+    "badge": "Collection Officielle Showroom",
+    "title": "PUISSANCE. ADRÉNALINE. PRÉCISION.",
+    "subtitle": "Motos de compétition, d'initiation et quads tout-terrain sélectionnés pour leur rigueur mécanique et leurs performances éprouvées.",
+    "ctaShop": "Explorer le Catalogue",
+    "ctaShowroom": "Découvrir le Showroom",
+    "metricsNew": "Véhicules Neufs",
+    "metricsShowroom": "Showroom Dédié",
+    "metricsShipping": "Expédition Express"
+  },
+  "telemetry": {
+    "title": "Télémétrie Machine",
+    "ref": "RÉF",
+    "displacement": "Cylindrée",
+    "transmission": "Boîte / Réf",
+    "weight": "Poids",
+    "seatHeight": "Selle / Garde",
+    "orderModel": "Commander ce modèle",
+    "added": "Ajouté au panier"
+  },
+  "catalogSection": {
+    "badge": "Showroom En Direct",
+    "title": "Catalogue Véhicules & Équipements",
+    "subtitle": "Explorez nos modèles, filtrez par catégorie ou puissance, inspectez les fiches techniques complètes et ajoutez directement à votre panier.",
+    "liveFilterPlaceholder": "Filtrer en direct...",
+    "sortFeatured": "Tri : Vedettes",
+    "sortPriceAsc": "Prix : Croissant",
+    "sortPriceDesc": "Prix : Décroissant",
+    "resultsFound": "{count} résultat(s) trouvé(s)",
+    "clearSearch": "Effacer la recherche",
+    "inStockUnits": "{count} en stock",
+    "modelsCount": "{count} modèles"
   },
   "categories": {
-    "title": "Univers & Catégories",
-    "subtitle": "Du jeune pilote au compétiteur expérimenté, trouvez la machine taillée pour vous.",
+    "badge": "Univers Presty Motors",
+    "title": "Univers Motorsport",
+    "subtitle": "Du jeune pilote au compétiteur expérimenté, trouvez la machine taillée pour votre aventure.",
     "kidsMotorcycles": "Motos Enfants",
     "adultMotorcycles": "Motos Adultes",
     "quadBikes": "Quads Tout-Terrain",
@@ -48,7 +88,45 @@
   },
   "featured": {
     "title": "Véhicules & Équipements Vedettes",
-    "subtitle": "Les meilleures performances sélectionnées par nos experts."
+    "subtitle": "Les meilleures performances sélectionnées par nos spécialistes."
+  },
+  "showroomSection": {
+    "badge": "Showroom Physique Paris",
+    "title": "VENEZ ESSAYER VOS MACHINES AU SHOWROOM",
+    "subtitle": "Rencontrez notre équipe technique, prenez place au guidon de nos modèles récents et bénéficiez de réglages personnalisés avant livraison.",
+    "address": "128 Avenue des Sports Motorisés, 75016 Paris",
+    "hours": "Mardi au Samedi : 9h00 - 19h00",
+    "phone": "Atelier & Essais : +33 1 45 67 89 00",
+    "bookBtn": "Réserver un créneau d'essai",
+    "gpsBtn": "Itinéraire GPS",
+    "caption": "Atelier de préparation & exposition véhicules neufs"
+  },
+  "testRide": {
+    "modalTitle": "Réservation Essai Showroom Paris",
+    "vehicleType": "Type de véhicule à essayer",
+    "optionAdultBike": "Moto Adulte (Yamaha YZ125, etc.)",
+    "optionSportQuad": "Quad Sportif / Can-Am 1000R",
+    "optionKidsBike": "Moto Enfant (KTM 50 SX Mini)",
+    "optionKidsQuad": "Quad Enfant (Polaris Outlaw 70)",
+    "date": "Date souhaitée",
+    "timeSlot": "Créneau horaire",
+    "name": "Nom complet",
+    "phone": "Téléphone mobile",
+    "notice": "* Équipement de sécurité fourni sur place (casque, gants homologués). Permis ou autorisation parentale requise selon la cylindrée.",
+    "submit": "Confirmer la demande d'essai",
+    "successTitle": "Demande Confirmée",
+    "successDesc": "Merci {name}. Notre équipe showroom vous recontactera sous 2 heures pour valider votre créneau d'essai."
+  },
+  "megaMenu": {
+    "kidsBikesTitle": "Motos Enfants",
+    "kidsBikesDesc": "Modèles d'initiation et de compétition adaptés de 4 à 14 ans (50cc, 65cc, 85cc).",
+    "adultBikesTitle": "Motos Adultes",
+    "adultBikesDesc": "Motos de cross et tout-terrain haute performance (125cc à 450cc).",
+    "viewAllBikes": "Voir toutes les motos",
+    "sportQuadsTitle": "Quads Sportifs & Utilitaires",
+    "sportQuadsDesc": "Modèles 4x4 et sportifs pour adolescents et adultes (Can-Am, Polaris).",
+    "youthQuadsTitle": "Quads Enfants & Sécurité",
+    "youthQuadsDesc": "Équipés de coupe-circuit et limiteur de vitesse parental."
   },
   "trust": {
     "showroomTitle": "Showroom d'Exception",

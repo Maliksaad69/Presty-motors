@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Link } from "@/i18n/routing";
 import { useCart } from "@/lib/cart-context";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Eye, Check, Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { ShoppingCart, Eye, Check, Search, SlidersHorizontal, X } from "lucide-react";
 import { VehicleQuickViewModal } from "./VehicleQuickViewModal";
 
 export interface SerializedProduct {
@@ -24,32 +25,27 @@ export interface SerializedProduct {
   shortDescription: string;
   primaryImage: string | null;
   stock: number;
-  specifications?: Record<string, any> | null;
+  specifications?: Record<string, unknown> | null;
 }
 
 interface ShowcaseProps {
   products: SerializedProduct[];
   categories: { slug: string; name: string }[];
-  translations: {
-    allCategories: string;
-    addToCart: string;
-    added: string;
-    viewDetails: string;
-    inStock: string;
-    outOfStock: string;
-  };
 }
 
 export function InteractiveProductShowcase({
   products,
   categories,
-  translations,
 }: ShowcaseProps) {
+  const tCat = useTranslations("catalogSection");
+  const tCommon = useTranslations("common");
+
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc">("featured");
   const [inspectingProduct, setInspectingProduct] = useState<SerializedProduct | null>(null);
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const { addItem } = useCart();
 
@@ -88,7 +84,9 @@ export function InteractiveProductShowcase({
     return result;
   }, [products, activeCategory, searchQuery, sortBy]);
 
-  const handleAddToCart = (product: SerializedProduct) => {
+  const handleAddToCart = (product: SerializedProduct, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem({
       id: product.id,
       title: product.title,
@@ -102,22 +100,28 @@ export function InteractiveProductShowcase({
     setTimeout(() => setAddedId(null), 1800);
   };
 
+  const handleOpenQuickView = (product: SerializedProduct, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setInspectingProduct(product);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Interactive Toolbar: Live Search, Category Tabs & Sort */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-3 rounded border border-neutral-200 bg-neutral-50/70">
+    <div className="space-y-4">
+      {/* Sleek Motorsport Toolbar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded border border-[#E2E2E2] bg-[#F5F5F5]">
         
-        {/* Category Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        {/* Desktop Category Filter Tabs */}
+        <div className="hidden sm:flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => setActiveCategory("all")}
-            className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all duration-150 ${
+            className={`px-3 py-1.5 text-[11px] font-heading font-black uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
               activeCategory === "all"
-                ? "bg-black text-white"
-                : "bg-white text-neutral-600 hover:text-black border border-neutral-200"
+                ? "bg-[#0B0B0B] text-white shadow-xs"
+                : "bg-white text-neutral-700 hover:text-black border border-[#E2E2E2] hover:border-neutral-400"
             }`}
           >
-            {translations.allCategories} ({products.length})
+            {tCommon("allModels")} ({products.length})
           </button>
 
           {categories.map((cat) => {
@@ -127,10 +131,10 @@ export function InteractiveProductShowcase({
               <button
                 key={cat.slug}
                 onClick={() => setActiveCategory(cat.slug)}
-                className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded transition-all duration-150 ${
+                className={`px-3 py-1.5 text-[11px] font-heading font-black uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
                   isActive
-                    ? "bg-[#DC2626] text-white shadow-xs"
-                    : "bg-white text-neutral-600 hover:text-black border border-neutral-200"
+                    ? "bg-[#E10600] text-white shadow-xs"
+                    : "bg-white text-neutral-700 hover:text-black border border-[#E2E2E2] hover:border-neutral-400"
                 }`}
               >
                 {cat.name} ({count})
@@ -139,17 +143,28 @@ export function InteractiveProductShowcase({
           })}
         </div>
 
+        {/* Mobile Filter Button (Under 640px) */}
+        <div className="sm:hidden flex items-center justify-between gap-2">
+          <button
+            onClick={() => setMobileFiltersOpen(true)}
+            className="flex-1 flex items-center justify-center gap-2 h-9 px-3 bg-[#0B0B0B] text-white text-xs font-heading font-black uppercase tracking-wider rounded border border-[#262626] cursor-pointer"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#E10600]" />
+            <span>Filter Categories ({activeCategory === "all" ? "All" : categories.find(c => c.slug === activeCategory)?.name})</span>
+          </button>
+        </div>
+
         {/* Search & Sort Controls */}
         <div className="flex items-center gap-2">
           {/* Live Search */}
           <div className="relative flex-1 sm:w-48">
-            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-neutral-400 absolute start-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filtrer en direct..."
-              className="w-full text-xs pl-8 pr-3 py-1.5 bg-white border border-neutral-200 rounded text-neutral-800 placeholder-neutral-400 focus:outline-hidden focus:border-[#DC2626]"
+              placeholder={tCat("liveFilterPlaceholder")}
+              className="w-full text-xs ps-8 pe-2.5 py-1.5 h-9 bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] placeholder-neutral-400 focus:outline-hidden focus:border-[#E10600] transition-colors"
             />
           </div>
 
@@ -157,37 +172,37 @@ export function InteractiveProductShowcase({
           <div className="relative">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="text-xs bg-white border border-neutral-200 rounded px-2.5 py-1.5 font-medium text-neutral-700 focus:outline-hidden focus:border-[#DC2626] cursor-pointer"
+              onChange={(e) => setSortBy(e.target.value as "featured" | "price-asc" | "price-desc")}
+              className="h-9 text-xs bg-white border border-[#E2E2E2] rounded px-2.5 font-medium text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] cursor-pointer"
             >
-              <option value="featured">Tri : Vedettes</option>
-              <option value="price-asc">Prix : Croissant</option>
-              <option value="price-desc">Prix : Décroissant</option>
+              <option value="featured">{tCat("sortFeatured")}</option>
+              <option value="price-asc">{tCat("sortPriceAsc")}</option>
+              <option value="price-desc">{tCat("sortPriceDesc")}</option>
             </select>
           </div>
         </div>
       </div>
 
       {/* Product Results Counter */}
-      <div className="flex items-center justify-between text-xs text-neutral-500 px-1">
-        <span>{filteredAndSorted.length} résultat(s) trouvé(s)</span>
+      <div className="flex items-center justify-between text-xs text-[#737373] px-1">
+        <span className="font-mono font-medium">{tCat("resultsFound", { count: filteredAndSorted.length })}</span>
         {searchQuery && (
           <button
             onClick={() => setSearchQuery("")}
-            className="text-[11px] text-[#DC2626] hover:underline"
+            className="text-[11px] text-[#E10600] hover:underline cursor-pointer uppercase font-bold tracking-wider"
           >
-            Effacer la recherche
+            {tCat("clearSearch")}
           </button>
         )}
       </div>
 
-      {/* Animated Product Grid (Refined, Smaller Typography, NO BADGES) */}
-      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Responsive Product Grid: 4 cols on lg/xl, 3 on md, 2 on sm (min 520px), 1 on xs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         <AnimatePresence>
           {filteredAndSorted.map((p) => {
             const isAdded = addedId === p.id;
             const inStock = p.stock > 0;
-            const activePrice = p.salePrice ?? p.price;
+            const hasDiscount = p.salePrice !== null && p.salePrice < p.price;
 
             return (
               <motion.div
@@ -195,74 +210,96 @@ export function InteractiveProductShowcase({
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.15 }}
                 key={p.id}
-                className="group rounded border border-neutral-200 bg-white hover:border-black hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden"
+                className="group rounded border border-[#E2E2E2] bg-white hover:border-[#0B0B0B] hover:shadow-lg transition-all duration-200 flex flex-col justify-between overflow-hidden relative"
               >
-                {/* Photo Header (NO BADGES) */}
-                <div className="relative aspect-16/10 bg-neutral-950 overflow-hidden">
-                  {p.primaryImage ? (
-                    <Image
-                      src={p.primaryImage}
-                      alt={p.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs text-neutral-600 font-heading">
-                      NO PHOTO
+                {/* Photo & Badges Container */}
+                <div className="relative aspect-16/10 bg-[#0B0B0B] overflow-hidden">
+                  <Link href={`/products/${p.slug}`} className="block w-full h-full relative">
+                    {p.primaryImage ? (
+                      <Image
+                        src={p.primaryImage}
+                        alt={p.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs text-neutral-500 font-heading">
+                        PRESTY MOTORS
+                      </div>
+                    )}
+                  </Link>
+
+                  {/* Corner red racing hairline on hover */}
+                  <div className="absolute top-0 left-0 w-0 group-hover:w-full h-0.5 bg-[#E10600] transition-all duration-300 z-10" />
+
+                  {/* Sale Badge */}
+                  {hasDiscount && (
+                    <div className="absolute top-2.5 start-2.5 z-10 bg-[#E10600] text-white text-[10px] font-heading font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
+                      Promo
                     </div>
                   )}
 
-                  {/* Corner red accent hairline on hover */}
-                  <div className="absolute top-0 left-0 w-0 group-hover:w-full h-0.5 bg-[#DC2626] transition-all duration-300" />
+                  {/* Quick View Button on Image */}
+                  <button
+                    onClick={(e) => handleOpenQuickView(p, e)}
+                    className="absolute bottom-2.5 end-2.5 z-10 h-7 px-2 bg-[#0B0B0B]/85 hover:bg-[#0B0B0B] text-white text-[10px] font-heading font-bold uppercase tracking-wider rounded border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 cursor-pointer"
+                    title={tCommon("specs")}
+                  >
+                    <Eye className="w-3 h-3 text-[#E10600]" />
+                    <span>{tCommon("specs")}</span>
+                  </button>
                 </div>
 
-                {/* Content Section (Refined, Smaller Typography) */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                {/* Content Section */}
+                <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    {/* Compact Metadata line */}
-                    <div className="flex items-center justify-between text-[11px] text-neutral-500 font-semibold uppercase tracking-wider mb-1">
-                      <span>{p.categoryName}</span>
-                      <span>{p.engineCapacity || p.ageGroup || p.sku}</span>
+                    {/* Metadata line */}
+                    <div className="flex items-center justify-between text-[10px] text-[#737373] font-mono uppercase tracking-wider mb-1">
+                      <span className="truncate max-w-[65%]">{p.categoryName}</span>
+                      <span className="font-bold text-[#0B0B0B]">{p.engineCapacity || p.ageGroup || p.sku}</span>
                     </div>
 
-                    {/* Compact Heading: text-base sm:text-lg font-bold */}
-                    <h3 className="font-heading text-base sm:text-lg font-bold text-[#0A0A0A] uppercase leading-snug group-hover:text-[#DC2626] transition-colors">
-                      {p.title}
-                    </h3>
+                    {/* Product Title */}
+                    <Link href={`/products/${p.slug}`} className="block">
+                      <h3 className="font-heading text-sm sm:text-base font-black text-[#0B0B0B] uppercase leading-snug line-clamp-1 group-hover:text-[#E10600] transition-colors">
+                        {p.title}
+                      </h3>
+                    </Link>
 
-                    <p className="text-xs text-neutral-500 mt-1.5 line-clamp-2 leading-relaxed">
+                    {/* Short Description */}
+                    <p className="text-[11px] text-[#737373] mt-1 line-clamp-2 leading-relaxed">
                       {p.shortDescription}
                     </p>
 
-                    {/* Clean stock indicator (No Badge) */}
-                    <div className="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium text-neutral-500">
+                    {/* Stock Status Indicator with #16803C */}
+                    <div className="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          inStock ? "bg-[#0A0A0A]" : "bg-neutral-300"
+                        className={`w-2 h-2 rounded-full shrink-0 ${
+                          inStock ? "bg-[#16803C]" : "bg-neutral-300"
                         }`}
                       />
-                      <span>
+                      <span className={inStock ? "text-[#16803C] font-semibold" : "text-[#737373]"}>
                         {inStock
-                          ? `${p.stock} en stock`
-                          : translations.outOfStock}
+                          ? tCat("inStockUnits", { count: p.stock })
+                          : tCommon("outOfStock")}
                       </span>
                     </div>
                   </div>
 
-                  {/* Compact Price and Action Controls */}
-                  <div className="pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+                  {/* Price and Action Controls */}
+                  <div className="pt-2.5 border-t border-[#E2E2E2] flex items-center justify-between gap-2">
                     <div>
-                      {p.salePrice ? (
-                        <div className="flex items-baseline gap-1.5">
-                          <span className="font-heading text-lg sm:text-xl font-black text-[#DC2626]">
-                            {p.salePrice.toLocaleString("fr-FR", {
+                      {hasDiscount ? (
+                        <div className="flex flex-col">
+                          <span className="font-heading text-base sm:text-lg font-black text-[#E10600] leading-none">
+                            {p.salePrice!.toLocaleString("fr-FR", {
                               style: "currency",
                               currency: p.currency,
                             })}
                           </span>
-                          <span className="text-[11px] text-neutral-400 line-through">
+                          <span className="text-[10px] text-[#737373] line-through mt-0.5">
                             {p.price.toLocaleString("fr-FR", {
                               style: "currency",
                               currency: p.currency,
@@ -270,7 +307,7 @@ export function InteractiveProductShowcase({
                           </span>
                         </div>
                       ) : (
-                        <span className="font-heading text-lg sm:text-xl font-black text-[#0A0A0A]">
+                        <span className="font-heading text-base sm:text-lg font-black text-[#0B0B0B]">
                           {p.price.toLocaleString("fr-FR", {
                             style: "currency",
                             currency: p.currency,
@@ -279,38 +316,28 @@ export function InteractiveProductShowcase({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      {/* Inspect Specs Modal trigger */}
-                      <button
-                        onClick={() => setInspectingProduct(p)}
-                        className="px-2.5 py-2 rounded bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors"
-                        title="Fiche technique détaillée"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">Specs</span>
-                      </button>
-
+                    <div className="flex items-center gap-1.5 shrink-0">
                       {/* Add to Cart Button */}
                       <button
-                        onClick={() => handleAddToCart(p)}
+                        onClick={(e) => handleAddToCart(p, e)}
                         disabled={!inStock}
-                        className={`px-3 py-2 rounded font-heading font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 ${
+                        className={`h-8 px-3 rounded font-heading font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all duration-150 cursor-pointer shadow-xs active:scale-[0.98] ${
                           isAdded
-                            ? "bg-black text-white"
+                            ? "bg-[#0B0B0B] text-white"
                             : inStock
-                            ? "bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-xs"
-                            : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+                            ? "bg-[#E10600] hover:bg-[#B80500] text-white shadow-red-700/20"
+                            : "bg-[#E2E2E2] text-neutral-400 cursor-not-allowed"
                         }`}
                       >
                         {isAdded ? (
                           <>
-                            <Check className="w-3.5 h-3.5" />
-                            <span>{translations.added}</span>
+                            <Check className="w-3.5 h-3.5 text-white" />
+                            <span>{tCommon("added")}</span>
                           </>
                         ) : (
                           <>
                             <ShoppingCart className="w-3.5 h-3.5" />
-                            <span>{translations.addToCart}</span>
+                            <span>{tCommon("addToCart")}</span>
                           </>
                         )}
                       </button>
@@ -321,7 +348,83 @@ export function InteractiveProductShowcase({
             );
           })}
         </AnimatePresence>
-      </motion.div>
+      </div>
+
+      {/* Mobile Filters Drawer Modal */}
+      <AnimatePresence>
+        {mobileFiltersOpen && (
+          <div className="fixed inset-0 z-50 flex sm:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileFiltersOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative mt-auto w-full bg-white rounded-t-xl p-5 border-t border-[#E2E2E2] shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between border-b border-[#E2E2E2] pb-3">
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-[#E10600]" />
+                  <h3 className="font-heading font-black text-sm uppercase text-[#0B0B0B]">
+                    Filter by Category
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="p-1.5 text-neutral-400 hover:text-black rounded"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setActiveCategory("all");
+                    setMobileFiltersOpen(false);
+                  }}
+                  className={`w-full py-2.5 px-4 text-xs font-heading font-bold uppercase tracking-wider rounded text-start flex items-center justify-between border ${
+                    activeCategory === "all"
+                      ? "bg-[#0B0B0B] text-white border-[#0B0B0B]"
+                      : "bg-[#F5F5F5] text-[#0B0B0B] border-[#E2E2E2]"
+                  }`}
+                >
+                  <span>{tCommon("allModels")}</span>
+                  <span className="font-mono text-xs">({products.length})</span>
+                </button>
+
+                {categories.map((cat) => {
+                  const count = products.filter((p) => p.categorySlug === cat.slug).length;
+                  const isActive = activeCategory === cat.slug;
+                  return (
+                    <button
+                      key={cat.slug}
+                      onClick={() => {
+                        setActiveCategory(cat.slug);
+                        setMobileFiltersOpen(false);
+                      }}
+                      className={`w-full py-2.5 px-4 text-xs font-heading font-bold uppercase tracking-wider rounded text-start flex items-center justify-between border ${
+                        isActive
+                          ? "bg-[#E10600] text-white border-[#E10600]"
+                          : "bg-[#F5F5F5] text-[#0B0B0B] border-[#E2E2E2]"
+                      }`}
+                    >
+                      <span>{cat.name}</span>
+                      <span className="font-mono text-xs">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Interactive Quick-View Vehicle Specs Modal */}
       <VehicleQuickViewModal

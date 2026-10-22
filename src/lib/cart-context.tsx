@@ -19,6 +19,7 @@ interface CartContextType {
   addItem: (item: Omit<CartItemType, "quantity"> & { quantity?: number }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
   totalCount: number;
   subtotal: number;
 }
@@ -26,22 +27,22 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItemType[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Load from localStorage if available
-  useEffect(() => {
+  const [items, setItems] = useState<CartItemType[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const saved = localStorage.getItem("presty_cart");
       if (saved) {
-        setItems(JSON.parse(saved));
+        return JSON.parse(saved);
       }
     } catch {
       // ignore
     }
-  }, []);
+    return [];
+  });
 
-  // Save to localStorage
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Sync to localStorage on update
   useEffect(() => {
     try {
       localStorage.setItem("presty_cart", JSON.stringify(items));
@@ -83,6 +84,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const clearCart = () => {
+    setItems([]);
+  };
+
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -96,6 +101,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addItem,
         removeItem,
         updateQuantity,
+        clearCart,
         totalCount,
         subtotal,
       }}

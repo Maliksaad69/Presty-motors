@@ -2,47 +2,61 @@
 
 :root {
   --background: #FFFFFF;
-  --foreground: #0A0A0A;
+  --background-off: #F5F5F5;
+  --foreground: #0B0B0B;
   
-  --primary: #DC2626; /* Precision Racing Red */
-  --primary-hover: #B91C1C;
+  /* Primary Brand Tokens (Automotive Motorsport Red & Black) */
+  --primary-black: #0B0B0B;
+  --secondary-black: #171717;
+  
+  --racing-red: #E10600;
+  --racing-red-hover: #B80500;
+  
+  --pure-white: #FFFFFF;
+  --off-white: #F5F5F5;
+  --border-grey: #E2E2E2;
+  --muted-text: #737373;
+  --success-stock: #16803C;
+
+  /* shadcn compat variables */
+  --primary: #E10600;
+  --primary-hover: #B80500;
   --primary-foreground: #FFFFFF;
   
-  --accent: #E10600; /* Formula 1 / Motorsport Red */
+  --accent: #E10600;
   --accent-foreground: #FFFFFF;
 
-  --surface-dark: #0A0A0A;
-  --surface-dark-elevated: #141414;
+  --surface-dark: #0B0B0B;
+  --surface-dark-elevated: #171717;
   --surface-dark-border: #262626;
   
-  --secondary: #F4F4F5;
-  --secondary-foreground: #0A0A0A;
+  --secondary: #171717;
+  --secondary-foreground: #FFFFFF;
   
-  --muted: #F4F4F5;
-  --muted-foreground: #71717A;
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
   
-  --border: #E4E4E7;
-  --border-subtle: #F4F4F5;
-  --destructive: #DC2626;
+  --border: #E2E2E2;
+  --border-subtle: #F5F5F5;
+  --destructive: #E10600;
   --destructive-foreground: #FFFFFF;
   
   --card: #FFFFFF;
-  --card-foreground: #0A0A0A;
+  --card-foreground: #0B0B0B;
 
-  --radius: 0.375rem;
+  --radius: 0.25rem;
 }
 
 @theme inline {
-  --color-racing-red: #DC2626;
-  --color-racing-red-hover: #B91C1C;
-  --color-racing-red-bright: #EF4444;
-  --color-pitch-black: #0A0A0A;
-  --color-surface-black: #121212;
-  --color-border-dark: #262626;
+  --color-primary-black: #0B0B0B;
+  --color-secondary-black: #171717;
+  --color-racing-red: #E10600;
+  --color-racing-red-hover: #B80500;
   --color-pure-white: #FFFFFF;
-  --color-neutral-grey: #F4F4F5;
-  --color-border-grey: #E4E4E7;
-  --color-text-muted: #71717A;
+  --color-off-white: #F5F5F5;
+  --color-border-grey: #E2E2E2;
+  --color-muted-text: #737373;
+  --color-stock-green: #16803C;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -60,27 +74,46 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  --font-heading: var(--font-barlow-condensed), "Barlow Condensed", "Oswald", sans-serif;
-  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* User requested Tahoma, sans-serif fonts */
+  --font-heading: Tahoma, "Segoe UI", Arial, sans-serif;
+  --font-sans: Tahoma, "Segoe UI", Arial, sans-serif;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: Tahoma, "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: var(--font-heading);
-  letter-spacing: -0.01em;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  letter-spacing: normal;
 }
 
-/* Technical Hairline Borders */
+/* Motorsport Hairline Borders */
 .border-hairline {
   border-width: 1px;
+}
+
+/* Precision Racing Red Highlights */
+.racing-accent-line {
+  position: relative;
+}
+.racing-accent-line::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 24px;
+  background-color: #E10600;
+  transition: width 0.3s ease;
+}
+.group:hover .racing-accent-line::after {
+  width: 100%;
 }
 
 /* Clean Custom Scrollbar */
@@ -89,22 +122,23 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #0B0B0B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272A;
+  background: #262626;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #DC2626;
+  background: #E10600;
 }
 
-/* RTL layout adjustments for Arabic */
+/* RTL layout adjustments for Arabic with Tahoma */
 [dir="rtl"] {
   text-align: right;
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
 }
 
 [dir="rtl"] .font-heading {
-  font-family: var(--font-sans);
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
   letter-spacing: normal;
 }

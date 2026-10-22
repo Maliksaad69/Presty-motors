@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, Clock, Check, Phone, User, ShieldCheck } from "lucide-react";
 
 interface TestRideModalProps {
   isOpen: boolean;
@@ -10,177 +11,184 @@ interface TestRideModalProps {
 }
 
 export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    vehicleType: "motorcycle-adult",
-    date: "",
-    timeSlot: "14:00 - 15:00",
-  });
+  const t = useTranslations("testRide");
+
+  const [machineType, setMachineType] = useState("adult-bike");
+  const [date, setDate] = useState("");
+  const [timeSlot, setTimeSlot] = useState("14:00 - 15:00");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-    }, 2500);
+    setIsSuccess(true);
   };
 
-  if (!isOpen) return null;
+  const handleReset = () => {
+    setIsSuccess(false);
+    onClose();
+  };
 
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 overflow-y-auto">
+        {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/75 backdrop-blur-xs"
+          className="fixed inset-0 bg-black/80 backdrop-blur-xs"
         />
 
-        <div className="min-h-full flex items-center justify-center p-4">
+        <div className="min-h-full flex items-center justify-center p-3 sm:p-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-white rounded border border-neutral-200 shadow-2xl overflow-hidden text-[#0A0A0A]"
+            className="relative w-full max-w-lg bg-white text-[#0B0B0B] rounded border border-[#E2E2E2] shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-black text-white border-b border-neutral-800">
+            <div className="flex items-center justify-between p-4 border-b border-[#171717] bg-[#0B0B0B] text-white">
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />
-                <h3 className="font-heading text-base font-bold uppercase tracking-wider">
-                  Réservation Essai Showroom Paris
+                <span className="w-2 h-2 rounded-full bg-[#E10600]" />
+                <h3 className="font-heading text-sm font-black uppercase tracking-wider text-white">
+                  {t("modalTitle")}
                 </h3>
               </div>
               <button
                 onClick={onClose}
-                className="p-1 rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+                className="p-1 rounded text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors cursor-pointer"
+                aria-label="Fermer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {submitted ? (
-              <div className="p-8 text-center space-y-4">
-                <div className="w-12 h-12 mx-auto rounded-full bg-black text-[#DC2626] flex items-center justify-center">
-                  <Check className="w-6 h-6" />
-                </div>
-                <h4 className="font-heading text-xl font-bold uppercase">
-                  Demande Confirmée
-                </h4>
-                <p className="text-xs text-neutral-600 leading-relaxed max-w-sm mx-auto">
-                  Merci {formData.name}. Notre équipe showroom vous recontactera sous 2 heures pour valider votre créneau d'essai.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    Type de véhicule à essayer
-                  </label>
-                  <select
-                    value={formData.vehicleType}
-                    onChange={(e) =>
-                      setFormData({ ...formData, vehicleType: e.target.value })
-                    }
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded font-medium focus:outline-hidden focus:border-[#DC2626]"
-                    required
-                  >
-                    <option value="motorcycle-adult">Moto Adulte (Yamaha YZ125, etc.)</option>
-                    <option value="quad-sport">Quad Sportif / Can-Am 1000R</option>
-                    <option value="motorcycle-kids">Moto Enfant (KTM 50 SX Mini)</option>
-                    <option value="quad-kids">Quad Enfant (Polaris Outlaw 70)</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                      Date souhaitée
-                    </label>
-                    <input
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) =>
-                        setFormData({ ...formData, date: e.target.value })
-                      }
-                      className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded font-medium focus:outline-hidden focus:border-[#DC2626]"
-                      required
-                    />
+            {/* Content */}
+            <div className="p-5 sm:p-6">
+              {isSuccess ? (
+                <div className="text-center py-6 space-y-4">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-[#16803C]/10 text-[#16803C] flex items-center justify-center">
+                    <Check className="w-6 h-6" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                      Créneau horaire
-                    </label>
-                    <select
-                      value={formData.timeSlot}
-                      onChange={(e) =>
-                        setFormData({ ...formData, timeSlot: e.target.value })
-                      }
-                      className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded font-medium focus:outline-hidden focus:border-[#DC2626]"
-                    >
-                      <option value="10:00 - 11:00">10:00 - 11:00</option>
-                      <option value="11:30 - 12:30">11:30 - 12:30</option>
-                      <option value="14:00 - 15:00">14:00 - 15:00</option>
-                      <option value="16:00 - 17:00">16:00 - 17:00</option>
-                      <option value="17:30 - 18:30">17:30 - 18:30</option>
-                    </select>
+                    <h4 className="font-heading text-lg font-black uppercase text-[#0B0B0B]">
+                      {t("successTitle")}
+                    </h4>
+                    <p className="text-xs text-[#737373] mt-1 max-w-sm mx-auto leading-relaxed">
+                      {t("successDesc", { name: name || "Customer" })}
+                    </p>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                      Nom complet
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Jean Dupont"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded font-medium focus:outline-hidden focus:border-[#DC2626]"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                      Téléphone mobile
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+33 6 12 34 56 78"
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                      className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded font-medium focus:outline-hidden focus:border-[#DC2626]"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <p className="text-[10px] text-neutral-400">
-                  * Équipement de sécurité fourni sur place (casque, gants homologués). Permis ou autorisation parentale requise selon la cylindrée.
-                </p>
-
-                <div className="pt-2">
                   <button
-                    type="submit"
-                    className="w-full py-3 rounded bg-[#DC2626] hover:bg-[#B91C1C] text-white font-heading font-black text-xs uppercase tracking-wider transition-colors shadow-md shadow-red-600/20"
+                    onClick={handleReset}
+                    className="mt-4 px-6 py-2.5 rounded bg-[#0B0B0B] text-white font-heading font-black text-xs uppercase tracking-wider hover:bg-[#171717] transition-colors cursor-pointer"
                   >
-                    Confirmer la demande d'essai
+                    Fermer
                   </button>
                 </div>
-              </form>
-            )}
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Vehicle Type Choice */}
+                  <div>
+                    <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                      {t("vehicleType")}
+                    </label>
+                    <select
+                      value={machineType}
+                      onChange={(e) => setMachineType(e.target.value)}
+                      className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] font-medium cursor-pointer"
+                    >
+                      <option value="adult-bike">{t("optionAdultBike")}</option>
+                      <option value="sport-quad">{t("optionSportQuad")}</option>
+                      <option value="kids-bike">{t("optionKidsBike")}</option>
+                      <option value="kids-quad">{t("optionKidsQuad")}</option>
+                    </select>
+                  </div>
+
+                  {/* Date & Time Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                        {t("date")}
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] font-mono cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                        {t("timeSlot")}
+                      </label>
+                      <select
+                        value={timeSlot}
+                        onChange={(e) => setTimeSlot(e.target.value)}
+                        className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] font-medium cursor-pointer"
+                      >
+                        <option value="10:00 - 11:00">10:00 - 11:00</option>
+                        <option value="11:30 - 12:30">11:30 - 12:30</option>
+                        <option value="14:00 - 15:00">14:00 - 15:00</option>
+                        <option value="15:30 - 16:30">15:30 - 16:30</option>
+                        <option value="17:00 - 18:00">17:00 - 18:00</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Rider Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                        {t("name")}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Marc Dupont"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] placeholder-neutral-400 focus:outline-hidden focus:border-[#E10600]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                        {t("phone")}
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+33 6 12 34 56 78"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] placeholder-neutral-400 focus:outline-hidden focus:border-[#E10600] font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Notice */}
+                  <p className="text-[10px] text-[#737373] leading-relaxed pt-1">
+                    {t("notice")}
+                  </p>
+
+                  {/* Submit Button */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider transition-colors shadow-md shadow-red-700/25 cursor-pointer active:scale-[0.98]"
+                    >
+                      {t("submit")}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>

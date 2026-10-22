@@ -17,7 +17,14 @@ import {
   InteractiveProductShowcase,
   SerializedProduct,
 } from "@/components/products/InteractiveProductShowcase";
+import { PromotionalBanner } from "@/components/home/PromotionalBanner";
 import { InteractiveShowroomSection } from "@/components/home/InteractiveShowroomSection";
+import {
+  MotionSection,
+  MotionStagger,
+  MotionCard,
+  MotionItem,
+} from "@/components/ui/motion-container";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +34,8 @@ interface PageProps {
 
 export default async function HomePage({ params }: PageProps) {
   const { locale } = await params;
-  const t = await getTranslations("hero");
   const tCat = await getTranslations("categories");
-  const tFeat = await getTranslations("featured");
+  const tCatSection = await getTranslations("catalogSection");
   const tTrust = await getTranslations("trust");
   const common = await getTranslations("common");
 
@@ -75,7 +81,7 @@ export default async function HomePage({ params }: PageProps) {
     const trans = p.translations[0];
     const catTrans = p.category.translations[0]?.name || p.category.slug;
     const primaryImg = p.images.find((img) => img.isPrimary) || p.images[0];
-    const rawSpecs = trans?.specifications as Record<string, any> | null;
+    const rawSpecs = trans?.specifications as Record<string, unknown> | null;
 
     return {
       id: p.id,
@@ -108,7 +114,7 @@ export default async function HomePage({ params }: PageProps) {
       slug: p.slug,
       sku: p.sku,
       title: trans?.title || p.slug,
-      subtitle: p.engineCapacity ? `${p.engineCapacity} Motorsport` : "High Performance",
+      subtitle: p.engineCapacity ? `${p.engineCapacity} Motorsport Series` : "High Performance",
       price: Number(p.price),
       salePrice: p.salePrice ? Number(p.salePrice) : null,
       currency: p.currency,
@@ -130,169 +136,174 @@ export default async function HomePage({ params }: PageProps) {
 
   return (
     <div className="flex flex-col bg-white">
-      {/* 1. Dynamic Hero Machine Controller & HUD (Compact Typography, No Badges) */}
-      <DynamicHeroShowcase
-        vehicles={heroVehicles}
-        ctaShopText={t("ctaShop")}
-        ctaShowroomText={t("ctaShowroom")}
-      />
+      {/* 1. Hero Machine Controller & HUD (with Framer Motion Vehicle Switching) */}
+      <DynamicHeroShowcase vehicles={heroVehicles} />
 
-      {/* 2. Featured Vehicles Catalog with Live Search, Filter Tabs & Quick View Modal */}
-      <section className="py-14 sm:py-18 bg-white border-b border-neutral-200">
+      {/* 2. Product Categories: with Framer Motion Staggered Cards */}
+      <MotionSection className="py-12 sm:py-16 bg-[#F5F5F5] border-b border-[#E2E2E2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#DC2626]">
-                  Showroom En Direct
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 rounded-full bg-[#E10600]" />
+                <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+                  {tCat("badge")}
                 </span>
               </div>
-              <h2 className="font-heading text-2xl sm:text-3xl font-black uppercase text-[#0A0A0A] leading-tight">
-                {tFeat("title")}
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-black uppercase text-[#0B0B0B] tracking-tight">
+                {tCat("title")}
               </h2>
-              <p className="text-neutral-500 mt-1 text-xs sm:text-sm max-w-xl">
-                Explorez nos modèles, filtrez par catégorie ou puissance, inspectez les fiches techniques complètes et ajoutez directement à votre panier.
+              <p className="text-[#737373] mt-0.5 text-xs max-w-xl">
+                {tCat("subtitle")}
               </p>
             </div>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#DC2626] hover:text-black uppercase tracking-wider transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-heading font-black text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
             >
               <span>{common("shopNow")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          {/* Interactive Client Component */}
-          <InteractiveProductShowcase
-            products={serializedProducts}
-            categories={serializedCategories}
-            translations={{
-              allCategories: "Tous les modèles",
-              addToCart: "Ajouter",
-              added: "Ajouté !",
-              viewDetails: "Fiche",
-              inStock: common("inStock"),
-              outOfStock: common("outOfStock"),
-            }}
-          />
-        </div>
-      </section>
-
-      {/* 3. Categories Navigation Grid (Refined, Compact Scale) */}
-      <section className="py-14 sm:py-18 bg-neutral-50 border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-10">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#DC2626]">
-              Univers Presty Motors
-            </span>
-            <h2 className="font-heading text-2xl sm:text-3xl font-black uppercase text-[#0A0A0A] mt-1">
-              {tCat("title")}
-            </h2>
-            <p className="text-neutral-500 mt-1 text-xs sm:text-sm">
-              {tCat("subtitle")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MotionStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {dbCategories.map((cat) => {
               const trans = cat.translations[0];
               const name = trans?.name || cat.slug;
               const desc = trans?.description || "";
 
               return (
-                <Link
-                  key={cat.id}
-                  href={`/shop?category=${cat.slug}`}
-                  className="group rounded border border-neutral-200 bg-white p-5 hover:border-[#DC2626] hover:shadow-md transition-all duration-200 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-8 h-0.5 bg-[#DC2626] mb-4 group-hover:w-full transition-all duration-300" />
-                    <h3 className="font-heading text-lg font-bold uppercase text-[#0A0A0A] group-hover:text-[#DC2626] transition-colors">
-                      {name}
-                    </h3>
-                    <p className="text-xs text-neutral-500 mt-1.5 line-clamp-3 leading-relaxed">
-                      {desc}
-                    </p>
-                  </div>
-                  <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-bold text-black group-hover:text-[#DC2626]">
-                    <span>{cat._count.products} modèles</span>
-                    <ChevronRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
+                <MotionCard key={cat.id}>
+                  <Link
+                    href={`/shop?category=${cat.slug}`}
+                    className="group rounded border border-[#E2E2E2] bg-white p-5 hover:border-[#0B0B0B] hover:shadow-lg transition-all duration-200 flex flex-col justify-between h-full"
+                  >
+                    <div>
+                      <div className="w-8 h-1 bg-[#E10600] mb-3 group-hover:w-full transition-all duration-300" />
+                      <h3 className="font-heading text-base font-black uppercase text-[#0B0B0B] group-hover:text-[#E10600] transition-colors">
+                        {name}
+                      </h3>
+                      <p className="text-xs text-[#737373] mt-1.5 line-clamp-2 leading-relaxed">
+                        {desc}
+                      </p>
+                    </div>
+                    <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-heading font-bold text-[#0B0B0B] group-hover:text-[#E10600]">
+                      <span>{tCatSection("modelsCount", { count: cat._count.products })}</span>
+                      <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform text-[#E10600]" />
+                    </div>
+                  </Link>
+                </MotionCard>
               );
             })}
-          </div>
+          </MotionStagger>
         </div>
-      </section>
+      </MotionSection>
 
-      {/* 4. Interactive Showroom & Paris Test Ride Booking */}
+      {/* 3. Featured Products Grid with Live Search, Filter Tabs & Quick View */}
+      <MotionSection className="py-14 sm:py-20 bg-white border-b border-[#E2E2E2]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 rounded-full bg-[#E10600]" />
+                <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+                  {tCatSection("badge")}
+                </span>
+              </div>
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-black uppercase text-[#0B0B0B] tracking-tight leading-tight">
+                {tCatSection("title")}
+              </h2>
+              <p className="text-[#737373] mt-0.5 text-xs max-w-xl">
+                {tCatSection("subtitle")}
+              </p>
+            </div>
+
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-1.5 text-xs font-heading font-black text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
+            >
+              <span>{common("shopNow")}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Interactive Client Component with Layout Animation */}
+          <InteractiveProductShowcase
+            products={serializedProducts}
+            categories={serializedCategories}
+          />
+        </div>
+      </MotionSection>
+
+      {/* 4. Bold Motorsport Promotional Banner with Pulsing Ambient Light */}
+      <PromotionalBanner />
+
+      {/* 5. Showroom & Paris Test Ride Booking */}
       <InteractiveShowroomSection />
 
-      {/* 5. Trust & Service Pillars (Clean, Downscaled Typography) */}
-      <section className="py-12 bg-white">
+      {/* 6. Trust & Service Pillars with Staggered Motion */}
+      <MotionSection className="py-14 sm:py-18 bg-white border-t border-[#E2E2E2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded bg-black text-white flex items-center justify-center shrink-0">
-                <Award className="w-4 h-4 text-[#DC2626]" />
+          <MotionStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <MotionCard className="flex items-start gap-3.5 p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] hover:border-[#0B0B0B] transition-colors">
+              <div className="w-9 h-9 rounded bg-[#0B0B0B] text-white flex items-center justify-center shrink-0">
+                <Award className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-bold uppercase text-[#0A0A0A]">
+                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
                   {tTrust("showroomTitle")}
                 </h4>
-                <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
                   {tTrust("showroomDesc")}
                 </p>
               </div>
-            </div>
+            </MotionCard>
 
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded bg-black text-white flex items-center justify-center shrink-0">
-                <Truck className="w-4 h-4 text-[#DC2626]" />
+            <MotionCard className="flex items-start gap-3.5 p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] hover:border-[#0B0B0B] transition-colors">
+              <div className="w-9 h-9 rounded bg-[#0B0B0B] text-white flex items-center justify-center shrink-0">
+                <Truck className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-bold uppercase text-[#0A0A0A]">
+                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
                   {tTrust("deliveryTitle")}
                 </h4>
-                <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
                   {tTrust("deliveryDesc")}
                 </p>
               </div>
-            </div>
+            </MotionCard>
 
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded bg-black text-white flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4 text-[#DC2626]" />
+            <MotionCard className="flex items-start gap-3.5 p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] hover:border-[#0B0B0B] transition-colors">
+              <div className="w-9 h-9 rounded bg-[#0B0B0B] text-white flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-bold uppercase text-[#0A0A0A]">
+                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
                   {tTrust("quoteTitle")}
                 </h4>
-                <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
                   {tTrust("quoteDesc")}
                 </p>
               </div>
-            </div>
+            </MotionCard>
 
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded bg-black text-white flex items-center justify-center shrink-0">
-                <Wrench className="w-4 h-4 text-[#DC2626]" />
+            <MotionCard className="flex items-start gap-3.5 p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] hover:border-[#0B0B0B] transition-colors">
+              <div className="w-9 h-9 rounded bg-[#0B0B0B] text-white flex items-center justify-center shrink-0">
+                <Wrench className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-bold uppercase text-[#0A0A0A]">
+                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
                   {tTrust("supportTitle")}
                 </h4>
-                <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
                   {tTrust("supportDesc")}
                 </p>
               </div>
-            </div>
-          </div>
+            </MotionCard>
+          </MotionStagger>
         </div>
-      </section>
+      </MotionSection>
     </div>
   );
 }

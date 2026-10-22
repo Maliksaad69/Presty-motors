@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import { routing, Locale } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
@@ -10,19 +9,6 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import "../globals.css";
-
-const barlowCondensed = Barlow_Condensed({
-  weight: ["400", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  variable: "--font-barlow-condensed",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Presty Motors — Concessionnaire Motos, Quads & Équipements",
@@ -54,9 +40,12 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
-      className={`${barlowCondensed.variable} ${inter.variable}`}
+      suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col bg-white text-[#0A0A0A] font-sans antialiased">
+      <body
+        className="min-h-screen flex flex-col bg-white text-[#0B0B0B] font-sans antialiased"
+        suppressHydrationWarning
+      >
         <NextIntlClientProvider messages={messages}>
           <CartProvider>
             <AnnouncementBar />

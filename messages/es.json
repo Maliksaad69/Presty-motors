@@ -11,10 +11,17 @@
     "lowStock": "Solo quedan {count} unidades",
     "price": "Precio",
     "viewDetails": "Detalles del vehículo",
-    "specs": "Especificaciones técnicas",
+    "specs": "Especificaciones",
     "requestQuote": "Solicitar presupuesto",
     "searchPlaceholder": "Buscar motos, quads, equipamiento...",
-    "allCategories": "Todas las categorías"
+    "allCategories": "Todas las categorías",
+    "allModels": "Todos los modelos",
+    "added": "¡Añadido!",
+    "viewFullSpecs": "Ficha completa",
+    "cartEmpty": "Su cesta está actualmente vacía",
+    "checkout": "Tramitar pedido",
+    "subtotal": "Subtotal",
+    "taxIncludedNotice": "IVA incluido. Gastos de envío calculados en el siguiente paso."
   },
   "nav": {
     "home": "Inicio",
@@ -26,29 +33,100 @@
     "contact": "Contacto",
     "about": "Nosotros",
     "account": "Mi Cuenta",
-    "cart": "Cesta"
+    "cart": "Cesta",
+    "language": "Idioma",
+    "kidsMotorcycles": "Motos Infantiles",
+    "adultMotorcycles": "Motos para Adultos",
+    "quadBikes": "Quads Todoterreno"
   },
   "announcement": {
-    "text": "Envío gratis en equipos a partir de 500€ | Pruebas en showroom con cita previa"
+    "text": "Envío gratis en equipos a partir de 500€ | Pruebas en showroom con cita previa",
+    "hours": "Showroom abierto de Martes a Sábado — 128 Avenue des Sports Motorisés, París",
+    "shipping": "Envío internacional asegurado y presupuestos personalizados disponibles"
   },
   "hero": {
-    "badge": "Gama 2025 ya disponible",
+    "badge": "Colección Oficial de Showroom",
     "title": "POTENCIA. ADRENALINA. PRECISIÓN.",
-    "subtitle": "Descubra nuestra selección exclusiva de motos para niños y adultos, quads todoterreno y equipamiento homologado.",
-    "ctaShop": "Explorar Vehículos",
-    "ctaShowroom": "Conocer el Showroom"
+    "subtitle": "Motos de competición, iniciación infantil y quads todoterreno seleccionados por su fiabilidad mecánica y máximo rendimiento.",
+    "ctaShop": "Explorar Catálogo",
+    "ctaShowroom": "Conocer Showroom",
+    "metricsNew": "Vehículos Nuevos",
+    "metricsShowroom": "Showroom Exclusivo",
+    "metricsShipping": "Envío Express"
+  },
+  "telemetry": {
+    "title": "Telemetría del Vehículo",
+    "ref": "REF",
+    "displacement": "Cilindrada",
+    "transmission": "Cambio / Transmisión",
+    "weight": "Peso",
+    "seatHeight": "Asiento / Despeje",
+    "orderModel": "Comprar este modelo",
+    "added": "Añadido a la cesta"
+  },
+  "catalogSection": {
+    "badge": "Inventario en Directo",
+    "title": "Catálogo de Vehículos y Equipamiento",
+    "subtitle": "Explore nuestros modelos, filtre por categoría o cilindrada, consulte fichas técnicas y añada directamente a su pedido.",
+    "liveFilterPlaceholder": "Filtrar en directo...",
+    "sortFeatured": "Orden: Destacados",
+    "sortPriceAsc": "Precio: Menor a Mayor",
+    "sortPriceDesc": "Precio: Mayor a Menor",
+    "resultsFound": "{count} resultado(s) encontrado(s)",
+    "clearSearch": "Borrar búsqueda",
+    "inStockUnits": "{count} en stock",
+    "modelsCount": "{count} modelos"
   },
   "categories": {
-    "title": "Categorías y Modelos",
-    "subtitle": "Desde jóvenes promesas hasta pilotos expertos, encuentre la máquina perfecta para su aventura.",
+    "badge": "Universo Presty Motors",
+    "title": "Categorías Motorsport",
+    "subtitle": "Desde jóvenes promesas hasta pilotos experimentados, encuentre la máquina perfecta para su aventura.",
     "kidsMotorcycles": "Motos para Niños",
     "adultMotorcycles": "Motos para Adultos",
-    "quadBikes": "Quads y Cuatrimotos",
+    "quadBikes": "Quads Todoterreno",
     "ridingEquipment": "Equipamiento de Protección"
   },
   "featured": {
     "title": "Modelos y Equipos Destacados",
-    "subtitle": "El mejor rendimiento seleccionado por nuestros especialistas."
+    "subtitle": "Las mejores prestaciones seleccionadas por nuestros especialistas."
+  },
+  "showroomSection": {
+    "badge": "Showroom Físico en París",
+    "title": "VENGA A PROBAR NUESTRAS MÁQUINAS EN PERSONA",
+    "subtitle": "Conozca a nuestro equipo de mecánicos, súbase a los últimos modelos y disfrute de ajustes personalizados antes de la entrega.",
+    "address": "128 Avenue des Sports Motorisés, 75016 París, Francia",
+    "hours": "Martes a Sábado: 9:00 - 19:00",
+    "phone": "Taller y Pruebas: +33 1 45 67 89 00",
+    "bookBtn": "Reservar cita para prueba",
+    "gpsBtn": "Ruta GPS",
+    "caption": "Taller de preparación y exposición de vehículos nuevos"
+  },
+  "testRide": {
+    "modalTitle": "Reserva de Prueba en Showroom de París",
+    "vehicleType": "Tipo de vehículo a probar",
+    "optionAdultBike": "Moto para Adulto (Yamaha YZ125, etc.)",
+    "optionSportQuad": "Quad Deportivo / Can-Am 1000R",
+    "optionKidsBike": "Moto Infantil (KTM 50 SX Mini)",
+    "optionKidsQuad": "Quad Infantil (Polaris Outlaw 70)",
+    "date": "Fecha preferida",
+    "timeSlot": "Horario disponible",
+    "name": "Nombre completo",
+    "phone": "Teléfono móvil",
+    "notice": "* Equipamiento de seguridad homologado disponible in situ (casco, guantes). Carnet o consentimiento parental requerido según cilindrada.",
+    "submit": "Confirmar solicitud de prueba",
+    "successTitle": "Solicitud Confirmada",
+    "successDesc": "Gracias {name}. Nuestro equipo del showroom le contactará en menos de 2 horas para confirmar su cita."
+  },
+  "megaMenu": {
+    "kidsBikesTitle": "Motos Infantiles",
+    "kidsBikesDesc": "Motos de iniciación y competición para edades de 4 a 14 años (50cc, 65cc, 85cc).",
+    "adultBikesTitle": "Motos para Adultos",
+    "adultBikesDesc": "Motos de motocross y enduro de alto rendimiento (125cc a 450cc).",
+    "viewAllBikes": "Ver todas las motos",
+    "sportQuadsTitle": "Quads Deportivos y Utilitarios",
+    "sportQuadsDesc": "Modelos 4x4 y de ocio para jóvenes y adultos (Can-Am, Polaris).",
+    "youthQuadsTitle": "Quads Infantiles de Seguridad",
+    "youthQuadsDesc": "Equipados con cordón de seguridad y control parental de velocidad."
   },
   "trust": {
     "showroomTitle": "Showroom Exclusivo",

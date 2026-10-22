@@ -2,7 +2,7 @@
   "common": {
     "brandName": "Presty Motors",
     "tagline": "Premier Motorcycle & Quad Showroom",
-    "shopNow": "Shop Catalog",
+    "shopNow": "View Catalog",
     "visitShowroom": "Visit Showroom",
     "contactUs": "Contact Us",
     "addToCart": "Add to Cart",
@@ -11,10 +11,17 @@
     "lowStock": "Only {count} left",
     "price": "Price",
     "viewDetails": "Vehicle Details",
-    "specs": "Technical Specifications",
+    "specs": "Specifications",
     "requestQuote": "Request a Quote",
     "searchPlaceholder": "Search bikes, quads, riding gear...",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "allModels": "All Models",
+    "added": "Added!",
+    "viewFullSpecs": "Full Spec Sheet",
+    "cartEmpty": "Your cart is currently empty",
+    "checkout": "Checkout",
+    "subtotal": "Subtotal",
+    "taxIncludedNotice": "VAT included. Shipping calculated at checkout."
   },
   "nav": {
     "home": "Home",
@@ -26,21 +33,54 @@
     "contact": "Contact",
     "about": "About",
     "account": "My Account",
-    "cart": "Cart"
+    "cart": "Cart",
+    "language": "Language",
+    "kidsMotorcycles": "Kids' Motorcycles",
+    "adultMotorcycles": "Adult Motorcycles",
+    "quadBikes": "Quad Bikes"
   },
   "announcement": {
-    "text": "Free delivery on gear orders over €500 | Showroom test rides available by appointment"
+    "text": "Free delivery on gear orders over €500 | Showroom test rides available by appointment",
+    "hours": "Showroom open Tuesday to Saturday — 128 Avenue des Sports Motorisés, Paris",
+    "shipping": "Secure international shipping & bespoke quotes available"
   },
   "hero": {
-    "badge": "2025 Model Lineup Now Available",
+    "badge": "Official Showroom Collection",
     "title": "POWER. ADRENALINE. PRECISION.",
-    "subtitle": "Discover our premier lineup of youth and adult motocross bikes, utility and sport quads, and certified safety gear.",
-    "ctaShop": "Explore Vehicles",
-    "ctaShowroom": "Visit Our Showroom"
+    "subtitle": "Competition motocross bikes, youth trainers, and all-terrain quads engineered for mechanical precision and proven track performance.",
+    "ctaShop": "Explore Catalog",
+    "ctaShowroom": "Visit Our Showroom",
+    "metricsNew": "Brand New Fleet",
+    "metricsShowroom": "Flagship Showroom",
+    "metricsShipping": "Express Shipping"
+  },
+  "telemetry": {
+    "title": "Machine Telemetry",
+    "ref": "SKU",
+    "displacement": "Displacement",
+    "transmission": "Gearbox / Type",
+    "weight": "Weight",
+    "seatHeight": "Seat / Clearance",
+    "orderModel": "Order This Machine",
+    "added": "Added to Cart"
+  },
+  "catalogSection": {
+    "badge": "Live Showroom Inventory",
+    "title": "Vehicle & Equipment Catalog",
+    "subtitle": "Explore our lineup, filter live by category or displacement, inspect full engineering spec sheets, and order directly to your cart.",
+    "liveFilterPlaceholder": "Filter live...",
+    "sortFeatured": "Sort: Featured",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "resultsFound": "{count} result(s) found",
+    "clearSearch": "Clear search",
+    "inStockUnits": "{count} in stock",
+    "modelsCount": "{count} models"
   },
   "categories": {
-    "title": "Vehicle Categories",
-    "subtitle": "From beginner riders to veteran racers, find the machine engineered for your style.",
+    "badge": "Presty Motors Universe",
+    "title": "Motorsport Categories",
+    "subtitle": "From aspiring youth riders to seasoned competitors, find the machine calibrated for your journey.",
     "kidsMotorcycles": "Kids' Motorcycles",
     "adultMotorcycles": "Adult Motorcycles",
     "quadBikes": "Quad Bikes",
@@ -48,7 +88,45 @@
   },
   "featured": {
     "title": "Featured Machines & Gear",
-    "subtitle": "Hand-picked high-performance selections from our showroom floor."
+    "subtitle": "Top performance selections curated by our motorsport specialists."
+  },
+  "showroomSection": {
+    "badge": "Paris Flagship Showroom",
+    "title": "EXPERIENCE OUR MACHINES IN PERSON",
+    "subtitle": "Meet our certified technicians, take a seat on our latest models, and receive custom ergonomic tuning prior to delivery.",
+    "address": "128 Avenue des Sports Motorisés, 75016 Paris, France",
+    "hours": "Tuesday to Saturday: 9:00 AM - 7:00 PM",
+    "phone": "Workshop & Test Rides: +33 1 45 67 89 00",
+    "bookBtn": "Book a Test Ride Slot",
+    "gpsBtn": "GPS Directions",
+    "caption": "Workshop preparation bay & brand new exhibition floor"
+  },
+  "testRide": {
+    "modalTitle": "Paris Showroom Test Ride Booking",
+    "vehicleType": "Vehicle Type to Test",
+    "optionAdultBike": "Adult Motorcycle (Yamaha YZ125, etc.)",
+    "optionSportQuad": "Sport Quad / Can-Am 1000R",
+    "optionKidsBike": "Kids' Bike (KTM 50 SX Mini)",
+    "optionKidsQuad": "Kids' Quad (Polaris Outlaw 70)",
+    "date": "Preferred Date",
+    "timeSlot": "Time Slot",
+    "name": "Full Name",
+    "phone": "Mobile Phone",
+    "notice": "* Certified protective gear provided on site (helmet, gloves). Driver license or parental consent required depending on engine size.",
+    "submit": "Confirm Test Ride Request",
+    "successTitle": "Request Confirmed",
+    "successDesc": "Thank you {name}. Our showroom team will contact you within 2 hours to confirm your scheduled slot."
+  },
+  "megaMenu": {
+    "kidsBikesTitle": "Kids' Motorcycles",
+    "kidsBikesDesc": "Trainer and youth competition bikes engineered for ages 4 to 14 (50cc, 65cc, 85cc).",
+    "adultBikesTitle": "Adult Motorcycles",
+    "adultBikesDesc": "High-output motocross and enduro performance machines (125cc to 450cc).",
+    "viewAllBikes": "View all motorcycles",
+    "sportQuadsTitle": "Sport & Utility Quads",
+    "sportQuadsDesc": "Selectable 4WD and sport machines for adults and teens (Can-Am, Polaris).",
+    "youthQuadsTitle": "Youth Quads & Safety",
+    "youthQuadsDesc": "Equipped with safety tether cord and parental speed control."
   },
   "trust": {
     "showroomTitle": "Premier Showroom",
