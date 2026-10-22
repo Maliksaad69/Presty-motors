@@ -121,11 +121,14 @@ Milestone 5: QA, Security Hardening, RTL/SEO & Launch Readiness       [COMPLETED
   - [x] Enhanced Cart Drawer with direct link to full Cart review
 - [x] **Step-by-Step Checkout Workflow (`/[locale]/checkout`):**
   - [x] Step 1: Customer Contact & Identification (Guest vs Registered)
-  - [x] Step 2: Fulfillment Selection (Showroom Pickup vs Domestic Express vs International Quote)
-  - [x] Step 3: Shipping & Billing Address with validation
-  - [x] Step 4: Payment Method (Credit Card simulation, Bank Wire Transfer instructions, Direct Showroom Settlement)
+  - [x] Step 2: Fulfillment Selection with Dual Purchase/Reservation Modes:
+    - **Showroom Reservation (Paris 16e):** Free holding option (€0.00 online). Customer reserves machine, schedules showroom visit/test ride, and settles in person upon collection.
+    - **Domestic Freight Delivery:** Enclosed hydraulic tailgate freight across France (€150.00) with online card or wire payment.
+    - **International Quotation:** Overseas shipping request with custom freight quote.
+  - [x] Step 3: Shipping & Billing Address with validation (bypassed for Showroom Pickup)
+  - [x] Step 4: Payment Method (Paris Showroom In-Person Settlement, Credit Card simulation ready for future Stripe keys, Bank Wire Transfer instructions)
   - [x] Step 5: Server-side atomic order creation with price tampering protection, inventory reduction (`InventoryMovement` audit log), and database persistence
-  - [x] Step 6: Dynamic Order Confirmation screen with order reference, fulfillment details, and direct print/lookup action
+  - [x] Step 6: Dynamic Order / Reservation Confirmation screen with customized showroom visit slips, order reference, and lookup action
 - [x] **International Shipping Quotation System:**
   - [x] Seamless overseas quote submission integrated in checkout workflow
   - [x] Database persistence with `PENDING_QUOTE` status & `ShippingQuote` record generation (`PM-QUOTE-XXXX`)

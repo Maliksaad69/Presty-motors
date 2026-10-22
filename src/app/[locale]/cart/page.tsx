@@ -365,7 +365,7 @@ export default function CartPage() {
                         onChange={() => setShippingMethod("PICKUP")}
                         className="text-[#E10600] focus:ring-[#E10600]"
                       />
-                      <span>Paris Showroom Pickup</span>
+                      <span>Paris Showroom Reservation (Pay on Visit)</span>
                     </div>
                     <span className="text-[#16803C] font-mono">Free</span>
                   </label>
@@ -385,7 +385,7 @@ export default function CartPage() {
                         onChange={() => setShippingMethod("DOMESTIC")}
                         className="text-[#E10600] focus:ring-[#E10600]"
                       />
-                      <span>Domestic Freight (France)</span>
+                      <span>Domestic Freight Delivery (Pay Online)</span>
                     </div>
                     <span className="font-mono">€150.00</span>
                   </label>
@@ -405,7 +405,7 @@ export default function CartPage() {
                         onChange={() => setShippingMethod("INTERNATIONAL")}
                         className="text-[#E10600] focus:ring-[#E10600]"
                       />
-                      <span>International Quote</span>
+                      <span>International Freight Quote</span>
                     </div>
                     <span className="text-neutral-500 font-mono text-[11px]">To be quoted</span>
                   </label>
@@ -501,7 +501,7 @@ export default function CartPage() {
 
               {/* Checkout Button */}
               <Link
-                href={`/checkout${appliedPromo ? `?promo=${appliedPromo.code}` : ""}`}
+                href={`/checkout?fulfillment=${shippingMethod}${appliedPromo ? `&promo=${appliedPromo.code}` : ""}`}
                 className="w-full py-3.5 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-600/25 active:scale-[0.98]"
               >
                 <span>Proceed to Checkout</span>

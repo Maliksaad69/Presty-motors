@@ -22,6 +22,9 @@ import {
   FileText,
   Clock,
   Sparkles,
+  MapPin,
+  Calendar,
+  CheckCircle2,
 } from "lucide-react";
 import { createOrderAction } from "@/server/actions/order";
 import { applyPromoCodeAction } from "@/server/actions/cart";
@@ -36,7 +39,7 @@ export default function CheckoutPage() {
 
   // Fulfillment & Payment states
   const [fulfillment, setFulfillment] = useState<FulfillmentMode>("SHOWROOM_PICKUP");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodChoice>("CARD");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodChoice>("ON_PICKUP");
 
   // Customer contact state
   const [fullName, setFullName] = useState("");
@@ -66,6 +69,7 @@ export default function CheckoutPage() {
     quoteNumber?: string;
     status: string;
     fulfillment: FulfillmentMode;
+    paymentMethod: PaymentMethodChoice;
     total: number;
     subtotal: number;
     shippingFee: number;
@@ -73,7 +77,7 @@ export default function CheckoutPage() {
     email: string;
   } | null>(null);
 
-  // Auto-apply promo from query parameter if present
+  // Auto-apply promo and fulfillment mode from query parameter if present
   useEffect(() => {
     const promoFromUrl = searchParams.get("promo");
     if (promoFromUrl && subtotal > 0 && !appliedPromo) {
@@ -87,7 +91,35 @@ export default function CheckoutPage() {
         }
       });
     }
+
+    const fulfillmentFromUrl = searchParams.get("fulfillment") || searchParams.get("mode");
+    if (fulfillmentFromUrl) {
+      if (fulfillmentFromUrl === "PICKUP" || fulfillmentFromUrl === "SHOWROOM_PICKUP") {
+        setFulfillment("SHOWROOM_PICKUP");
+        setPaymentMethod("ON_PICKUP");
+      } else if (fulfillmentFromUrl === "DOMESTIC" || fulfillmentFromUrl === "DOMESTIC_DELIVERY") {
+        setFulfillment("DOMESTIC_DELIVERY");
+        setPaymentMethod("CARD");
+      } else if (fulfillmentFromUrl === "INTERNATIONAL" || fulfillmentFromUrl === "INTERNATIONAL_QUOTE") {
+        setFulfillment("INTERNATIONAL_QUOTE");
+        setPaymentMethod("TRANSFER");
+      }
+    }
   }, [searchParams, subtotal, appliedPromo]);
+
+  // Handle fulfillment mode change
+  const handleSelectFulfillment = (mode: FulfillmentMode) => {
+    setFulfillment(mode);
+    if (mode === "SHOWROOM_PICKUP") {
+      setPaymentMethod("ON_PICKUP");
+    } else if (mode === "DOMESTIC_DELIVERY") {
+      if (paymentMethod === "ON_PICKUP") {
+        setPaymentMethod("CARD");
+      }
+    } else if (mode === "INTERNATIONAL_QUOTE") {
+      setPaymentMethod("TRANSFER");
+    }
+  };
 
   // Handle promo code apply
   const handleApplyPromo = async (e: React.FormEvent) => {
@@ -159,7 +191,10 @@ export default function CheckoutPage() {
           quantity: i.quantity,
         })),
         promoCode: appliedPromo?.code,
-        notes: orderNotes,
+        notes:
+          fulfillment === "SHOWROOM_PICKUP"
+            ? `[SHOWROOM RESERVATION] Customer visiting Paris showroom to inspect and pay on collection. ${orderNotes}`.trim()
+            : orderNotes,
       });
 
       if (!response.success) {
@@ -172,6 +207,7 @@ export default function CheckoutPage() {
         quoteNumber: response.quoteNumber,
         status: response.status || "PENDING",
         fulfillment,
+        paymentMethod,
         total: response.total ?? grandTotal,
         subtotal: response.subtotal ?? subtotal,
         shippingFee: response.shippingFee ?? shippingFee,
@@ -183,9 +219,10 @@ export default function CheckoutPage() {
     });
   };
 
-  // Order Confirmed / Quotation Requested Screen
+  // Order Confirmed / Reservation Confirmed / Quotation Requested Screen
   if (orderResult) {
     const isQuote = orderResult.fulfillment === "INTERNATIONAL_QUOTE";
+    const isReservation = orderResult.fulfillment === "SHOWROOM_PICKUP";
 
     return (
       <div className="bg-white min-h-[75vh] py-16">
@@ -194,10 +231,18 @@ export default function CheckoutPage() {
             className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
               isQuote
                 ? "bg-amber-500/10 text-amber-600"
+                : isReservation
+                ? "bg-[#16803C]/10 text-[#16803C]"
                 : "bg-[#16803C]/10 text-[#16803C]"
             }`}
           >
-            {isQuote ? <Globe className="w-8 h-8" /> : <Check className="w-8 h-8" />}
+            {isQuote ? (
+              <Globe className="w-8 h-8" />
+            ) : isReservation ? (
+              <Building className="w-8 h-8" />
+            ) : (
+              <Check className="w-8 h-8" />
+            )}
           </div>
 
           <div className="space-y-2">
@@ -206,15 +251,20 @@ export default function CheckoutPage() {
               <span className="text-xs font-mono font-bold text-[#E10600] uppercase tracking-wider">
                 {isQuote
                   ? `Shipping Quote Reference: ${orderResult.quoteNumber || orderResult.orderNumber}`
-                  : `Order Confirmed • Reference: ${orderResult.orderNumber}`}
+                  : isReservation
+                  ? `Showroom Reservation • Reference: ${orderResult.orderNumber}`
+                  : `Delivery Order Confirmed • Reference: ${orderResult.orderNumber}`}
               </span>
             </div>
 
             <h1 className="font-heading text-3xl sm:text-4xl font-black uppercase text-[#0B0B0B]">
               {isQuote
                 ? "International Quotation Request Received!"
+                : isReservation
+                ? "Machine Reservation Confirmed!"
                 : "Thank You for Your Order!"}
             </h1>
+
             <p className="text-xs sm:text-sm text-[#737373] max-w-lg mx-auto leading-relaxed">
               {isQuote ? (
                 <>
@@ -222,38 +272,57 @@ export default function CheckoutPage() {
                   Our Paris logistics team is preparing a customized freight, customs & duty dossier dispatched to{" "}
                   <strong>{orderResult.email}</strong> within 24–48 hours.
                 </>
+              ) : isReservation ? (
+                <>
+                  Your machine is exclusively reserved at our Paris showroom with{" "}
+                  <strong className="text-[#16803C]">zero upfront online charge</strong>. Our workshop
+                  mechanics are preparing the machine for your upcoming visit, inspection, and test ride.
+                </>
               ) : (
                 <>
                   A formal confirmation receipt and pre-delivery inspection summary have been dispatched to{" "}
-                  <strong>{orderResult.email}</strong>. Our Paris workshop team has reserved your vehicle.
+                  <strong>{orderResult.email}</strong>. Enclosed tailgate delivery will be scheduled.
                 </>
               )}
             </p>
           </div>
 
+          {/* Showroom Visit Location Notice (For Reservation) */}
+          {isReservation && (
+            <div className="p-4 rounded border border-[#16803C]/30 bg-[#16803C]/5 text-xs text-start space-y-2 max-w-lg mx-auto">
+              <div className="flex items-center gap-2 text-[#16803C] font-heading font-black uppercase tracking-wider">
+                <MapPin className="w-4 h-4" />
+                <span>Showroom Handover & Inspection Location</span>
+              </div>
+              <p className="text-neutral-700 leading-relaxed">
+                <strong>Presty Motors Paris Flagship:</strong> 128 Avenue des Sports Motorisés, 75016 Paris, France
+                <br />
+                <strong>Opening Hours:</strong> Tuesday to Saturday, 09:00 – 19:00
+                <br />
+                <strong>Payment on Collection:</strong> Accepted via Credit/Debit Card, Certified Bank Check, or Cash in person.
+              </p>
+            </div>
+          )}
+
           {/* Receipt Card */}
           <div className="p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] text-xs text-start space-y-3 max-w-lg mx-auto">
             <div className="flex justify-between border-b border-[#E2E2E2] pb-2">
               <span className="text-[#737373]">Reference Number:</span>
-              <strong className="font-mono text-[#0B0B0B]">
-                {orderResult.orderNumber}
-              </strong>
+              <strong className="font-mono text-[#0B0B0B]">{orderResult.orderNumber}</strong>
             </div>
 
             {orderResult.quoteNumber && (
               <div className="flex justify-between border-b border-[#E2E2E2] pb-2">
                 <span className="text-[#737373]">Quotation Request:</span>
-                <strong className="font-mono text-[#E10600]">
-                  {orderResult.quoteNumber}
-                </strong>
+                <strong className="font-mono text-[#E10600]">{orderResult.quoteNumber}</strong>
               </div>
             )}
 
             <div className="flex justify-between">
-              <span className="text-[#737373]">Fulfillment:</span>
+              <span className="text-[#737373]">Order Type:</span>
               <strong className="text-[#0B0B0B]">
-                {orderResult.fulfillment === "SHOWROOM_PICKUP"
-                  ? "Paris 16e Flagship Showroom Pickup"
+                {isReservation
+                  ? "Showroom Visit & Reservation (Pay on Collection)"
                   : orderResult.fulfillment === "DOMESTIC_DELIVERY"
                   ? "Domestic Enclosed Tailgate Freight"
                   : `International Freight (${country})`}
@@ -263,11 +332,11 @@ export default function CheckoutPage() {
             <div className="flex justify-between">
               <span className="text-[#737373]">Payment Selection:</span>
               <strong className="text-[#0B0B0B]">
-                {paymentMethod === "CARD"
-                  ? "Credit / Debit Card (Pre-Authorized)"
-                  : paymentMethod === "TRANSFER"
-                  ? "Official Bank Wire Transfer (IBAN Issued)"
-                  : "Paris Showroom Settlement on Collection"}
+                {isReservation
+                  ? "Direct Showroom Payment on Collection (Zero Paid Online)"
+                  : orderResult.paymentMethod === "CARD"
+                  ? "Online Card Payment (Pre-Authorized / Stripe)"
+                  : "Official Bank Wire Transfer (SEPA / IBAN Issued)"}
               </strong>
             </div>
 
@@ -286,7 +355,11 @@ export default function CheckoutPage() {
 
             <div className="flex justify-between border-t border-[#E2E2E2] pt-3 font-bold text-sm">
               <span className="text-[#0B0B0B]">
-                {isQuote ? "Subtotal (Excl. Overseas Shipping):" : "Total Amount (TTC):"}
+                {isReservation
+                  ? "Amount to Pay upon Showroom Collection:"
+                  : isQuote
+                  ? "Subtotal (Excl. Overseas Shipping):"
+                  : "Total Amount (TTC):"}
               </span>
               <span className="text-[#E10600] font-heading text-lg">
                 {orderResult.total.toLocaleString("fr-FR", {
@@ -314,7 +387,7 @@ export default function CheckoutPage() {
               className="px-5 py-3 rounded border border-[#E2E2E2] bg-white hover:bg-[#F5F5F5] text-[#0B0B0B] font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Receipt</span>
+              <span>Print Reservation Slip</span>
             </button>
 
             <Link
@@ -369,13 +442,13 @@ export default function CheckoutPage() {
               </Link>
             </div>
             <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-black uppercase text-[#0B0B0B]">
-              Secure Checkout & Vehicle Order
+              Checkout & Vehicle Order
             </h1>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono text-neutral-500 bg-[#F5F5F5] px-3 py-1.5 rounded border border-[#E2E2E2]">
             <Lock className="w-3.5 h-3.5 text-[#16803C]" />
-            <span>256-bit SSL Encrypted & Verified</span>
+            <span>256-bit Encrypted Showroom System</span>
           </div>
         </div>
 
@@ -443,87 +516,139 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Step 2: Fulfillment Choice */}
+            {/* Step 2: Order & Fulfillment Mode Choice */}
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
                 <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-black text-xs">
                   2
                 </div>
-                <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-                  Fulfillment & Delivery Method
-                </h2>
+                <div>
+                  <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
+                    Choose Order Mode: Showroom Reservation vs. Delivery
+                  </h2>
+                  <p className="text-[11px] text-[#737373]">
+                    Reserve online to visit and pay in Paris, or select home freight with online payment.
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Option 1: Pickup */}
+                {/* Option 1: Showroom Reservation (Pay on Collection) */}
                 <label
-                  onClick={() => setFulfillment("SHOWROOM_PICKUP")}
+                  onClick={() => handleSelectFulfillment("SHOWROOM_PICKUP")}
                   className={`p-3.5 rounded border cursor-pointer flex flex-col justify-between transition-all ${
                     fulfillment === "SHOWROOM_PICKUP"
-                      ? "border-[#E10600] bg-white shadow-xs"
+                      ? "border-[#E10600] bg-white shadow-xs ring-1 ring-[#E10600]"
                       : "border-[#E2E2E2] bg-white/60 hover:bg-white"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-heading font-black text-xs uppercase text-[#0B0B0B]">
-                      Paris Showroom
-                    </span>
-                    <span className="text-[10px] font-bold text-[#16803C] uppercase">FREE</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                        <Building className="w-3.5 h-3.5 text-[#E10600]" />
+                        <span>Showroom Reservation</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-[#16803C] bg-[#16803C]/10 px-1.5 py-0.5 rounded uppercase">
+                        Zero Online
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#737373] leading-relaxed">
+                      Hold vehicle for in-person inspection and test ride at Paris 16e. <strong>Pay on visit</strong>.
+                    </p>
                   </div>
-                  <p className="text-[10px] text-[#737373] leading-relaxed">
-                    Personalized vehicle briefing at 128 Av. des Sports Motorisés, Paris 16e.
-                  </p>
+                  <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono font-bold text-[#16803C]">
+                    <span>Hold Online: €0</span>
+                    <span>Free Handover</span>
+                  </div>
                 </label>
 
-                {/* Option 2: Domestic Delivery */}
+                {/* Option 2: Domestic Freight Delivery */}
                 <label
-                  onClick={() => setFulfillment("DOMESTIC_DELIVERY")}
+                  onClick={() => handleSelectFulfillment("DOMESTIC_DELIVERY")}
                   className={`p-3.5 rounded border cursor-pointer flex flex-col justify-between transition-all ${
                     fulfillment === "DOMESTIC_DELIVERY"
-                      ? "border-[#E10600] bg-white shadow-xs"
+                      ? "border-[#E10600] bg-white shadow-xs ring-1 ring-[#E10600]"
                       : "border-[#E2E2E2] bg-white/60 hover:bg-white"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-heading font-black text-xs uppercase text-[#0B0B0B]">
-                      Domestic Freight
-                    </span>
-                    <span className="text-[10px] font-bold text-[#0B0B0B] font-mono">€150.00</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                        <Truck className="w-3.5 h-3.5 text-[#0B0B0B]" />
+                        <span>Home Delivery</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-[#0B0B0B] bg-neutral-200 px-1.5 py-0.5 rounded">
+                        €150.00
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#737373] leading-relaxed">
+                      Enclosed tailgate delivery in France in a protective steel transport frame. Pay online.
+                    </p>
                   </div>
-                  <p className="text-[10px] text-[#737373] leading-relaxed">
-                    Enclosed tailgate delivery in France in a protective steel transport frame.
-                  </p>
+                  <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono text-neutral-600">
+                    <span>Mainland France</span>
+                    <span>Online / Wire</span>
+                  </div>
                 </label>
 
-                {/* Option 3: International Quotation */}
+                {/* Option 3: International Freight Quotation */}
                 <label
-                  onClick={() => setFulfillment("INTERNATIONAL_QUOTE")}
+                  onClick={() => handleSelectFulfillment("INTERNATIONAL_QUOTE")}
                   className={`p-3.5 rounded border cursor-pointer flex flex-col justify-between transition-all ${
                     fulfillment === "INTERNATIONAL_QUOTE"
-                      ? "border-[#E10600] bg-white shadow-xs"
+                      ? "border-[#E10600] bg-white shadow-xs ring-1 ring-[#E10600]"
                       : "border-[#E2E2E2] bg-white/60 hover:bg-white"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-heading font-black text-xs uppercase text-[#0B0B0B]">
-                      Overseas Quote
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-600 uppercase">Quote</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                        <Globe className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Overseas Quote</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">
+                        Quote
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-[#737373] leading-relaxed">
+                      Custom air/sea freight crate packaging with export customs clearance.
+                    </p>
                   </div>
-                  <p className="text-[10px] text-[#737373] leading-relaxed">
-                    Custom worldwide air & maritime freight dossier with customs assistance.
-                  </p>
+                  <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono text-neutral-600">
+                    <span>Worldwide</span>
+                    <span>To be quoted</span>
+                  </div>
                 </label>
               </div>
 
-              {/* Step 3: Address Details (if not showroom pickup) */}
+              {/* Showroom Handover Details Banner (if Showroom Reservation) */}
+              {fulfillment === "SHOWROOM_PICKUP" && (
+                <div className="p-3.5 rounded border border-[#16803C]/30 bg-[#16803C]/5 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 text-[#16803C] font-heading font-black uppercase text-[11px]">
+                    <Building className="w-4 h-4 shrink-0" />
+                    <span>Paris 16e Flagship Handover & Test Ride</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-700 leading-relaxed">
+                    <strong>Location:</strong> 128 Avenue des Sports Motorisés, 75016 Paris
+                    <br />
+                    <strong>Hours:</strong> Tuesday to Saturday, 09:00 – 19:00
+                    <br />
+                    <span className="text-[#16803C] font-bold">
+                      ✓ No upfront card payment required online today.
+                    </span>{" "}
+                    Our mechanics will inspect, dyno-tune, and hold your machine until your visit.
+                  </p>
+                </div>
+              )}
+
+              {/* Step 3: Destination Address (Only if Delivery or International Quote) */}
               {fulfillment !== "SHOWROOM_PICKUP" && (
                 <div className="pt-3 border-t border-[#E2E2E2] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B]">
                       {fulfillment === "INTERNATIONAL_QUOTE"
                         ? "International Destination Address"
-                        : "Domestic Delivery Address"}
+                        : "Domestic Tailgate Delivery Address"}
                     </span>
                   </div>
 
@@ -577,7 +702,11 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         required
-                        placeholder={fulfillment === "INTERNATIONAL_QUOTE" ? "e.g. United Kingdom, Switzerland, UAE, USA" : "France"}
+                        placeholder={
+                          fulfillment === "INTERNATIONAL_QUOTE"
+                            ? "e.g. United Kingdom, Switzerland, UAE, USA"
+                            : "France"
+                        }
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         className="w-full h-9 px-3 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] focus:outline-none focus:border-[#E10600]"
@@ -588,114 +717,127 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* Step 4: Payment Choice */}
+            {/* Step 4: Payment Method Choice */}
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
                 <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-black text-xs">
                   {fulfillment === "SHOWROOM_PICKUP" ? "3" : "4"}
                 </div>
-                <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-                  Payment Method
-                </h2>
+                <div>
+                  <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
+                    {fulfillment === "SHOWROOM_PICKUP"
+                      ? "Payment Method: Settle on Showroom Visit"
+                      : "Online & Bank Payment Methods"}
+                  </h2>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label
-                  onClick={() => setPaymentMethod("CARD")}
-                  className={`p-3.5 rounded border cursor-pointer flex items-center justify-between transition-all ${
-                    paymentMethod === "CARD"
-                      ? "border-[#E10600] bg-white shadow-xs"
-                      : "border-[#E2E2E2] bg-white/60 hover:bg-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-[#E10600]" />
-                    <div>
-                      <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
-                        Credit / Debit Card (Visa, Mastercard, Amex)
-                      </span>
-                      <span className="text-[10px] text-[#737373]">
-                        Instant secure reservation with 3D-Secure authentication.
-                      </span>
-                    </div>
-                  </div>
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentMethod === "CARD"}
-                    onChange={() => setPaymentMethod("CARD")}
-                    className="text-[#E10600]"
-                  />
-                </label>
-
-                <label
-                  onClick={() => setPaymentMethod("TRANSFER")}
-                  className={`p-3.5 rounded border cursor-pointer flex items-center justify-between transition-all ${
-                    paymentMethod === "TRANSFER"
-                      ? "border-[#E10600] bg-white shadow-xs"
-                      : "border-[#E2E2E2] bg-white/60 hover:bg-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Building className="w-4 h-4 text-[#E10600]" />
-                    <div>
-                      <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
-                        Bank Wire Transfer (SEPA / IBAN)
-                      </span>
-                      <span className="text-[10px] text-[#737373]">
-                        Official proforma invoice and bank IBAN coordinates issued upon checkout.
-                      </span>
-                    </div>
-                  </div>
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentMethod === "TRANSFER"}
-                    onChange={() => setPaymentMethod("TRANSFER")}
-                    className="text-[#E10600]"
-                  />
-                </label>
-
-                {fulfillment === "SHOWROOM_PICKUP" && (
+              {/* If Showroom Reservation is selected */}
+              {fulfillment === "SHOWROOM_PICKUP" ? (
+                <div className="space-y-3">
                   <label
                     onClick={() => setPaymentMethod("ON_PICKUP")}
+                    className="p-4 rounded border border-[#16803C] bg-white flex items-start gap-3 cursor-pointer shadow-xs"
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === "ON_PICKUP"}
+                      onChange={() => setPaymentMethod("ON_PICKUP")}
+                      className="mt-1 text-[#E10600]"
+                    />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-black text-xs uppercase text-[#0B0B0B]">
+                          Direct Showroom Payment on Collection
+                        </span>
+                        <span className="text-[10px] font-mono font-bold text-[#16803C] bg-[#16803C]/10 px-2 py-0.5 rounded">
+                          ZERO DUE TODAY
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#737373] leading-relaxed">
+                        Inspect the machine in person with our workshop team before paying. Settle the balance
+                        directly in Paris by Credit/Debit Card, Certified Bank Check, or Cash.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              ) : (
+                /* If Home Delivery is selected */
+                <div className="space-y-2">
+                  <label
+                    onClick={() => setPaymentMethod("CARD")}
                     className={`p-3.5 rounded border cursor-pointer flex items-center justify-between transition-all ${
-                      paymentMethod === "ON_PICKUP"
+                      paymentMethod === "CARD"
                         ? "border-[#E10600] bg-white shadow-xs"
                         : "border-[#E2E2E2] bg-white/60 hover:bg-white"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <ShieldCheck className="w-4 h-4 text-[#E10600]" />
+                      <CreditCard className="w-4 h-4 text-[#E10600]" />
                       <div>
                         <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
-                          Payment in Paris Showroom on Collection
+                          Online Payment: Credit / Debit Card (Visa, Mastercard, Amex)
                         </span>
                         <span className="text-[10px] text-[#737373]">
-                          Inspect the machine in person with our mechanics before final payment.
+                          Secure online checkout (Stripe Gateway). Instant order confirmation.
                         </span>
                       </div>
                     </div>
                     <input
                       type="radio"
                       name="payment"
-                      checked={paymentMethod === "ON_PICKUP"}
-                      onChange={() => setPaymentMethod("ON_PICKUP")}
+                      checked={paymentMethod === "CARD"}
+                      onChange={() => setPaymentMethod("CARD")}
                       className="text-[#E10600]"
                     />
                   </label>
-                )}
-              </div>
+
+                  <label
+                    onClick={() => setPaymentMethod("TRANSFER")}
+                    className={`p-3.5 rounded border cursor-pointer flex items-center justify-between transition-all ${
+                      paymentMethod === "TRANSFER"
+                        ? "border-[#E10600] bg-white shadow-xs"
+                        : "border-[#E2E2E2] bg-white/60 hover:bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Building className="w-4 h-4 text-[#E10600]" />
+                      <div>
+                        <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
+                          Bank Wire Transfer (SEPA / IBAN Proforma)
+                        </span>
+                        <span className="text-[10px] text-[#737373]">
+                          Official proforma invoice and company IBAN details dispatched immediately.
+                        </span>
+                      </div>
+                    </div>
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={paymentMethod === "TRANSFER"}
+                      onChange={() => setPaymentMethod("TRANSFER")}
+                      className="text-[#E10600]"
+                    />
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* Special Instructions & Notes */}
             <div className="p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-2">
               <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B]">
-                Order Notes / Tailgate Logistics Requests (Optional)
+                {fulfillment === "SHOWROOM_PICKUP"
+                  ? "Planned Visit Date or Test Ride Preferences (Optional)"
+                  : "Order Notes / Tailgate Logistics Requests (Optional)"}
               </label>
               <textarea
                 rows={2}
-                placeholder="e.g., Gate code, specific handover window, or test ride preferences..."
+                placeholder={
+                  fulfillment === "SHOWROOM_PICKUP"
+                    ? "e.g. Planning to visit this Saturday around 14:00 for test ride..."
+                    : "e.g. Gate access code, specific tailgate delivery window..."
+                }
                 value={orderNotes}
                 onChange={(e) => setOrderNotes(e.target.value)}
                 className="w-full p-2.5 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] focus:outline-none focus:border-[#E10600]"
@@ -818,19 +960,31 @@ export default function CheckoutPage() {
                 )}
 
                 <div className="flex justify-between text-[#737373]">
-                  <span>Fulfillment & Transport:</span>
+                  <span>Fulfillment:</span>
                   <span className="font-mono text-[#0B0B0B]">
                     {fulfillment === "SHOWROOM_PICKUP"
-                      ? "FREE"
+                      ? "Paris Showroom (FREE)"
                       : fulfillment === "DOMESTIC_DELIVERY"
                       ? "€150.00"
                       : "To be quoted"}
                   </span>
                 </div>
 
+                {/* Showroom Reservation Payment Notice */}
+                {fulfillment === "SHOWROOM_PICKUP" && (
+                  <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span><strong>Due Online Now: €0.00</strong> (Pay balance in Paris upon collection)</span>
+                  </div>
+                )}
+
                 <div className="flex justify-between pt-3 border-t border-[#E2E2E2] text-sm font-black">
                   <span className="font-heading uppercase text-base text-[#0B0B0B]">
-                    {fulfillment === "INTERNATIONAL_QUOTE" ? "Machine Total (Excl. Freight):" : "Total (TTC):"}
+                    {fulfillment === "SHOWROOM_PICKUP"
+                      ? "Total Payable on Collection:"
+                      : fulfillment === "INTERNATIONAL_QUOTE"
+                      ? "Subtotal (Excl. Freight):"
+                      : "Total (TTC):"}
                   </span>
                   <span className="font-heading text-xl text-[#E10600]">
                     {grandTotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
@@ -846,7 +1000,12 @@ export default function CheckoutPage() {
                   className="w-full py-3.5 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs sm:text-sm uppercase tracking-wider transition-colors shadow-lg shadow-red-700/25 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] disabled:opacity-50"
                 >
                   {isPending ? (
-                    <span>Registering Order in Workshop System...</span>
+                    <span>Registering in Workshop System...</span>
+                  ) : fulfillment === "SHOWROOM_PICKUP" ? (
+                    <>
+                      <Building className="w-4 h-4" />
+                      <span>Confirm Showroom Reservation (Pay on Visit)</span>
+                    </>
                   ) : fulfillment === "INTERNATIONAL_QUOTE" ? (
                     <>
                       <Globe className="w-4 h-4" />
@@ -856,7 +1015,7 @@ export default function CheckoutPage() {
                     <>
                       <Lock className="w-4 h-4" />
                       <span>
-                        Confirm & Place Order (
+                        Confirm & Pay Delivery Order (
                         {grandTotal.toLocaleString("fr-FR", {
                           style: "currency",
                           currency: "EUR",
@@ -869,7 +1028,9 @@ export default function CheckoutPage() {
               </div>
 
               <p className="text-[10px] text-[#737373] text-center leading-snug">
-                Official transaction recorded directly in Presty Motors Paris system with legal guarantee.
+                {fulfillment === "SHOWROOM_PICKUP"
+                  ? "Zero charge online. Vehicle held exclusively for your showroom appointment."
+                  : "Official order recorded directly in Presty Motors Paris system with legal guarantee."}
               </p>
             </div>
           </div>
