@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import { Inter } from "next/font/google";
 import { routing, Locale } from "@/i18n/routing";
 import { getMessages } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
@@ -8,7 +9,21 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { StorefrontFrame } from "@/components/layout/StorefrontFrame";
 import "../globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600"],
+});
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -157,6 +172,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     <html
       lang={locale}
       dir={isRtl ? "rtl" : "ltr"}
+      className={inter.variable}
       suppressHydrationWarning
     >
       <head>
@@ -166,16 +182,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         />
       </head>
       <body
-        className="min-h-screen flex flex-col bg-white text-[#0B0B0B] font-sans antialiased"
+        className={`${inter.className} min-h-screen flex flex-col bg-white text-[#0B0B0B] font-sans antialiased`}
         suppressHydrationWarning
       >
         <NextIntlClientProvider messages={messages}>
           <CartProvider>
-            <AnnouncementBar />
-            <SiteHeader />
+            <StorefrontFrame>
+              <AnnouncementBar />
+              <SiteHeader />
+            </StorefrontFrame>
             <main className="flex-1">{children}</main>
-            <SiteFooter />
-            <CartDrawer />
+            <StorefrontFrame>
+              <SiteFooter />
+              <CartDrawer />
+            </StorefrontFrame>
           </CartProvider>
         </NextIntlClientProvider>
       </body>

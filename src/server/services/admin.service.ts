@@ -9,10 +9,19 @@ import {
   ShipmentStatus,
 } from "@prisma/client";
 import { createProductSchema } from "@/lib/validations/product";
+import { generateSlug } from "@/lib/utils";
+import crypto from "crypto";
+
+export interface UploadedImageData {
+  data: string; // base64 data URI or raw base64
+  mimeType?: string;
+  altText?: string;
+  isPrimary?: boolean;
+}
 
 export interface CreateProductInput {
-  slug: string;
-  sku: string;
+  slug?: string | null;
+  sku?: string | null;
   price: number;
   salePrice?: number | null;
   categoryId: string;
@@ -23,6 +32,7 @@ export interface CreateProductInput {
   isFeatured?: boolean;
   initialStock: number;
   imageUrl?: string | null;
+  images?: UploadedImageData[];
   translations: {
     locale: string;
     title: string;
@@ -33,14 +43,41 @@ export interface CreateProductInput {
 }
 
 export interface UpdateProductInput {
+  sku?: string;
   price?: number;
   salePrice?: number | null;
+  stock?: number;
+  threshold?: number;
+  categoryId?: string;
+  vehicleType?: VehicleType;
   status?: ProductStatus;
   isFeatured?: boolean;
-  title?: string;
-  locale?: string;
   ageGroup?: string | null;
   engineCapacity?: string | null;
+  translations?: {
+    locale: string;
+    title: string;
+    shortDescription?: string;
+    description: string;
+    specifications?: any;
+  }[];
+  newImages?: UploadedImageData[];
+  deleteImageIds?: string[];
+  primaryImageId?: string;
+}
+
+function parseBase64Image(dataString: string): { buffer: Buffer; mimeType: string } {
+  const matches = dataString.match(/^data:([A-Za-z0-9-+\/.]+);base64,(.+)$/);
+  if (matches && matches.length === 3) {
+    return {
+      mimeType: matches[1],
+      buffer: Buffer.from(matches[2], "base64"),
+    };
+  }
+  return {
+    mimeType: "image/jpeg",
+    buffer: Buffer.from(dataString, "base64"),
+  };
 }
 
 export async function getAdminOverview() {
@@ -165,33 +202,72 @@ export async function getAdminProducts() {
     },
   });
 
-  return products.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    sku: p.sku,
-    price: Number(p.price),
-    salePrice: p.salePrice ? Number(p.salePrice) : null,
-    vehicleType: p.vehicleType,
-    ageGroup: p.ageGroup,
-    engineCapacity: p.engineCapacity,
-    status: p.status,
-    isFeatured: p.isFeatured,
-    categoryName: p.category.translations[0]?.name || p.category.slug,
-    categoryId: p.categoryId,
-    stock: p.inventory?.quantity ?? 0,
-    threshold: p.inventory?.lowStockThreshold ?? 2,
-    imageUrl: p.images[0]?.url || null,
-    titleFr: p.translations.find((t) => t.locale === "fr")?.title || p.translations[0]?.title || p.slug,
-    titleEn: p.translations.find((t) => t.locale === "en")?.title || "",
-    titleEs: p.translations.find((t) => t.locale === "es")?.title || "",
-    titleAr: p.translations.find((t) => t.locale === "ar")?.title || "",
-    translations: p.translations,
-    createdAt: p.createdAt.toISOString(),
-  }));
+  return products.map((p) => {
+    const frTrans = p.translations.find((t) => t.locale === "fr") || p.translations[0];
+    const enTrans = p.translations.find((t) => t.locale === "en");
+    const esTrans = p.translations.find((t) => t.locale === "es");
+    const arTrans = p.translations.find((t) => t.locale === "ar");
+
+    return {
+      id: p.id,
+      slug: p.slug,
+      sku: p.sku,
+      price: Number(p.price),
+      salePrice: p.salePrice ? Number(p.salePrice) : null,
+      vehicleType: p.vehicleType,
+      ageGroup: p.ageGroup,
+      engineCapacity: p.engineCapacity,
+      status: p.status,
+      isFeatured: p.isFeatured,
+      categoryName: p.category.translations[0]?.name || p.category.slug,
+      categoryId: p.categoryId,
+      stock: p.inventory?.quantity ?? 0,
+      threshold: p.inventory?.lowStockThreshold ?? 2,
+      imageUrl: p.images.find((img) => img.isPrimary)?.url || p.images[0]?.url || null,
+      images: p.images.map((img) => ({
+        id: img.id,
+        url: img.url,
+        isPrimary: img.isPrimary,
+        sortOrder: img.sortOrder,
+      })),
+      titleFr: frTrans?.title || p.slug,
+      descFr: frTrans?.description || "",
+      titleEn: enTrans?.title || "",
+      descEn: enTrans?.description || "",
+      titleEs: esTrans?.title || "",
+      descEs: esTrans?.description || "",
+      titleAr: arTrans?.title || "",
+      descAr: arTrans?.description || "",
+      specifications: (frTrans?.specifications || p.translations[0]?.specifications || {}) as any,
+      translations: p.translations,
+      createdAt: p.createdAt.toISOString(),
+    };
+  });
 }
 
 export async function createAdminProduct(input: CreateProductInput) {
-  const parsed = createProductSchema.safeParse(input);
+  const primaryTitle =
+    input.translations.find((t) => t.locale === "fr")?.title ||
+    input.translations[0]?.title ||
+    "Machine";
+
+  const finalSlug =
+    input.slug && input.slug.trim().length > 0
+      ? input.slug.toLowerCase().trim()
+      : generateSlug(primaryTitle);
+
+  const finalSku =
+    input.sku && input.sku.trim().length > 0
+      ? input.sku.toUpperCase().trim()
+      : `PM-${input.vehicleType.slice(0, 4)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+  const payloadToValidate = {
+    ...input,
+    slug: finalSlug,
+    sku: finalSku,
+  };
+
+  const parsed = createProductSchema.safeParse(payloadToValidate);
   if (!parsed.success) {
     const errorMsg = parsed.error.issues.map((i) => i.message).join(", ");
     throw new Error(`Product validation error: ${errorMsg}`);
@@ -201,8 +277,8 @@ export async function createAdminProduct(input: CreateProductInput) {
     // 1. Create the product
     const product = await tx.product.create({
       data: {
-        slug: input.slug.toLowerCase().trim(),
-        sku: input.sku.toUpperCase().trim(),
+        slug: finalSlug,
+        sku: finalSku,
         price: input.price,
         salePrice: input.salePrice || null,
         categoryId: input.categoryId,
@@ -220,15 +296,6 @@ export async function createAdminProduct(input: CreateProductInput) {
             specifications: (t.specifications || {}) as unknown as object,
           })),
         },
-        images: input.imageUrl
-          ? {
-              create: {
-                url: input.imageUrl,
-                isPrimary: true,
-                sortOrder: 0,
-              },
-            }
-          : undefined,
         inventory: {
           create: {
             quantity: input.initialStock,
@@ -242,7 +309,37 @@ export async function createAdminProduct(input: CreateProductInput) {
       },
     });
 
-    // 2. Create initial restock movement log
+    // 2. Store local uploaded images directly in PostgreSQL BYTEA column
+    if (input.images && input.images.length > 0) {
+      for (let i = 0; i < input.images.length; i++) {
+        const img = input.images[i];
+        const { buffer, mimeType } = parseBase64Image(img.data);
+        const imageId = crypto.randomUUID();
+        await tx.productImage.create({
+          data: {
+            id: imageId,
+            productId: product.id,
+            url: `/api/images/${imageId}`,
+            imageData: new Uint8Array(buffer),
+            mimeType: img.mimeType || mimeType,
+            altText: img.altText || primaryTitle,
+            sortOrder: i,
+            isPrimary: i === 0 || !!img.isPrimary,
+          },
+        });
+      }
+    } else if (input.imageUrl) {
+      await tx.productImage.create({
+        data: {
+          productId: product.id,
+          url: input.imageUrl,
+          isPrimary: true,
+          sortOrder: 0,
+        },
+      });
+    }
+
+    // 3. Create initial restock movement log
     if (product.inventory) {
       await tx.inventoryMovement.create({
         data: {
@@ -251,7 +348,7 @@ export async function createAdminProduct(input: CreateProductInput) {
           quantityChange: input.initialStock,
           previousQuantity: 0,
           newQuantity: input.initialStock,
-          reason: "Initial product stock creation via Admin Dashboard",
+          reason: "Initial machine creation in PostgreSQL catalog",
           referenceId: product.sku,
         },
       });
@@ -265,16 +362,135 @@ export async function updateAdminProduct(
   id: string,
   input: UpdateProductInput
 ) {
-  return db.product.update({
-    where: { id },
-    data: {
-      price: input.price !== undefined ? input.price : undefined,
-      salePrice: input.salePrice !== undefined ? input.salePrice : undefined,
-      status: input.status,
-      isFeatured: input.isFeatured,
-      ageGroup: input.ageGroup !== undefined ? input.ageGroup : undefined,
-      engineCapacity: input.engineCapacity !== undefined ? input.engineCapacity : undefined,
-    },
+  return db.$transaction(async (tx) => {
+    // 1. Update basic product info
+    const product = await tx.product.update({
+      where: { id },
+      data: {
+        sku: input.sku ? input.sku.toUpperCase().trim() : undefined,
+        price: input.price !== undefined ? input.price : undefined,
+        salePrice: input.salePrice !== undefined ? input.salePrice : undefined,
+        categoryId: input.categoryId || undefined,
+        vehicleType: input.vehicleType || undefined,
+        status: input.status,
+        isFeatured: input.isFeatured,
+        ageGroup: input.ageGroup !== undefined ? input.ageGroup : undefined,
+        engineCapacity: input.engineCapacity !== undefined ? input.engineCapacity : undefined,
+      },
+      include: {
+        inventory: true,
+      },
+    });
+
+    // 2. Update stock & threshold if provided
+    if (input.stock !== undefined && product.inventory) {
+      const prevStock = product.inventory.quantity;
+      if (input.stock !== prevStock) {
+        await tx.inventory.update({
+          where: { id: product.inventory.id },
+          data: {
+            quantity: input.stock,
+            lowStockThreshold: input.threshold !== undefined ? input.threshold : undefined,
+          },
+        });
+
+        await tx.inventoryMovement.create({
+          data: {
+            inventoryId: product.inventory.id,
+            type: input.stock > prevStock ? InventoryMovementType.RESTOCK : InventoryMovementType.ADJUSTMENT,
+            quantityChange: input.stock - prevStock,
+            previousQuantity: prevStock,
+            newQuantity: input.stock,
+            reason: "Admin stock update via vehicle editor",
+            referenceId: product.sku,
+          },
+        });
+      } else if (input.threshold !== undefined) {
+        await tx.inventory.update({
+          where: { id: product.inventory.id },
+          data: { lowStockThreshold: input.threshold },
+        });
+      }
+    }
+
+    // 3. Update translations
+    if (input.translations && input.translations.length > 0) {
+      for (const t of input.translations) {
+        await tx.productTranslation.upsert({
+          where: {
+            productId_locale: {
+              productId: id,
+              locale: t.locale,
+            },
+          },
+          update: {
+            title: t.title,
+            description: t.description,
+            shortDescription: t.shortDescription || null,
+            specifications: (t.specifications || {}) as unknown as object,
+          },
+          create: {
+            productId: id,
+            locale: t.locale,
+            title: t.title,
+            description: t.description,
+            shortDescription: t.shortDescription || null,
+            specifications: (t.specifications || {}) as unknown as object,
+          },
+        });
+      }
+    }
+
+    // 4. Delete images if requested
+    if (input.deleteImageIds && input.deleteImageIds.length > 0) {
+      await tx.productImage.deleteMany({
+        where: {
+          id: { in: input.deleteImageIds },
+          productId: id,
+        },
+      });
+    }
+
+    // 5. Add new local images directly into PostgreSQL
+    if (input.newImages && input.newImages.length > 0) {
+      const highestImg = await tx.productImage.findFirst({
+        where: { productId: id },
+        orderBy: { sortOrder: "desc" },
+      });
+      let nextOrder = (highestImg?.sortOrder ?? -1) + 1;
+
+      for (let i = 0; i < input.newImages.length; i++) {
+        const img = input.newImages[i];
+        const { buffer, mimeType } = parseBase64Image(img.data);
+        const imageId = crypto.randomUUID();
+        await tx.productImage.create({
+          data: {
+            id: imageId,
+            productId: id,
+            url: `/api/images/${imageId}`,
+            imageData: new Uint8Array(buffer),
+            mimeType: img.mimeType || mimeType,
+            altText: img.altText || null,
+            sortOrder: nextOrder++,
+            isPrimary: !!img.isPrimary,
+          },
+        });
+      }
+    }
+
+    // 6. Set primary image if requested
+    if (input.primaryImageId) {
+      await tx.productImage.updateMany({
+        where: { productId: id },
+        data: { isPrimary: false },
+      });
+      await tx.productImage.update({
+        where: { id: input.primaryImageId },
+        data: { isPrimary: true },
+      });
+    }
+
+    return product;
   });
 }
 

@@ -17,17 +17,13 @@ export default async function ShopPage({ params, searchParams }: ShopPageProps) 
   const dbProducts = await db.product.findMany({
     where: { status: "PUBLISHED" },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       images: {
         orderBy: { sortOrder: "asc" },
       },
       category: {
         include: {
-          translations: {
-            where: { locale },
-          },
+          translations: true,
         },
       },
       inventory: true,
@@ -39,9 +35,7 @@ export default async function ShopPage({ params, searchParams }: ShopPageProps) 
   const dbCategories = await db.category.findMany({
     where: { isActive: true },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       _count: {
         select: { products: true },
       },
@@ -51,8 +45,11 @@ export default async function ShopPage({ params, searchParams }: ShopPageProps) 
 
   // Serialize products
   const serializedProducts: SerializedProduct[] = dbProducts.map((p) => {
-    const trans = p.translations[0];
-    const catTrans = p.category.translations[0]?.name || p.category.slug;
+    const trans = p.translations.find((t) => t.locale === locale) || p.translations[0];
+    const catTrans =
+      p.category.translations.find((t) => t.locale === locale)?.name ||
+      p.category.translations[0]?.name ||
+      p.category.slug;
     const primaryImg = p.images.find((img) => img.isPrimary) || p.images[0];
     const rawSpecs = trans?.specifications as Record<string, unknown> | null;
 
@@ -78,7 +75,10 @@ export default async function ShopPage({ params, searchParams }: ShopPageProps) 
 
   const categories = dbCategories.map((c) => ({
     slug: c.slug,
-    name: c.translations[0]?.name || c.slug,
+    name:
+      c.translations.find((t) => t.locale === locale)?.name ||
+      c.translations[0]?.name ||
+      c.slug,
   }));
 
   return (

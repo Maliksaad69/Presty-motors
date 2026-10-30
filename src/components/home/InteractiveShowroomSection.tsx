@@ -23,17 +23,17 @@ export function InteractiveShowroomSection() {
             <div className="lg:col-span-6 space-y-4 sm:space-y-5">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-                <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+                <span className="text-[10px] font-heading font-medium uppercase tracking-widest text-[#E10600]">
                   {t("badge")}
                 </span>
               </div>
 
-              {/* Bold Headline */}
-              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-black uppercase text-white tracking-tight leading-tight">
+              {/* Clean Headline */}
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-semibold uppercase text-white tracking-tight leading-tight">
                 {t("title")}
               </h2>
 
-              <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed max-w-lg">
+              <p className="text-neutral-300 text-xs sm:text-sm leading-relaxed max-w-lg font-normal">
                 {t("subtitle")}
               </p>
 
@@ -54,8 +54,10 @@ export function InteractiveShowroomSection() {
 
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <button
+                  type="button"
                   onClick={() => setTestRideOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-red-700/25 cursor-pointer active:scale-[0.98]"
+                  aria-label="Réserver un essai de moto ou quad au showroom de Paris"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs uppercase tracking-wider transition-all shadow-md shadow-red-700/25 cursor-pointer active:scale-[0.98]"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>{t("bookBtn")}</span>
@@ -65,7 +67,7 @@ export function InteractiveShowroomSection() {
                   href="https://maps.google.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-5 py-3 rounded bg-transparent hover:bg-[#171717] text-white font-heading font-bold text-xs uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors"
+                  className="inline-flex items-center gap-1.5 px-5 py-3 rounded bg-transparent hover:bg-[#171717] text-white font-heading font-medium text-xs uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors"
                 >
                   <span>{t("gpsBtn")}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#E10600]" />

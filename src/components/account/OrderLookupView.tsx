@@ -2,21 +2,12 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Search,
-  Package,
-  Truck,
   CheckCircle2,
-  Clock,
   AlertCircle,
-  Calendar,
-  MapPin,
-  CreditCard,
-  Building,
-  Globe,
   Printer,
-  ChevronRight,
-  ShieldCheck,
 } from "lucide-react";
 import { lookupOrderAction } from "@/server/actions/order";
 
@@ -26,6 +17,10 @@ interface OrderLookupViewProps {
 }
 
 export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLookupViewProps) {
+  const t = useTranslations("account");
+  const tCheckout = useTranslations("checkout");
+  const locale = useLocale();
+
   const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState(
     initialOrderNumber || searchParams.get("orderNumber") || ""
@@ -49,16 +44,16 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
           setSearchedOrder(res.order);
           setErrorMessage(null);
         } else {
-          setErrorMessage(res.errorMessage || "Order not found.");
+          setErrorMessage(res.errorMessage || t("noOrderFound"));
         }
       });
     }
-  }, [searchParams, searchedOrder]);
+  }, [searchParams, searchedOrder, t]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderNumber.trim() || !email.trim()) {
-      setErrorMessage("Please enter both Order Reference Number and Email.");
+      setErrorMessage(t("enterBothFields"));
       return;
     }
 
@@ -70,7 +65,7 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
         setErrorMessage(null);
       } else {
         setSearchedOrder(null);
-        setErrorMessage(res.errorMessage || "Order reference and email combination not found.");
+        setErrorMessage(res.errorMessage || t("noOrderFound"));
       }
     });
   };
@@ -80,26 +75,26 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
       const quoteStatus = searchedOrder?.quote?.status || "REQUESTED";
       return [
         {
-          label: "Quote Submitted",
-          desc: "Logistics dossier opened",
+          label: t("stepQuoteSubmitted"),
+          desc: t("stepQuoteSubmittedDesc"),
           completed: true,
           active: quoteStatus === "REQUESTED",
         },
         {
-          label: "Customs & Freight Review",
-          desc: "Calculating overseas carrier rates",
+          label: t("stepQuoteReview"),
+          desc: t("stepQuoteReviewDesc"),
           completed: quoteStatus === "REVIEWING" || quoteStatus === "QUOTED" || quoteStatus === "ACCEPTED",
           active: quoteStatus === "REVIEWING",
         },
         {
-          label: "Formal Quote Dispatched",
-          desc: "Proforma rate communicated via email",
+          label: t("stepQuoteDispatched"),
+          desc: t("stepQuoteDispatchedDesc"),
           completed: quoteStatus === "QUOTED" || quoteStatus === "ACCEPTED",
           active: quoteStatus === "QUOTED",
         },
         {
-          label: "Customer Acceptance",
-          desc: "Freight scheduled",
+          label: t("stepQuoteAccepted"),
+          desc: t("stepQuoteAcceptedDesc"),
           completed: quoteStatus === "ACCEPTED",
           active: quoteStatus === "ACCEPTED",
         },
@@ -109,26 +104,26 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
     const isPickup = fulfillmentType === "SHOWROOM_PICKUP";
     return [
       {
-        label: "Order Placed",
-        desc: "Recorded in showroom system",
+        label: t("stepOrderPlaced"),
+        desc: t("stepOrderPlacedDesc"),
         completed: true,
         active: status === "PENDING",
       },
       {
-        label: "Workshop Inspection",
-        desc: "Dyno run & 45-point checklist",
+        label: t("stepWorkshop"),
+        desc: t("stepWorkshopDesc"),
         completed: ["PROCESSING", "READY_FOR_PICKUP", "SHIPPED", "DELIVERED"].includes(status),
         active: status === "PROCESSING",
       },
       {
-        label: isPickup ? "Ready in Paris Showroom" : "Dispatched via Freight",
-        desc: isPickup ? "Ready for customer collection" : "Handed to enclosed carrier",
+        label: isPickup ? t("stepReadyPickup") : t("stepDispatched"),
+        desc: isPickup ? t("stepReadyPickupDesc") : t("stepDispatchedDesc"),
         completed: ["READY_FOR_PICKUP", "SHIPPED", "DELIVERED"].includes(status),
         active: ["READY_FOR_PICKUP", "SHIPPED"].includes(status),
       },
       {
-        label: isPickup ? "Collected by Customer" : "Delivered to Address",
-        desc: isPickup ? "Showroom handover complete" : "Tailgate delivered & signed",
+        label: isPickup ? t("stepCollected") : t("stepDelivered"),
+        desc: isPickup ? t("stepCollectedDesc") : t("stepDeliveredDesc"),
         completed: status === "DELIVERED",
         active: status === "DELIVERED",
       },
@@ -141,37 +136,39 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
       <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
         <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
           <Search className="w-4 h-4 text-[#E10600]" />
-          <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-            Live Order & Quotation Tracker
+          <h2 className="font-heading text-base font-semibold uppercase text-[#0B0B0B]">
+            {t("trackerTitle")}
           </h2>
         </div>
 
         <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
           <div className="sm:col-span-5">
-            <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-              Order or Quote Reference *
+            <label htmlFor="lookup-ref" className="block text-[11px] font-heading font-semibold uppercase text-[#0B0B0B] mb-1">
+              {t("orderRef")}
             </label>
             <input
+              id="lookup-ref"
               type="text"
               required
               placeholder="e.g. PM-2026-780669"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value)}
-              className="w-full h-9 px-3 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] font-mono uppercase focus:outline-none focus:border-[#E10600]"
+              className="w-full h-9 px-3 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] font-mono uppercase focus:outline-hidden focus:border-[#E10600]"
             />
           </div>
 
           <div className="sm:col-span-5">
-            <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-              Customer Email *
+            <label htmlFor="lookup-email" className="block text-[11px] font-heading font-semibold uppercase text-[#0B0B0B] mb-1">
+              {t("email")}
             </label>
             <input
+              id="lookup-email"
               type="email"
               required
-              placeholder="e.g. jean.dupont@motorsport.fr"
+              placeholder="e.g. client@motorsport.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-9 px-3 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] focus:outline-none focus:border-[#E10600]"
+              className="w-full h-9 px-3 text-xs bg-white border border-[#E2E2E2] rounded text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600]"
             />
           </div>
 
@@ -179,14 +176,14 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
             <button
               type="submit"
               disabled={isPending}
-              className="w-full h-9 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="w-full h-9 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
-                <span>...</span>
+                <span>{t("lookingUp")}</span>
               ) : (
                 <>
                   <Search className="w-3.5 h-3.5" />
-                  <span>Lookup</span>
+                  <span>{t("lookupBtn")}</span>
                 </>
               )}
             </button>
@@ -208,27 +205,27 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E2E2] pb-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-black text-[#0B0B0B]">
-                  REF: {searchedOrder.orderNumber}
+                <span className="font-mono text-sm font-semibold text-[#0B0B0B]">
+                  {t("ref")} {searchedOrder.orderNumber}
                 </span>
                 {searchedOrder.quote && (
-                  <span className="text-xs font-mono font-bold text-[#E10600] bg-[#E10600]/10 px-2 py-0.5 rounded border border-[#E10600]/20">
+                  <span className="text-xs font-mono font-medium text-[#E10600] bg-[#E10600]/10 px-2 py-0.5 rounded border border-[#E10600]/20">
                     QUOTE: {searchedOrder.quote.quoteNumber}
                   </span>
                 )}
               </div>
               <p className="text-xs text-[#737373]">
-                Placed on {new Date(searchedOrder.createdAt).toLocaleDateString("fr-FR", {
+                {new Date(searchedOrder.createdAt).toLocaleDateString(locale, {
                   day: "2-digit",
                   month: "long",
                   year: "numeric",
-                })} • Customer: <strong>{searchedOrder.guestName}</strong>
+                })} • {t("customer")} <strong>{searchedOrder.guestName}</strong>
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               <span
-                className={`inline-flex items-center px-3 py-1 rounded text-xs font-heading font-black uppercase tracking-wider ${
+                className={`inline-flex items-center px-3 py-1 rounded text-xs font-heading font-semibold uppercase tracking-wider ${
                   searchedOrder.status === "DELIVERED" || searchedOrder.status === "READY_FOR_PICKUP"
                     ? "bg-[#16803C]/10 text-[#16803C] border border-[#16803C]/30"
                     : searchedOrder.status === "PENDING_QUOTE"
@@ -240,9 +237,11 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
               </span>
 
               <button
+                type="button"
                 onClick={() => window.print()}
                 className="p-1.5 rounded border border-[#E2E2E2] hover:bg-[#F5F5F5] text-[#0B0B0B] cursor-pointer"
-                title="Print Order"
+                title={t("printOrder")}
+                aria-label={t("printOrder")}
               >
                 <Printer className="w-4 h-4" />
               </button>
@@ -251,8 +250,8 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
 
           {/* Visual Fulfillment Timeline */}
           <div className="space-y-3">
-            <h3 className="font-heading text-xs font-black uppercase tracking-wider text-[#737373]">
-              Real-Time Progression Timeline
+            <h3 className="font-heading text-xs font-semibold uppercase tracking-wider text-[#737373]">
+              {t("timelineTitle")}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
@@ -293,15 +292,15 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
             {/* Items Column */}
             <div className="lg:col-span-7 space-y-3">
-              <h3 className="font-heading text-xs font-black uppercase tracking-wider text-[#737373]">
-                Itemized Machines & Equipment ({searchedOrder.items.length})
+              <h3 className="font-heading text-xs font-semibold uppercase tracking-wider text-[#737373]">
+                {t("vehicleItems")} ({searchedOrder.items.length})
               </h3>
 
               <div className="divide-y divide-[#E2E2E2] border border-[#E2E2E2] rounded overflow-hidden">
                 {searchedOrder.items.map((item: any) => (
                   <div key={item.id} className="p-3 bg-white flex justify-between items-center text-xs">
                     <div className="space-y-0.5">
-                      <span className="font-mono text-[10px] text-[#E10600] font-bold block">
+                      <span className="font-mono text-[10px] text-[#E10600] font-medium block">
                         {item.sku}
                       </span>
                       <strong className="font-heading uppercase text-[#0B0B0B] text-xs">
@@ -310,9 +309,9 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
                       <p className="text-[11px] text-[#737373]">Qty: {item.quantity}</p>
                     </div>
 
-                    <div className="text-right">
-                      <span className="font-heading font-black text-xs text-[#0B0B0B]">
-                        {item.totalPrice.toLocaleString("fr-FR", {
+                    <div className="text-right rtl:text-left">
+                      <span className="font-heading font-semibold text-xs text-[#0B0B0B]">
+                        {item.totalPrice.toLocaleString(locale, {
                           style: "currency",
                           currency: "EUR",
                         })}
@@ -325,20 +324,20 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
               {/* Breakdown */}
               <div className="p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-1.5 text-xs">
                 <div className="flex justify-between text-[#737373]">
-                  <span>Subtotal:</span>
+                  <span>{tCheckout("subtotal")}</span>
                   <span className="font-mono text-[#0B0B0B]">
-                    {searchedOrder.subtotal.toLocaleString("fr-FR", {
+                    {searchedOrder.subtotal.toLocaleString(locale, {
                       style: "currency",
                       currency: "EUR",
                     })}
                   </span>
                 </div>
                 {searchedOrder.discountAmount > 0 && (
-                  <div className="flex justify-between text-[#16803C] font-bold">
+                  <div className="flex justify-between text-[#16803C] font-semibold">
                     <span>Discount:</span>
                     <span>
                       -
-                      {searchedOrder.discountAmount.toLocaleString("fr-FR", {
+                      {searchedOrder.discountAmount.toLocaleString(locale, {
                         style: "currency",
                         currency: "EUR",
                       })}
@@ -346,15 +345,15 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
                   </div>
                 )}
                 <div className="flex justify-between text-[#737373]">
-                  <span>Fulfillment Freight:</span>
+                  <span>{tCheckout("shippingFee")}</span>
                   <span className="font-mono text-[#0B0B0B]">
                     {searchedOrder.shippingFee === 0 ? "FREE" : `€${searchedOrder.shippingFee}`}
                   </span>
                 </div>
-                <div className="flex justify-between border-t border-[#E2E2E2] pt-2 font-bold text-sm">
-                  <span className="font-heading uppercase text-[#0B0B0B]">Grand Total:</span>
-                  <span className="text-[#E10600] font-heading text-base">
-                    {searchedOrder.total.toLocaleString("fr-FR", {
+                <div className="flex justify-between border-t border-[#E2E2E2] pt-2 font-semibold text-sm">
+                  <span className="font-heading uppercase text-[#0B0B0B]">{t("orderTotal")}</span>
+                  <span className="text-[#E10600] font-heading text-base font-semibold">
+                    {searchedOrder.total.toLocaleString(locale, {
                       style: "currency",
                       currency: "EUR",
                     })}
@@ -365,14 +364,14 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
 
             {/* Logistics & Fulfillment Column */}
             <div className="lg:col-span-5 space-y-4">
-              <h3 className="font-heading text-xs font-black uppercase tracking-wider text-[#737373]">
-                Fulfillment Logistics & Tracking
+              <h3 className="font-heading text-xs font-semibold uppercase tracking-wider text-[#737373]">
+                {t("orderDetails")}
               </h3>
 
               <div className="p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-[#737373] uppercase font-bold block">
-                    Fulfillment Method
+                  <span className="text-[10px] text-[#737373] uppercase font-medium block">
+                    {t("fulfillmentType")}
                   </span>
                   <strong className="text-[#0B0B0B] font-heading uppercase">
                     {searchedOrder.fulfillmentType.replace(/_/g, " ")}
@@ -381,13 +380,13 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
 
                 {searchedOrder.shipment && (
                   <div className="pt-2 border-t border-[#E2E2E2] space-y-1">
-                    <span className="text-[10px] text-[#737373] uppercase font-bold block">
-                      Enclosed Freight Carrier
+                    <span className="text-[10px] text-[#737373] uppercase font-medium block">
+                      {t("carrierTracking")}
                     </span>
                     <strong className="text-[#0B0B0B] block">{searchedOrder.shipment.carrier}</strong>
                     <div className="flex items-center gap-2 pt-1">
-                      <span className="text-[10px] text-[#737373]">Tracking:</span>
-                      <span className="font-mono text-[11px] font-bold text-[#E10600]">
+                      <span className="text-[10px] text-[#737373]">Ref:</span>
+                      <span className="font-mono text-[11px] font-medium text-[#E10600]">
                         {searchedOrder.shipment.trackingNumber}
                       </span>
                     </div>
@@ -396,8 +395,8 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
 
                 {searchedOrder.shippingAddress && (
                   <div className="pt-2 border-t border-[#E2E2E2] space-y-1">
-                    <span className="text-[10px] text-[#737373] uppercase font-bold block">
-                      Delivery Destination
+                    <span className="text-[10px] text-[#737373] uppercase font-medium block">
+                      {t("shippingAddress")}
                     </span>
                     <p className="text-[#0B0B0B] leading-relaxed text-[11px]">
                       {searchedOrder.shippingAddress.streetLine1}
@@ -409,9 +408,9 @@ export function OrderLookupView({ initialOrderNumber, initialEmail }: OrderLooku
                 )}
 
                 <div className="pt-2 border-t border-[#E2E2E2] flex items-center justify-between">
-                  <span className="text-[10px] text-[#737373] uppercase font-bold">Payment Status</span>
+                  <span className="text-[10px] text-[#737373] uppercase font-medium">{t("paymentMethod")}</span>
                   <span
-                    className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded ${
+                    className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded ${
                       searchedOrder.paymentStatus === "PAID" || searchedOrder.paymentStatus === "AUTHORIZED"
                         ? "bg-[#16803C]/10 text-[#16803C]"
                         : "bg-neutral-200 text-[#0B0B0B]"

@@ -74,23 +74,25 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  /* User requested Tahoma, sans-serif fonts */
-  --font-heading: Tahoma, "Segoe UI", Arial, sans-serif;
-  --font-sans: Tahoma, "Segoe UI", Arial, sans-serif;
+  /* Modern Enterprise Professional Font Stacks */
+  --font-heading: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: Tahoma, "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  font-weight: 400;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
-  letter-spacing: normal;
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+  font-weight: 500;
 }
 
 /* Motorsport Hairline Borders */
@@ -132,6 +134,91 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: #E10600;
 }
 
+/* Specialized Interactive Popup Form Scroll Effects */
+.popup-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #E10600 #1E1E1E;
+}
+.popup-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.popup-scroll::-webkit-scrollbar-track {
+  background: rgba(18, 18, 18, 0.7);
+  border-radius: 9999px;
+}
+.popup-scroll::-webkit-scrollbar-thumb {
+  background: #E10600;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px rgba(225, 6, 0, 0.4);
+  transition: background 0.15s ease;
+}
+.popup-scroll::-webkit-scrollbar-thumb:hover {
+  background: #FF2B24;
+}
+
+/* Light-Themed Popup Form Scroll Effect */
+.popup-scroll-light {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #E10600 #F2F2F2;
+}
+.popup-scroll-light::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.popup-scroll-light::-webkit-scrollbar-track {
+  background: #F2F2F2;
+  border-radius: 9999px;
+}
+.popup-scroll-light::-webkit-scrollbar-thumb {
+  background: #E10600;
+  border-radius: 9999px;
+  box-shadow: 0 0 4px rgba(225, 6, 0, 0.3);
+  transition: background 0.15s ease;
+}
+.popup-scroll-light::-webkit-scrollbar-thumb:hover {
+  background: #B80500;
+}
+
+/* Professional Range Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #2B2B2B;
+  border-radius: 9999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #E10600;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.12s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #E10600;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
 /* RTL layout adjustments for Arabic with Tahoma */
 [dir="rtl"] {
   text-align: right;
@@ -141,4 +228,22 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 [dir="rtl"] .font-heading {
   font-family: Tahoma, "Segoe UI", Arial, sans-serif;
   letter-spacing: normal;
+}
+
+/* WCAG 2.2 Accessible Focus Rings */
+:focus-visible {
+  outline: 2px solid #E10600;
+  outline-offset: 2px;
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

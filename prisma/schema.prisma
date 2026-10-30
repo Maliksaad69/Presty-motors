@@ -22,6 +22,7 @@ enum AddressType {
 }
 
 enum VehicleType {
+  CAR
   MOTORCYCLE_KIDS
   MOTORCYCLE_ADULT
   QUAD
@@ -216,6 +217,8 @@ model ProductImage {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
+  imageData Bytes?
+  mimeType  String?
   altText   String?
   sortOrder Int      @default(0)
   isPrimary Boolean  @default(false)

@@ -41,14 +41,16 @@ export function LanguageSwitcher({
               key={lang.code}
               type="button"
               onClick={() => handleSwitch(lang.code)}
+              aria-label={lang.fullLabel}
+              aria-pressed={isActive}
               className={cn(
                 "flex flex-col items-center justify-center py-2 px-1 rounded border text-center transition-all cursor-pointer select-none",
                 isActive
-                  ? "bg-[#E10600] text-white border-[#E10600] font-black shadow-xs"
+                  ? "bg-[#E10600] text-white border-[#E10600] font-medium shadow-xs"
                   : "bg-[#171717] text-neutral-300 border-[#262626] hover:border-neutral-500 hover:text-white font-medium"
               )}
             >
-              <span className="text-[11px] font-heading font-black tracking-wider uppercase">
+              <span className="text-[11px] font-heading font-medium tracking-wider uppercase">
                 {lang.label}
               </span>
               <span className="text-[9px] text-neutral-400 opacity-90 truncate max-w-full">
@@ -83,8 +85,10 @@ export function LanguageSwitcher({
               key={lang.code}
               type="button"
               onClick={() => handleSwitch(lang.code)}
+              aria-label={lang.fullLabel}
+              aria-pressed={isActive}
               className={cn(
-                "px-2 py-0.5 text-[11px] font-heading font-black uppercase tracking-wider rounded transition-all duration-150 cursor-pointer text-center min-w-6",
+                "px-2 py-1 text-[11px] font-heading font-medium uppercase tracking-wider rounded transition-all duration-150 cursor-pointer text-center min-w-7 min-h-[28px]",
                 isActive
                   ? "bg-[#E10600] text-white shadow-xs"
                   : "text-neutral-400 hover:text-white hover:bg-neutral-800"

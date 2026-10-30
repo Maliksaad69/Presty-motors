@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { useCart } from "@/lib/cart-context";
+import { useTranslations } from "next-intl";
 import {
   ShieldCheck,
   CreditCard,
@@ -33,6 +34,9 @@ type FulfillmentMode = "SHOWROOM_PICKUP" | "DOMESTIC_DELIVERY" | "INTERNATIONAL_
 type PaymentMethodChoice = "CARD" | "TRANSFER" | "ON_PICKUP";
 
 export default function CheckoutPage() {
+  const tCheckout = useTranslations("checkout");
+  const tCommon = useTranslations("common");
+  const tNav = useTranslations("nav");
   const { items, subtotal, totalCount, clearCart } = useCart();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -62,25 +66,24 @@ export default function CheckoutPage() {
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoLoading, setPromoLoading] = useState(false);
 
-  // Submission result states
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  // Result state after submission
   const [orderResult, setOrderResult] = useState<{
-    orderNumber: string;
+    success: boolean;
+    orderId?: string;
+    orderNumber?: string;
     quoteNumber?: string;
-    status: string;
-    fulfillment: FulfillmentMode;
-    paymentMethod: PaymentMethodChoice;
-    total: number;
-    subtotal: number;
-    shippingFee: number;
-    discountAmount: number;
-    email: string;
+    fulfillment?: string;
+    total?: number;
+    email?: string;
+    paymentMethod?: string;
+    discountAmount?: number;
   } | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Auto-apply promo and fulfillment mode from query parameter if present
+  // Initialize query parameters
   useEffect(() => {
     const promoFromUrl = searchParams.get("promo");
-    if (promoFromUrl && subtotal > 0 && !appliedPromo) {
+    if (promoFromUrl && !appliedPromo) {
       setPromoCode(promoFromUrl);
       applyPromoCodeAction(promoFromUrl, subtotal).then((res) => {
         if (res.valid) {
@@ -140,7 +143,7 @@ export default function CheckoutPage() {
       setPromoError(null);
     } else {
       setAppliedPromo(null);
-      setPromoError(result.errorMessage || "Invalid promotional code.");
+      setPromoError(result.errorMessage || "Code invalide.");
     }
   };
 
@@ -162,12 +165,24 @@ export default function CheckoutPage() {
     setSubmitError(null);
 
     if (items.length === 0) {
-      setSubmitError("Your cart is empty. Please select products first.");
+      setSubmitError("Your cart is empty.");
       return;
     }
 
+    if (!fullName.trim() || !email.trim() || !phone.trim()) {
+      setSubmitError("Please fill in your name, email, and phone number.");
+      return;
+    }
+
+    if (fulfillment !== "SHOWROOM_PICKUP") {
+      if (!street.trim() || !city.trim() || !postalCode.trim() || !country.trim()) {
+        setSubmitError("Please provide complete delivery address details.");
+        return;
+      }
+    }
+
     startTransition(async () => {
-      const response = await createOrderAction({
+      const result = await createOrderAction({
         customer: {
           fullName,
           email,
@@ -178,61 +193,53 @@ export default function CheckoutPage() {
           fulfillment !== "SHOWROOM_PICKUP"
             ? {
                 fullName,
-                streetLine1: street || "Not specified",
-                city: city || "Not specified",
-                postalCode: postalCode || "00000",
-                country: country || (fulfillment === "DOMESTIC_DELIVERY" ? "France" : "International"),
+                streetLine1: street,
+                city,
+                postalCode,
+                country,
                 phone,
               }
             : undefined,
-        paymentMethod,
+        paymentMethod: paymentMethod,
+        promoCode: appliedPromo?.code,
+        notes: orderNotes,
         items: items.map((i) => ({
           id: i.id,
           quantity: i.quantity,
         })),
-        promoCode: appliedPromo?.code,
-        notes:
-          fulfillment === "SHOWROOM_PICKUP"
-            ? `[SHOWROOM RESERVATION] Customer visiting Paris showroom to inspect and pay on collection. ${orderNotes}`.trim()
-            : orderNotes,
       });
 
-      if (!response.success) {
-        setSubmitError(response.errorMessage || "Failed to process order. Please verify your details.");
-        return;
+      if (result.success) {
+        setOrderResult({
+          success: true,
+          orderId: result.orderId,
+          orderNumber: result.orderNumber,
+          quoteNumber: result.quoteNumber,
+          fulfillment,
+          total: grandTotal,
+          email,
+          paymentMethod,
+          discountAmount,
+        });
+        clearCart();
+      } else {
+        setSubmitError(result.errorMessage || "Failed to register order.");
       }
-
-      setOrderResult({
-        orderNumber: response.orderNumber || "PM-ORDER",
-        quoteNumber: response.quoteNumber,
-        status: response.status || "PENDING",
-        fulfillment,
-        paymentMethod,
-        total: response.total ?? grandTotal,
-        subtotal: response.subtotal ?? subtotal,
-        shippingFee: response.shippingFee ?? shippingFee,
-        discountAmount: response.discountAmount ?? discountAmount,
-        email,
-      });
-
-      clearCart();
     });
   };
 
-  // Order Confirmed / Reservation Confirmed / Quotation Requested Screen
-  if (orderResult) {
+  // Post-submission confirmation display
+  if (orderResult && orderResult.success) {
     const isQuote = orderResult.fulfillment === "INTERNATIONAL_QUOTE";
     const isReservation = orderResult.fulfillment === "SHOWROOM_PICKUP";
 
     return (
-      <div className="bg-white min-h-[75vh] py-16">
+      <div className="bg-white min-h-[75vh] py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center space-y-6">
           <div
             className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
               isQuote
                 ? "bg-amber-500/10 text-amber-600"
-                : isReservation
-                ? "bg-[#16803C]/10 text-[#16803C]"
                 : "bg-[#16803C]/10 text-[#16803C]"
             }`}
           >
@@ -248,40 +255,36 @@ export default function CheckoutPage() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#F5F5F5] border border-[#E2E2E2]">
               <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-              <span className="text-xs font-mono font-bold text-[#E10600] uppercase tracking-wider">
+              <span className="text-xs font-mono font-medium text-[#E10600] uppercase tracking-wider">
                 {isQuote
-                  ? `Shipping Quote Reference: ${orderResult.quoteNumber || orderResult.orderNumber}`
-                  : isReservation
-                  ? `Showroom Reservation • Reference: ${orderResult.orderNumber}`
-                  : `Delivery Order Confirmed • Reference: ${orderResult.orderNumber}`}
+                  ? `Ref: ${orderResult.quoteNumber || orderResult.orderNumber}`
+                  : `Ref: ${orderResult.orderNumber}`}
               </span>
             </div>
 
-            <h1 className="font-heading text-3xl sm:text-4xl font-black uppercase text-[#0B0B0B]">
+            <h1 className="font-heading text-2xl sm:text-3xl font-semibold uppercase text-[#0B0B0B]">
               {isQuote
-                ? "International Quotation Request Received!"
+                ? tCheckout("successQuoteTitle")
                 : isReservation
-                ? "Machine Reservation Confirmed!"
-                : "Thank You for Your Order!"}
+                ? tCheckout("successReservationTitle")
+                : tCheckout("successDeliveryTitle")}
             </h1>
 
-            <p className="text-xs sm:text-sm text-[#737373] max-w-lg mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#737373] max-w-lg mx-auto leading-relaxed font-normal">
               {isQuote ? (
                 <>
-                  We have logged your international freight request for destination <strong>{country}</strong>.
-                  Our Paris logistics team is preparing a customized freight, customs & duty dossier dispatched to{" "}
-                  <strong>{orderResult.email}</strong> within 24–48 hours.
+                  Dossier logged for destination <strong>{country}</strong>. Receipt dispatched to{" "}
+                  <strong>{orderResult.email}</strong>.
                 </>
               ) : isReservation ? (
                 <>
-                  Your machine is exclusively reserved at our Paris showroom with{" "}
-                  <strong className="text-[#16803C]">zero upfront online charge</strong>. Our workshop
-                  mechanics are preparing the machine for your upcoming visit, inspection, and test ride.
+                  Your machine is exclusively reserved at our Paris showroom. Handover details sent to{" "}
+                  <strong>{orderResult.email}</strong>.
                 </>
               ) : (
                 <>
-                  A formal confirmation receipt and pre-delivery inspection summary have been dispatched to{" "}
-                  <strong>{orderResult.email}</strong>. Enclosed tailgate delivery will be scheduled.
+                  Confirmation receipt and pre-delivery inspection summary dispatched to{" "}
+                  <strong>{orderResult.email}</strong>.
                 </>
               )}
             </p>
@@ -290,16 +293,12 @@ export default function CheckoutPage() {
           {/* Showroom Visit Location Notice (For Reservation) */}
           {isReservation && (
             <div className="p-4 rounded border border-[#16803C]/30 bg-[#16803C]/5 text-xs text-start space-y-2 max-w-lg mx-auto">
-              <div className="flex items-center gap-2 text-[#16803C] font-heading font-black uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-[#16803C] font-heading font-semibold uppercase tracking-wider">
                 <MapPin className="w-4 h-4" />
-                <span>Showroom Handover & Inspection Location</span>
+                <span>{tCheckout("successReservationNotice")}</span>
               </div>
-              <p className="text-neutral-700 leading-relaxed">
-                <strong>Presty Motors Paris Flagship:</strong> 128 Avenue des Sports Motorisés, 75016 Paris, France
-                <br />
-                <strong>Opening Hours:</strong> Tuesday to Saturday, 09:00 – 19:00
-                <br />
-                <strong>Payment on Collection:</strong> Accepted via Credit/Debit Card, Certified Bank Check, or Cash in person.
+              <p className="text-neutral-700 leading-relaxed font-normal">
+                {tCheckout("successReservationNoticeDesc")}
               </p>
             </div>
           )}
@@ -308,41 +307,41 @@ export default function CheckoutPage() {
           <div className="p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] text-xs text-start space-y-3 max-w-lg mx-auto">
             <div className="flex justify-between border-b border-[#E2E2E2] pb-2">
               <span className="text-[#737373]">Reference Number:</span>
-              <strong className="font-mono text-[#0B0B0B]">{orderResult.orderNumber}</strong>
+              <strong className="font-mono text-[#0B0B0B] font-medium">{orderResult.orderNumber}</strong>
             </div>
 
             {orderResult.quoteNumber && (
               <div className="flex justify-between border-b border-[#E2E2E2] pb-2">
                 <span className="text-[#737373]">Quotation Request:</span>
-                <strong className="font-mono text-[#E10600]">{orderResult.quoteNumber}</strong>
+                <strong className="font-mono text-[#E10600] font-medium">{orderResult.quoteNumber}</strong>
               </div>
             )}
 
             <div className="flex justify-between">
               <span className="text-[#737373]">Order Type:</span>
-              <strong className="text-[#0B0B0B]">
+              <strong className="text-[#0B0B0B] font-medium">
                 {isReservation
-                  ? "Showroom Visit & Reservation (Pay on Collection)"
+                  ? tCheckout("pickupCardTitle")
                   : orderResult.fulfillment === "DOMESTIC_DELIVERY"
-                  ? "Domestic Enclosed Tailgate Freight"
-                  : `International Freight (${country})`}
+                  ? tCheckout("deliveryCardTitle")
+                  : `${tCheckout("overseasCardTitle")} (${country})`}
               </strong>
             </div>
 
             <div className="flex justify-between">
               <span className="text-[#737373]">Payment Selection:</span>
-              <strong className="text-[#0B0B0B]">
+              <strong className="text-[#0B0B0B] font-medium">
                 {isReservation
-                  ? "Direct Showroom Payment on Collection (Zero Paid Online)"
+                  ? tCheckout("paymentOnPickupTitle")
                   : orderResult.paymentMethod === "CARD"
-                  ? "Online Card Payment (Pre-Authorized / Stripe)"
-                  : "Official Bank Wire Transfer (SEPA / IBAN Issued)"}
+                  ? tCheckout("paymentCardTitle")
+                  : tCheckout("paymentTransferTitle")}
               </strong>
             </div>
 
-            {orderResult.discountAmount > 0 && (
-              <div className="flex justify-between text-[#16803C] font-bold">
-                <span>Promotional Discount:</span>
+            {orderResult.discountAmount && orderResult.discountAmount > 0 && (
+              <div className="flex justify-between text-[#16803C] font-semibold">
+                <span>Discount:</span>
                 <span>
                   -
                   {orderResult.discountAmount.toLocaleString("fr-FR", {
@@ -353,16 +352,16 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <div className="flex justify-between border-t border-[#E2E2E2] pt-3 font-bold text-sm">
+            <div className="flex justify-between border-t border-[#E2E2E2] pt-3 font-semibold text-sm">
               <span className="text-[#0B0B0B]">
                 {isReservation
-                  ? "Amount to Pay upon Showroom Collection:"
+                  ? tCheckout("totalDuePickup")
                   : isQuote
-                  ? "Subtotal (Excl. Overseas Shipping):"
-                  : "Total Amount (TTC):"}
+                  ? tCheckout("totalDueQuote")
+                  : tCheckout("totalDue")}
               </span>
-              <span className="text-[#E10600] font-heading text-lg">
-                {orderResult.total.toLocaleString("fr-FR", {
+              <span className="text-[#E10600] font-heading text-lg font-semibold">
+                {orderResult.total?.toLocaleString("fr-FR", {
                   style: "currency",
                   currency: "EUR",
                 })}
@@ -374,27 +373,28 @@ export default function CheckoutPage() {
           <div className="pt-4 flex flex-wrap justify-center gap-3">
             <Link
               href={`/account?orderNumber=${encodeURIComponent(
-                orderResult.orderNumber
-              )}&email=${encodeURIComponent(orderResult.email)}`}
-              className="px-6 py-3 rounded bg-[#0B0B0B] hover:bg-[#171717] text-white font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2"
+                orderResult.orderNumber || ""
+              )}&email=${encodeURIComponent(orderResult.email || "")}`}
+              className="px-6 py-3 rounded bg-[#0B0B0B] hover:bg-[#171717] text-white font-heading font-medium text-xs uppercase tracking-wider flex items-center gap-2"
             >
               <Clock className="w-3.5 h-3.5 text-[#E10600]" />
-              <span>Track in Customer Portal</span>
+              <span>{tCheckout("trackPortal")}</span>
             </Link>
 
             <button
+              type="button"
               onClick={() => window.print()}
-              className="px-5 py-3 rounded border border-[#E2E2E2] bg-white hover:bg-[#F5F5F5] text-[#0B0B0B] font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 rounded border border-[#E2E2E2] bg-white hover:bg-[#F5F5F5] text-[#0B0B0B] font-heading font-medium text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print Reservation Slip</span>
+              <span>{tCheckout("printSlip")}</span>
             </button>
 
             <Link
               href="/shop"
-              className="px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2"
+              className="px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs uppercase tracking-wider flex items-center gap-2"
             >
-              <span>Explore More Machines</span>
+              <span>{tCheckout("exploreMore")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -411,17 +411,17 @@ export default function CheckoutPage() {
           <div className="w-16 h-16 mx-auto rounded-full bg-[#F5F5F5] border border-[#E2E2E2] flex items-center justify-center text-neutral-400">
             <ShoppingBag className="w-8 h-8" />
           </div>
-          <h2 className="font-heading text-2xl font-black uppercase text-[#0B0B0B]">
-            Your Cart is Empty
+          <h2 className="font-heading text-2xl font-semibold uppercase text-[#0B0B0B]">
+            {tCommon("cartEmpty")}
           </h2>
-          <p className="text-xs text-[#737373]">
+          <p className="text-xs text-[#737373] font-normal">
             There are currently no machines or equipment in your shopping cart.
           </p>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider transition-colors mt-2"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs uppercase tracking-wider transition-colors mt-2"
           >
-            <span>Browse Catalog</span>
+            <span>{tCommon("shopNow")}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -438,17 +438,17 @@ export default function CheckoutPage() {
             <div className="flex items-center gap-2 text-xs font-mono text-[#737373] uppercase tracking-wider mb-1">
               <Link href="/cart" className="hover:text-[#E10600] flex items-center gap-1">
                 <ArrowLeft className="w-3 h-3" />
-                <span>Return to Cart Review</span>
+                <span>{tCheckout("returnToCart")}</span>
               </Link>
             </div>
-            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-black uppercase text-[#0B0B0B]">
-              Checkout & Vehicle Order
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold uppercase text-[#0B0B0B]">
+              {tCheckout("pageTitle")}
             </h1>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono text-neutral-500 bg-[#F5F5F5] px-3 py-1.5 rounded border border-[#E2E2E2]">
             <Lock className="w-3.5 h-3.5 text-[#16803C]" />
-            <span>256-bit Encrypted Showroom System</span>
+            <span>{tCheckout("encryptionBadge")}</span>
           </div>
         </div>
 
@@ -465,20 +465,21 @@ export default function CheckoutPage() {
             {/* Step 1: Customer Details */}
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
-                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-black text-xs">
+                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-medium text-xs">
                   1
                 </div>
-                <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-                  Customer & Contact Information
+                <h2 className="font-heading text-base font-semibold uppercase text-[#0B0B0B]">
+                  {tCheckout("step1Title")}
                 </h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                    Full Name *
+                  <label htmlFor="checkout-fullname" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                    {tCheckout("fullName")}
                   </label>
                   <input
+                    id="checkout-fullname"
                     type="text"
                     required
                     placeholder="Jean-Marc Dupont"
@@ -488,10 +489,11 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                    Email Address *
+                  <label htmlFor="checkout-email" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                    {tCheckout("email")}
                   </label>
                   <input
+                    id="checkout-email"
                     type="email"
                     required
                     placeholder="jean.dupont@motorsport.fr"
@@ -501,10 +503,11 @@ export default function CheckoutPage() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                    Mobile Phone *
+                  <label htmlFor="checkout-phone" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                    {tCheckout("phone")}
                   </label>
                   <input
+                    id="checkout-phone"
                     type="tel"
                     required
                     placeholder="+33 6 12 34 56 78"
@@ -519,15 +522,15 @@ export default function CheckoutPage() {
             {/* Step 2: Order & Fulfillment Mode Choice */}
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
-                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-black text-xs">
+                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-medium text-xs">
                   2
                 </div>
                 <div>
-                  <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-                    Choose Order Mode: Showroom Reservation vs. Delivery
+                  <h2 className="font-heading text-base font-semibold uppercase text-[#0B0B0B]">
+                    {tCheckout("step2Title")}
                   </h2>
                   <p className="text-[11px] text-[#737373]">
-                    Reserve online to visit and pay in Paris, or select home freight with online payment.
+                    {tCheckout("step2Subtitle")}
                   </p>
                 </div>
               </div>
@@ -544,21 +547,21 @@ export default function CheckoutPage() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                      <span className="font-heading font-semibold text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
                         <Building className="w-3.5 h-3.5 text-[#E10600]" />
-                        <span>Showroom Reservation</span>
+                        <span>{tCheckout("pickupCardTitle")}</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-[#16803C] bg-[#16803C]/10 px-1.5 py-0.5 rounded uppercase">
-                        Zero Online
+                      <span className="text-[9px] font-mono font-medium text-[#16803C] bg-[#16803C]/10 px-1.5 py-0.5 rounded uppercase">
+                        {tCheckout("pickupZeroOnline")}
                       </span>
                     </div>
                     <p className="text-[10px] text-[#737373] leading-relaxed">
-                      Hold vehicle for in-person inspection and test ride at Paris 16e. <strong>Pay on visit</strong>.
+                      {tCheckout("pickupCardDesc")}
                     </p>
                   </div>
-                  <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono font-bold text-[#16803C]">
-                    <span>Hold Online: €0</span>
-                    <span>Free Handover</span>
+                  <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono font-medium text-[#16803C]">
+                    <span>{tCheckout("pickupHoldOnline")}</span>
+                    <span>{tCheckout("pickupFreeHandover")}</span>
                   </div>
                 </label>
 
@@ -573,21 +576,21 @@ export default function CheckoutPage() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                      <span className="font-heading font-semibold text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
                         <Truck className="w-3.5 h-3.5 text-[#0B0B0B]" />
-                        <span>Home Delivery</span>
+                        <span>{tCheckout("deliveryCardTitle")}</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-[#0B0B0B] bg-neutral-200 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-mono font-medium text-[#0B0B0B] bg-neutral-200 px-1.5 py-0.5 rounded">
                         €150.00
                       </span>
                     </div>
                     <p className="text-[10px] text-[#737373] leading-relaxed">
-                      Enclosed tailgate delivery in France in a protective steel transport frame. Pay online.
+                      {tCheckout("deliveryCardDesc")}
                     </p>
                   </div>
                   <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono text-neutral-600">
-                    <span>Mainland France</span>
-                    <span>Online / Wire</span>
+                    <span>{tCheckout("deliveryMainland")}</span>
+                    <span>{tCheckout("deliveryMethod")}</span>
                   </div>
                 </label>
 
@@ -602,21 +605,21 @@ export default function CheckoutPage() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-heading font-black text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
+                      <span className="font-heading font-semibold text-xs uppercase text-[#0B0B0B] flex items-center gap-1">
                         <Globe className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Overseas Quote</span>
+                        <span>{tCheckout("overseasCardTitle")}</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">
-                        Quote
+                      <span className="text-[9px] font-mono font-medium text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">
+                        {tCheckout("overseasQuoteBadge")}
                       </span>
                     </div>
                     <p className="text-[10px] text-[#737373] leading-relaxed">
-                      Custom air/sea freight crate packaging with export customs clearance.
+                      {tCheckout("overseasCardDesc")}
                     </p>
                   </div>
                   <div className="pt-2 mt-2 border-t border-[#E2E2E2] flex items-center justify-between text-[10px] font-mono text-neutral-600">
-                    <span>Worldwide</span>
-                    <span>To be quoted</span>
+                    <span>{tCheckout("overseasWorldwide")}</span>
+                    <span>{tCheckout("overseasToBeQuoted")}</span>
                   </div>
                 </label>
               </div>
@@ -624,19 +627,18 @@ export default function CheckoutPage() {
               {/* Showroom Handover Details Banner (if Showroom Reservation) */}
               {fulfillment === "SHOWROOM_PICKUP" && (
                 <div className="p-3.5 rounded border border-[#16803C]/30 bg-[#16803C]/5 text-xs space-y-1.5">
-                  <div className="flex items-center gap-2 text-[#16803C] font-heading font-black uppercase text-[11px]">
+                  <div className="flex items-center gap-2 text-[#16803C] font-heading font-semibold uppercase text-[11px]">
                     <Building className="w-4 h-4 shrink-0" />
-                    <span>Paris 16e Flagship Handover & Test Ride</span>
+                    <span>{tCheckout("showroomHandoverBannerTitle")}</span>
                   </div>
-                  <p className="text-[11px] text-neutral-700 leading-relaxed">
-                    <strong>Location:</strong> 128 Avenue des Sports Motorisés, 75016 Paris
+                  <p className="text-[11px] text-neutral-700 leading-relaxed font-normal">
+                    <strong>Location:</strong> {tCheckout("showroomHandoverBannerAddress")}
                     <br />
-                    <strong>Hours:</strong> Tuesday to Saturday, 09:00 – 19:00
+                    <strong>Hours:</strong> {tCheckout("showroomHandoverBannerHours")}
                     <br />
-                    <span className="text-[#16803C] font-bold">
-                      ✓ No upfront card payment required online today.
-                    </span>{" "}
-                    Our mechanics will inspect, dyno-tune, and hold your machine until your visit.
+                    <span className="text-[#16803C] font-medium">
+                      ✓ {tCheckout("showroomHandoverBannerNotice")}
+                    </span>
                   </p>
                 </div>
               )}
@@ -645,19 +647,20 @@ export default function CheckoutPage() {
               {fulfillment !== "SHOWROOM_PICKUP" && (
                 <div className="pt-3 border-t border-[#E2E2E2] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B]">
+                    <span className="font-heading font-semibold text-xs uppercase text-[#0B0B0B]">
                       {fulfillment === "INTERNATIONAL_QUOTE"
-                        ? "International Destination Address"
-                        : "Domestic Tailgate Delivery Address"}
+                        ? tCheckout("step3OverseasTitle")
+                        : tCheckout("step3DeliveryTitle")}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="sm:col-span-2">
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                        Street Address *
+                      <label htmlFor="checkout-street" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                        {tCheckout("streetAddress")}
                       </label>
                       <input
+                        id="checkout-street"
                         type="text"
                         required
                         placeholder="15 Rue de la Victoire"
@@ -668,10 +671,11 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                        City *
+                      <label htmlFor="checkout-city" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                        {tCheckout("city")}
                       </label>
                       <input
+                        id="checkout-city"
                         type="text"
                         required
                         placeholder="Lyon"
@@ -682,10 +686,11 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                        Postal Code *
+                      <label htmlFor="checkout-postal" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                        {tCheckout("postalCode")}
                       </label>
                       <input
+                        id="checkout-postal"
                         type="text"
                         required
                         placeholder="69002"
@@ -696,10 +701,11 @@ export default function CheckoutPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1">
-                        Destination Country *
+                      <label htmlFor="checkout-country" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1">
+                        {tCheckout("country")}
                       </label>
                       <input
+                        id="checkout-country"
                         type="text"
                         required
                         placeholder={
@@ -720,14 +726,14 @@ export default function CheckoutPage() {
             {/* Step 4: Payment Method Choice */}
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E2E2E2] pb-3">
-                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-black text-xs">
+                <div className="w-6 h-6 rounded bg-[#0B0B0B] text-white flex items-center justify-center font-heading font-medium text-xs">
                   {fulfillment === "SHOWROOM_PICKUP" ? "3" : "4"}
                 </div>
                 <div>
-                  <h2 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
+                  <h2 className="font-heading text-base font-semibold uppercase text-[#0B0B0B]">
                     {fulfillment === "SHOWROOM_PICKUP"
-                      ? "Payment Method: Settle on Showroom Visit"
-                      : "Online & Bank Payment Methods"}
+                      ? tCheckout("step4PickupTitle")
+                      : tCheckout("step4DeliveryTitle")}
                   </h2>
                 </div>
               </div>
@@ -748,16 +754,15 @@ export default function CheckoutPage() {
                     />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-heading font-black text-xs uppercase text-[#0B0B0B]">
-                          Direct Showroom Payment on Collection
+                        <span className="font-heading font-semibold text-xs uppercase text-[#0B0B0B]">
+                          {tCheckout("paymentOnPickupTitle")}
                         </span>
-                        <span className="text-[10px] font-mono font-bold text-[#16803C] bg-[#16803C]/10 px-2 py-0.5 rounded">
-                          ZERO DUE TODAY
+                        <span className="text-[10px] font-mono font-medium text-[#16803C] bg-[#16803C]/10 px-2 py-0.5 rounded">
+                          {tCheckout("paymentOnPickupBadge")}
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#737373] leading-relaxed">
-                        Inspect the machine in person with our workshop team before paying. Settle the balance
-                        directly in Paris by Credit/Debit Card, Certified Bank Check, or Cash.
+                      <p className="text-[11px] text-[#737373] leading-relaxed font-normal">
+                        {tCheckout("paymentOnPickupDesc")}
                       </p>
                     </div>
                   </label>
@@ -776,11 +781,11 @@ export default function CheckoutPage() {
                     <div className="flex items-center gap-3">
                       <CreditCard className="w-4 h-4 text-[#E10600]" />
                       <div>
-                        <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
-                          Online Payment: Credit / Debit Card (Visa, Mastercard, Amex)
+                        <span className="font-heading font-medium text-xs uppercase text-[#0B0B0B] block">
+                          {tCheckout("paymentCardTitle")}
                         </span>
-                        <span className="text-[10px] text-[#737373]">
-                          Secure online checkout (Stripe Gateway). Instant order confirmation.
+                        <span className="text-[10px] text-[#737373] font-normal">
+                          {tCheckout("paymentCardDesc")}
                         </span>
                       </div>
                     </div>
@@ -804,11 +809,11 @@ export default function CheckoutPage() {
                     <div className="flex items-center gap-3">
                       <Building className="w-4 h-4 text-[#E10600]" />
                       <div>
-                        <span className="font-heading font-bold text-xs uppercase text-[#0B0B0B] block">
-                          Bank Wire Transfer (SEPA / IBAN Proforma)
+                        <span className="font-heading font-medium text-xs uppercase text-[#0B0B0B] block">
+                          {tCheckout("paymentTransferTitle")}
                         </span>
-                        <span className="text-[10px] text-[#737373]">
-                          Official proforma invoice and company IBAN details dispatched immediately.
+                        <span className="text-[10px] text-[#737373] font-normal">
+                          {tCheckout("paymentTransferDesc")}
                         </span>
                       </div>
                     </div>
@@ -826,17 +831,18 @@ export default function CheckoutPage() {
 
             {/* Special Instructions & Notes */}
             <div className="p-4 rounded border border-[#E2E2E2] bg-[#F5F5F5] space-y-2">
-              <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B]">
+              <label htmlFor="checkout-notes" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B]">
                 {fulfillment === "SHOWROOM_PICKUP"
-                  ? "Planned Visit Date or Test Ride Preferences (Optional)"
-                  : "Order Notes / Tailgate Logistics Requests (Optional)"}
+                  ? tCheckout("notesPickupLabel")
+                  : tCheckout("notesDeliveryLabel")}
               </label>
               <textarea
+                id="checkout-notes"
                 rows={2}
                 placeholder={
                   fulfillment === "SHOWROOM_PICKUP"
-                    ? "e.g. Planning to visit this Saturday around 14:00 for test ride..."
-                    : "e.g. Gate access code, specific tailgate delivery window..."
+                    ? tCheckout("notesPickupPlaceholder")
+                    : tCheckout("notesDeliveryPlaceholder")
                 }
                 value={orderNotes}
                 onChange={(e) => setOrderNotes(e.target.value)}
@@ -849,11 +855,11 @@ export default function CheckoutPage() {
           <div className="lg:col-span-5 space-y-5">
             <div className="p-5 sm:p-6 rounded border border-[#E2E2E2] bg-[#F5F5F5] sticky top-24 space-y-4">
               <div className="border-b border-[#E2E2E2] pb-3 flex items-center justify-between">
-                <h3 className="font-heading text-base font-black uppercase text-[#0B0B0B]">
-                  Order Summary ({totalCount})
+                <h3 className="font-heading text-base font-semibold uppercase text-[#0B0B0B]">
+                  {tCheckout("orderSummaryTitle", { count: totalCount })}
                 </h3>
-                <Link href="/cart" className="text-[11px] font-bold text-[#E10600] hover:underline">
-                  Manage Cart
+                <Link href="/cart" className="text-[11px] font-medium text-[#E10600] hover:underline">
+                  {tCheckout("manageCart")}
                 </Link>
               </div>
 
@@ -879,14 +885,14 @@ export default function CheckoutPage() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-heading text-xs font-bold text-[#0B0B0B] uppercase truncate">
+                      <h4 className="font-heading text-xs font-medium text-[#0B0B0B] uppercase truncate">
                         {item.title}
                       </h4>
                       <p className="text-[10px] text-[#737373]">
                         Qty: {item.quantity} • {item.sku}
                       </p>
                     </div>
-                    <span className="font-heading text-xs font-black text-[#0B0B0B] shrink-0">
+                    <span className="font-heading text-xs font-semibold text-[#0B0B0B] shrink-0">
                       {(item.price * item.quantity).toLocaleString("fr-FR", {
                         style: "currency",
                         currency: "EUR",
@@ -900,7 +906,7 @@ export default function CheckoutPage() {
               <div className="pt-2 border-t border-[#E2E2E2]">
                 {appliedPromo ? (
                   <div className="p-2 rounded bg-white border border-[#16803C]/40 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 text-[#16803C] font-bold">
+                    <div className="flex items-center gap-1.5 text-[#16803C] font-semibold">
                       <Tag className="w-3.5 h-3.5" />
                       <span>{appliedPromo.code}</span>
                       <span className="font-normal text-[11px] text-[#737373]">
@@ -910,7 +916,7 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={handleRemovePromo}
-                      className="text-neutral-400 hover:text-red-600 font-bold text-[11px]"
+                      className="text-neutral-400 hover:text-red-600 font-medium text-[11px]"
                     >
                       Remove
                     </button>
@@ -919,6 +925,7 @@ export default function CheckoutPage() {
                   <div className="flex gap-2">
                     <input
                       type="text"
+                      aria-label="Coupon Code"
                       placeholder="Coupon Code"
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value)}
@@ -928,7 +935,7 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={handleApplyPromo}
                       disabled={promoLoading}
-                      className="px-3 py-1.5 rounded bg-[#0B0B0B] hover:bg-[#171717] text-white font-heading font-black text-xs uppercase tracking-wider"
+                      className="px-3 py-1.5 rounded bg-[#0B0B0B] hover:bg-[#171717] text-white font-heading font-medium text-xs uppercase tracking-wider"
                     >
                       {promoLoading ? "..." : "Apply"}
                     </button>
@@ -938,16 +945,16 @@ export default function CheckoutPage() {
               </div>
 
               {/* Cost Breakdown */}
-              <div className="pt-3 border-t border-[#E2E2E2] space-y-2 text-xs">
+              <div className="pt-3 border-t border-[#E2E2E2] space-y-2 text-xs font-normal">
                 <div className="flex justify-between text-[#737373]">
-                  <span>Subtotal:</span>
+                  <span>{tCheckout("subtotal")}</span>
                   <span className="font-mono text-[#0B0B0B]">
                     {subtotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
                   </span>
                 </div>
 
                 {appliedPromo && (
-                  <div className="flex justify-between text-[#16803C] font-bold">
+                  <div className="flex justify-between text-[#16803C] font-semibold">
                     <span>Discount ({appliedPromo.code}):</span>
                     <span>
                       -
@@ -960,13 +967,13 @@ export default function CheckoutPage() {
                 )}
 
                 <div className="flex justify-between text-[#737373]">
-                  <span>Fulfillment:</span>
+                  <span>{tCheckout("shippingFee")}</span>
                   <span className="font-mono text-[#0B0B0B]">
                     {fulfillment === "SHOWROOM_PICKUP"
-                      ? "Paris Showroom (FREE)"
+                      ? tCheckout("pickupFreeHandover")
                       : fulfillment === "DOMESTIC_DELIVERY"
                       ? "€150.00"
-                      : "To be quoted"}
+                      : tCheckout("overseasToBeQuoted")}
                   </span>
                 </div>
 
@@ -978,13 +985,13 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                <div className="flex justify-between pt-3 border-t border-[#E2E2E2] text-sm font-black">
+                <div className="flex justify-between pt-3 border-t border-[#E2E2E2] text-sm font-semibold">
                   <span className="font-heading uppercase text-base text-[#0B0B0B]">
                     {fulfillment === "SHOWROOM_PICKUP"
-                      ? "Total Payable on Collection:"
+                      ? tCheckout("totalDuePickup")
                       : fulfillment === "INTERNATIONAL_QUOTE"
-                      ? "Subtotal (Excl. Freight):"
-                      : "Total (TTC):"}
+                      ? tCheckout("totalDueQuote")
+                      : tCheckout("totalDue")}
                   </span>
                   <span className="font-heading text-xl text-[#E10600]">
                     {grandTotal.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
@@ -997,31 +1004,24 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full py-3.5 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs sm:text-sm uppercase tracking-wider transition-colors shadow-lg shadow-red-700/25 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] disabled:opacity-50"
+                  className="w-full py-3.5 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs sm:text-sm uppercase tracking-wider transition-colors shadow-lg shadow-red-700/25 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] disabled:opacity-50"
                 >
                   {isPending ? (
-                    <span>Registering in Workshop System...</span>
+                    <span>...</span>
                   ) : fulfillment === "SHOWROOM_PICKUP" ? (
                     <>
                       <Building className="w-4 h-4" />
-                      <span>Confirm Showroom Reservation (Pay on Visit)</span>
+                      <span>{tCheckout("submitPickup")}</span>
                     </>
                   ) : fulfillment === "INTERNATIONAL_QUOTE" ? (
                     <>
                       <Globe className="w-4 h-4" />
-                      <span>Submit Shipping Quote Request</span>
+                      <span>{tCheckout("submitQuote")}</span>
                     </>
                   ) : (
                     <>
                       <Lock className="w-4 h-4" />
-                      <span>
-                        Confirm & Pay Delivery Order (
-                        {grandTotal.toLocaleString("fr-FR", {
-                          style: "currency",
-                          currency: "EUR",
-                        })}
-                        )
-                      </span>
+                      <span>{tCheckout("submitDeliveryCard")}</span>
                     </>
                   )}
                 </button>

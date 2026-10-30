@@ -43,17 +43,13 @@ export default async function HomePage({ params }: PageProps) {
   const dbProducts = await db.product.findMany({
     where: { status: "PUBLISHED" },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       images: {
         orderBy: { sortOrder: "asc" },
       },
       category: {
         include: {
-          translations: {
-            where: { locale },
-          },
+          translations: true,
         },
       },
       inventory: true,
@@ -66,9 +62,7 @@ export default async function HomePage({ params }: PageProps) {
   const dbCategories = await db.category.findMany({
     where: { isActive: true },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       _count: {
         select: { products: true },
       },
@@ -78,8 +72,11 @@ export default async function HomePage({ params }: PageProps) {
 
   // Serialize all products for the interactive catalog
   const serializedProducts: SerializedProduct[] = dbProducts.map((p) => {
-    const trans = p.translations[0];
-    const catTrans = p.category.translations[0]?.name || p.category.slug;
+    const trans = p.translations.find((t) => t.locale === locale) || p.translations[0];
+    const catTrans =
+      p.category.translations.find((t) => t.locale === locale)?.name ||
+      p.category.translations[0]?.name ||
+      p.category.slug;
     const primaryImg = p.images.find((img) => img.isPrimary) || p.images[0];
     const rawSpecs = trans?.specifications as Record<string, unknown> | null;
 
@@ -105,7 +102,7 @@ export default async function HomePage({ params }: PageProps) {
 
   // Hero machines configuration
   const heroVehicles: HeroVehicle[] = dbProducts.slice(0, 3).map((p) => {
-    const trans = p.translations[0];
+    const trans = p.translations.find((t) => t.locale === locale) || p.translations[0];
     const primaryImg = p.images.find((img) => img.isPrimary) || p.images[0];
     const specs = (trans?.specifications || {}) as Record<string, string>;
 
@@ -131,7 +128,10 @@ export default async function HomePage({ params }: PageProps) {
 
   const serializedCategories = dbCategories.map((c) => ({
     slug: c.slug,
-    name: c.translations[0]?.name || c.slug,
+    name:
+      c.translations.find((t) => t.locale === locale)?.name ||
+      c.translations[0]?.name ||
+      c.slug,
   }));
 
   return (
@@ -146,21 +146,21 @@ export default async function HomePage({ params }: PageProps) {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-                <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+                <span className="text-[10px] font-heading font-medium uppercase tracking-widest text-[#E10600]">
                   {tCat("badge")}
                 </span>
               </div>
-              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-black uppercase text-[#0B0B0B] tracking-tight">
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-semibold uppercase text-[#0B0B0B] tracking-tight">
                 {tCat("title")}
               </h2>
-              <p className="text-[#737373] mt-0.5 text-xs max-w-xl">
+              <p className="text-[#737373] mt-0.5 text-xs max-w-xl font-normal">
                 {tCat("subtitle")}
               </p>
             </div>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-1.5 text-xs font-heading font-black text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-heading font-medium text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
             >
               <span>{common("shopNow")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -169,7 +169,7 @@ export default async function HomePage({ params }: PageProps) {
 
           <MotionStagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {dbCategories.map((cat) => {
-              const trans = cat.translations[0];
+              const trans = cat.translations.find((t) => t.locale === locale) || cat.translations[0];
               const name = trans?.name || cat.slug;
               const desc = trans?.description || "";
 
@@ -181,14 +181,14 @@ export default async function HomePage({ params }: PageProps) {
                   >
                     <div>
                       <div className="w-8 h-1 bg-[#E10600] mb-3 group-hover:w-full transition-all duration-300" />
-                      <h3 className="font-heading text-base font-black uppercase text-[#0B0B0B] group-hover:text-[#E10600] transition-colors">
+                      <h3 className="font-heading text-base font-semibold uppercase text-[#0B0B0B] group-hover:text-[#E10600] transition-colors">
                         {name}
                       </h3>
-                      <p className="text-xs text-[#737373] mt-1.5 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[#737373] mt-1.5 line-clamp-2 leading-relaxed font-normal">
                         {desc}
                       </p>
                     </div>
-                    <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-heading font-bold text-[#0B0B0B] group-hover:text-[#E10600]">
+                    <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-heading font-medium text-[#0B0B0B] group-hover:text-[#E10600]">
                       <span>{tCatSection("modelsCount", { count: cat._count.products })}</span>
                       <ChevronRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform text-[#E10600]" />
                     </div>
@@ -207,21 +207,21 @@ export default async function HomePage({ params }: PageProps) {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-                <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+                <span className="text-[10px] font-heading font-medium uppercase tracking-widest text-[#E10600]">
                   {tCatSection("badge")}
                 </span>
               </div>
-              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-black uppercase text-[#0B0B0B] tracking-tight leading-tight">
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-semibold uppercase text-[#0B0B0B] tracking-tight leading-tight">
                 {tCatSection("title")}
               </h2>
-              <p className="text-[#737373] mt-0.5 text-xs max-w-xl">
+              <p className="text-[#737373] mt-0.5 text-xs max-w-xl font-normal">
                 {tCatSection("subtitle")}
               </p>
             </div>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-1.5 text-xs font-heading font-black text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs font-heading font-medium text-[#E10600] hover:text-[#0B0B0B] uppercase tracking-wider transition-colors shrink-0"
             >
               <span>{common("shopNow")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -251,10 +251,10 @@ export default async function HomePage({ params }: PageProps) {
                 <Award className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
+                <h4 className="font-heading text-sm font-semibold uppercase text-[#0B0B0B]">
                   {tTrust("showroomTitle")}
                 </h4>
-                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed font-normal">
                   {tTrust("showroomDesc")}
                 </p>
               </div>
@@ -265,10 +265,10 @@ export default async function HomePage({ params }: PageProps) {
                 <Truck className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
+                <h4 className="font-heading text-sm font-semibold uppercase text-[#0B0B0B]">
                   {tTrust("deliveryTitle")}
                 </h4>
-                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed font-normal">
                   {tTrust("deliveryDesc")}
                 </p>
               </div>
@@ -279,10 +279,10 @@ export default async function HomePage({ params }: PageProps) {
                 <ShieldCheck className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
+                <h4 className="font-heading text-sm font-semibold uppercase text-[#0B0B0B]">
                   {tTrust("quoteTitle")}
                 </h4>
-                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed font-normal">
                   {tTrust("quoteDesc")}
                 </p>
               </div>
@@ -293,10 +293,10 @@ export default async function HomePage({ params }: PageProps) {
                 <Wrench className="w-4 h-4 text-[#E10600]" />
               </div>
               <div>
-                <h4 className="font-heading text-sm font-black uppercase text-[#0B0B0B]">
+                <h4 className="font-heading text-sm font-semibold uppercase text-[#0B0B0B]">
                   {tTrust("supportTitle")}
                 </h4>
-                <p className="text-xs text-[#737373] mt-1 leading-relaxed">
+                <p className="text-xs text-[#737373] mt-1 leading-relaxed font-normal">
                   {tTrust("supportDesc")}
                 </p>
               </div>

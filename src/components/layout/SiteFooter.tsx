@@ -15,14 +15,14 @@ export function SiteFooter() {
           {/* Brand & Showroom Information */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded bg-[#E10600] flex items-center justify-center text-white font-heading font-black text-sm shadow-md">
+              <div className="w-8 h-8 rounded bg-[#E10600] flex items-center justify-center text-white font-heading font-medium text-sm shadow-md">
                 PM
               </div>
-              <span className="font-heading text-lg font-black tracking-tight text-white uppercase">
+              <span className="font-heading text-lg font-medium tracking-tight text-white uppercase">
                 PRESTY <span className="text-[#E10600]">MOTORS</span>
               </span>
             </div>
-            <p className="text-xs text-neutral-400 leading-relaxed max-w-sm">
+            <p className="text-xs text-neutral-400 leading-relaxed max-w-sm font-normal">
               {t("description")}
             </p>
             <div className="space-y-2.5 text-xs text-neutral-300">
@@ -43,10 +43,10 @@ export function SiteFooter() {
 
           {/* Quick Navigation Links */}
           <div>
-            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
               {t("quickLinks")}
             </h4>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 text-xs font-normal">
               <li>
                 <Link href="/" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
                   <span className="text-[#E10600] text-[10px]">›</span>
@@ -82,10 +82,10 @@ export function SiteFooter() {
 
           {/* Categories */}
           <div>
-            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
               {t("categories")}
             </h4>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 text-xs font-normal">
               <li>
                 <Link href="/shop?category=kids-motorcycles" className="hover:text-[#E10600] transition-colors flex items-center gap-1.5">
                   <span className="text-[#E10600] text-[10px]">›</span>
@@ -115,21 +115,21 @@ export function SiteFooter() {
 
           {/* Motorsport Assurance & Support */}
           <div>
-            <h4 className="font-heading text-xs font-black uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-white mb-4 border-b border-[#171717] pb-2">
               Motorsport Assurance
             </h4>
-            <div className="space-y-3 text-xs text-neutral-400">
+            <div className="space-y-3 text-xs text-neutral-400 font-normal">
               <div className="flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-[#E10600] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-white block font-heading uppercase text-xs">Official Warranty</strong>
+                  <strong className="text-white block font-heading uppercase text-xs font-medium">Official Warranty</strong>
                   <span className="text-[11px]">Manufacturer backing on all new vehicles and parts.</span>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Zap className="w-4 h-4 text-[#E10600] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-white block font-heading uppercase text-xs">PDI Preparation</strong>
+                  <strong className="text-white block font-heading uppercase text-xs font-medium">PDI Preparation</strong>
                   <span className="text-[11px]">Every machine undergoes rigorous dynamometer and workshop setup.</span>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export function SiteFooter() {
         <div className="pt-6 border-t border-[#171717] text-[11px] text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} {common("brandName")}. {t("rights")}</p>
           <div className="flex items-center gap-4 text-neutral-400">
-            <span className="text-[#E10600] font-heading font-black tracking-wider uppercase">F1 & Motocross Inspired</span>
+            <span className="text-[#E10600] font-heading font-medium tracking-wider uppercase">F1 & Motocross Inspired</span>
             <span>•</span>
             <span>Paris Showroom</span>
             <span>•</span>

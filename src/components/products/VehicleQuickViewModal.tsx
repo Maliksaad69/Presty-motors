@@ -2,7 +2,7 @@
 
 import { useCart } from "@/lib/cart-context";
 import { Link } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShoppingCart, Check, ArrowRight } from "lucide-react";
@@ -21,6 +21,7 @@ export function VehicleQuickViewModal({
   const { addItem } = useCart();
   const tCommon = useTranslations("common");
   const tCat = useTranslations("catalogSection");
+  const locale = useLocale();
 
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -59,7 +60,7 @@ export function VehicleQuickViewModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-xs"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm"
         />
 
         {/* Modal Dialog */}
@@ -69,27 +70,28 @@ export function VehicleQuickViewModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-2xl bg-white text-[#0B0B0B] rounded border border-[#E2E2E2] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-2xl bg-white text-[#0B0B0B] rounded border border-[#E2E2E2] shadow-2xl overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[85vh]"
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-[#171717] bg-[#0B0B0B] text-white">
+            <div className="flex items-center justify-between p-4 border-b border-[#171717] bg-[#0B0B0B] text-white shrink-0 sticky top-0 z-10 shadow-xs">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-                <span className="text-[11px] font-heading font-black uppercase tracking-wider text-neutral-300">
+                <span className="text-[11px] font-heading font-medium uppercase tracking-wider text-neutral-300">
                   {tCommon("specs")} • SKU: {product.sku}
                 </span>
               </div>
               <button
+                type="button"
                 onClick={onClose}
-                className="p-1 rounded text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors cursor-pointer"
-                aria-label="Fermer"
+                className="p-1.5 rounded text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors cursor-pointer"
+                aria-label="Fermer la vue rapide"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 sm:p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 space-y-6 overflow-y-auto popup-scroll-light flex-1">
               {/* Product Header & Media */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-center">
                 <div className="sm:col-span-5 relative aspect-4/3 bg-[#0B0B0B] rounded overflow-hidden border border-[#E2E2E2]">
@@ -111,43 +113,43 @@ export function VehicleQuickViewModal({
                   <div className="flex items-center gap-2 text-[10px] font-mono text-[#737373] uppercase tracking-wider">
                     <span>{product.categoryName}</span>
                     <span>•</span>
-                    <span className="text-[#0B0B0B] font-bold">{product.engineCapacity || product.vehicleType}</span>
+                    <span className="text-[#0B0B0B] font-medium">{product.engineCapacity || product.vehicleType}</span>
                   </div>
 
-                  <h3 className="font-heading text-lg sm:text-xl font-black text-[#0B0B0B] uppercase leading-tight">
+                  <h3 className="font-heading text-lg sm:text-xl font-semibold text-[#0B0B0B] uppercase leading-tight">
                     {product.title}
                   </h3>
 
-                  <p className="text-xs text-[#737373] leading-relaxed line-clamp-3">
+                  <p className="text-xs text-[#737373] leading-relaxed line-clamp-3 font-normal">
                     {product.shortDescription}
                   </p>
 
                   <div className="pt-2 flex items-baseline gap-2">
                     {product.salePrice ? (
                       <>
-                        <span className="font-heading text-xl font-black text-[#E10600]">
-                          {product.salePrice.toLocaleString("fr-FR", {
+                        <span className="font-heading text-xl font-semibold text-[#E10600]">
+                          {product.salePrice.toLocaleString(locale, {
                             style: "currency",
                             currency: product.currency,
                           })}
                         </span>
-                        <span className="text-xs text-[#737373] line-through">
-                          {product.price.toLocaleString("fr-FR", {
+                        <span className="text-xs text-[#737373] line-through font-normal">
+                          {product.price.toLocaleString(locale, {
                             style: "currency",
                             currency: product.currency,
                           })}
                         </span>
                       </>
                     ) : (
-                      <span className="font-heading text-xl font-black text-[#0B0B0B]">
-                        {product.price.toLocaleString("fr-FR", {
+                      <span className="font-heading text-xl font-semibold text-[#0B0B0B]">
+                        {product.price.toLocaleString(locale, {
                           style: "currency",
                           currency: product.currency,
                         })}
                       </span>
                     )}
 
-                    <span className={`text-[11px] font-semibold ms-auto ${inStock ? "text-[#16803C]" : "text-[#737373]"}`}>
+                    <span className={`text-[11px] font-medium ms-auto ${inStock ? "text-[#16803C]" : "text-[#737373]"}`}>
                       {inStock ? `● ${tCat("inStockUnits", { count: product.stock })}` : tCommon("outOfStock")}
                     </span>
                   </div>
@@ -156,7 +158,7 @@ export function VehicleQuickViewModal({
 
               {/* Technical Specifications Table */}
               <div className="space-y-2 pt-2 border-t border-[#E2E2E2]">
-                <h4 className="font-heading text-xs font-black uppercase tracking-wider text-[#0B0B0B]">
+                <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-[#0B0B0B]">
                   Technical Spec Sheet
                 </h4>
 
@@ -167,8 +169,8 @@ export function VehicleQuickViewModal({
                         key={key}
                         className="flex items-center justify-between p-2 rounded bg-[#F5F5F5] border border-[#E2E2E2]"
                       >
-                        <span className="text-[#737373] font-medium">{key}</span>
-                        <span className="font-heading font-bold text-[#0B0B0B] uppercase text-end">
+                        <span className="text-[#737373] font-normal">{key}</span>
+                        <span className="font-heading font-medium text-[#0B0B0B] uppercase text-end">
                           {String(val)}
                         </span>
                       </div>
@@ -183,11 +185,11 @@ export function VehicleQuickViewModal({
             </div>
 
             {/* Modal Footer Controls */}
-            <div className="p-4 border-t border-[#E2E2E2] bg-[#F5F5F5] flex flex-wrap items-center justify-between gap-3">
+            <div className="p-4 border-t border-[#E2E2E2] bg-[#F5F5F5] flex flex-wrap items-center justify-between gap-3 shrink-0 sticky bottom-0 z-10 shadow-xs">
               <Link
                 href={`/products/${product.slug}`}
                 onClick={onClose}
-                className="text-xs font-heading font-black text-[#0B0B0B] hover:text-[#E10600] uppercase tracking-wider flex items-center gap-1 transition-colors"
+                className="text-xs font-heading font-medium text-[#0B0B0B] hover:text-[#E10600] uppercase tracking-wider flex items-center gap-1 transition-colors"
               >
                 <span>{tCommon("viewFullSpecs")}</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#E10600]" />
@@ -200,13 +202,16 @@ export function VehicleQuickViewModal({
                   max={product.stock || 1}
                   value={qty}
                   onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-14 h-9 px-2 text-center text-xs font-bold border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600]"
+                  aria-label="Quantité"
+                  className="w-14 h-9 px-2 text-center text-xs font-medium border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600]"
                 />
 
                 <button
+                  type="button"
                   onClick={handleAdd}
                   disabled={!inStock}
-                  className={`h-9 px-5 rounded font-heading font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 cursor-pointer shadow-md ${
+                  aria-label={`Ajouter ${qty} ${product.title} au panier`}
+                  className={`h-9 px-5 rounded font-heading font-medium text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 cursor-pointer shadow-md ${
                     added
                       ? "bg-[#0B0B0B] text-white"
                       : inStock

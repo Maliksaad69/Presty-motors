@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = await db.product.findUnique({
     where: { slug },
     include: {
-      translations: { where: { locale } },
+      translations: true,
       images: { where: { isPrimary: true } },
     },
   });
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     };
   }
 
-  const trans = product.translations[0];
+  const trans = product.translations.find((t) => t.locale === locale) || product.translations[0];
   const title = trans?.title || product.slug;
   const description =
     trans?.shortDescription ||
@@ -82,17 +82,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const dbProduct = await db.product.findUnique({
     where: { slug },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       images: {
         orderBy: { sortOrder: "asc" },
       },
       category: {
         include: {
-          translations: {
-            where: { locale },
-          },
+          translations: true,
         },
       },
       inventory: true,
@@ -111,17 +107,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       status: "PUBLISHED",
     },
     include: {
-      translations: {
-        where: { locale },
-      },
+      translations: true,
       images: {
         orderBy: { sortOrder: "asc" },
       },
       category: {
         include: {
-          translations: {
-            where: { locale },
-          },
+          translations: true,
         },
       },
       inventory: true,
@@ -129,8 +121,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     take: 4,
   });
 
-  const trans = dbProduct.translations[0];
-  const catTrans = dbProduct.category.translations[0]?.name || dbProduct.category.slug;
+  const trans = dbProduct.translations.find((t) => t.locale === locale) || dbProduct.translations[0];
+  const catTrans =
+    dbProduct.category.translations.find((t) => t.locale === locale)?.name ||
+    dbProduct.category.translations[0]?.name ||
+    dbProduct.category.slug;
   const primaryImg = dbProduct.images.find((img) => img.isPrimary) || dbProduct.images[0];
   const rawSpecs = trans?.specifications as Record<string, unknown> | null;
   const inStock = (dbProduct.inventory?.quantity ?? 0) > 0;
@@ -159,8 +154,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
       altText: img.altText,
     })),
     relatedProducts: relatedDb.map((p) => {
-      const pTrans = p.translations[0];
-      const pCatTrans = p.category.translations[0]?.name || p.category.slug;
+      const pTrans = p.translations.find((t) => t.locale === locale) || p.translations[0];
+      const pCatTrans =
+        p.category.translations.find((t) => t.locale === locale)?.name ||
+        p.category.translations[0]?.name ||
+        p.category.slug;
       const pImg = p.images.find((img) => img.isPrimary) || p.images[0];
       return {
         id: p.id,

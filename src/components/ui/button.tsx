@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-xs font-heading font-black uppercase tracking-wider transition-all duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#E10600] disabled:pointer-events-none disabled:opacity-40 cursor-pointer select-none [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-xs font-heading font-medium uppercase tracking-wider transition-all duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-[#E10600] disabled:pointer-events-none disabled:opacity-40 cursor-pointer select-none [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 active:scale-[0.98]",
   {
     variants: {
       variant: {
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         ghostLight:
           "text-neutral-700 hover:text-[#0B0B0B] hover:bg-[#F5F5F5]",
         link:
-          "text-[#E10600] underline-offset-4 hover:underline p-0 h-auto font-bold normal-case",
+          "text-[#E10600] underline-offset-4 hover:underline p-0 h-auto font-medium normal-case",
         black:
           "bg-[#0B0B0B] text-white hover:bg-[#171717] border border-[#262626]",
         outlineWhite:

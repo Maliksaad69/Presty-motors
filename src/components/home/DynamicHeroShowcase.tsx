@@ -62,63 +62,64 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
           
           {/* Left Column: Headline, Telemetry HUD & CTAs */}
           <div className="lg:col-span-6 space-y-5 sm:space-y-6">
+            {/* Top Indicator */}
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-[#E10600] animate-pulse" />
-              <span className="text-[10px] sm:text-[11px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+              <span className="text-[10px] sm:text-[11px] font-heading font-medium uppercase tracking-widest text-[#E10600]">
                 {t("badge")}
               </span>
             </div>
 
-            {/* Bold Motorsport Title */}
-            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
+            {/* Clean Professional Motorsport Title */}
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold uppercase tracking-tight text-white leading-[1.12]">
               {t("title")}
             </h1>
 
-            <p className="text-xs sm:text-sm text-neutral-300 max-w-lg leading-relaxed">
+            <p className="text-xs sm:text-sm text-neutral-300 max-w-lg leading-relaxed font-normal">
               {t("subtitle")}
             </p>
 
             {/* Interactive Telemetry HUD (Live Specs of Selected Machine) */}
-            <div className="p-3.5 sm:p-4 rounded border border-[#262626] bg-[#171717]/90 backdrop-blur-xs space-y-3 shadow-xl">
+            <div className="p-3.5 sm:p-4 rounded border border-[#262626] bg-[#171717]/90 backdrop-blur-sm space-y-3 shadow-xl">
               <div className="flex items-center justify-between border-b border-[#262626] pb-2">
-                <span className="text-[10px] font-heading font-black uppercase tracking-wider text-neutral-400">
+                <span className="text-[10px] font-heading font-medium uppercase tracking-wider text-neutral-400">
                   {telem("title")}
                 </span>
-                <span className="text-[10px] font-mono font-bold text-[#E10600]">
+                <span className="text-[10px] font-mono font-medium text-[#E10600]">
                   {telem("ref")}: {current?.sku}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-start">
                 <div>
-                  <span className="text-[10px] uppercase text-neutral-400 font-semibold block">
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">
                     {telem("displacement")}
                   </span>
-                  <span className="font-heading text-sm sm:text-base font-bold text-white tracking-wide">
+                  <span className="font-heading text-sm sm:text-base font-semibold text-white tracking-wide">
                     {current?.engine}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-neutral-400 font-semibold block">
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">
                     {telem("transmission")}
                   </span>
-                  <span className="font-heading text-sm sm:text-base font-bold text-white tracking-wide truncate block">
+                  <span className="font-heading text-sm sm:text-base font-semibold text-white tracking-wide truncate block">
                     {current?.powerOrTransmission}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-neutral-400 font-semibold block">
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">
                     {telem("weight")}
                   </span>
-                  <span className="font-heading text-sm sm:text-base font-bold text-white tracking-wide">
+                  <span className="font-heading text-sm sm:text-base font-semibold text-white tracking-wide">
                     {current?.weight}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] uppercase text-neutral-400 font-semibold block">
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">
                     {telem("seatHeight")}
                   </span>
-                  <span className="font-heading text-sm sm:text-base font-bold text-white tracking-wide">
+                  <span className="font-heading text-sm sm:text-base font-semibold text-white tracking-wide">
                     {current?.seatHeight}
                   </span>
                 </div>
@@ -128,8 +129,10 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
             {/* CTAs & Quick Add */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
+                type="button"
                 onClick={handleAddToCart}
-                className={`px-6 py-3 rounded font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg active:scale-[0.98] ${
+                aria-label={added ? "Modèle ajouté au panier" : `Commander le modèle ${current?.title}`}
+                className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded font-heading font-semibold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-lg active:scale-[0.98] ${
                   added
                     ? "bg-white text-[#0B0B0B]"
                     : "bg-[#E10600] hover:bg-[#B80500] text-white shadow-red-700/25"
@@ -150,7 +153,7 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
 
               <Link
                 href="/shop"
-                className="px-5 py-3 rounded bg-transparent hover:bg-[#171717] text-white font-heading font-bold text-xs sm:text-sm uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors flex items-center justify-center gap-1.5"
+                className="px-5 py-2.5 sm:py-3 rounded bg-transparent hover:bg-[#171717] text-white font-heading font-medium text-xs sm:text-sm uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors flex items-center justify-center gap-1.5"
               >
                 <span>{t("ctaShop")}</span>
                 <ArrowRight className="w-4 h-4 text-[#E10600]" />
@@ -182,19 +185,19 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
                     <div className="absolute inset-0 bg-linear-to-t from-[#0B0B0B] via-[#0B0B0B]/30 to-transparent" />
 
                     {/* Overlaid specs banner */}
-                    <div className="absolute bottom-0 inset-x-0 p-3.5 border-t border-[#262626] bg-[#0B0B0B]/90 backdrop-blur-md flex items-center justify-between">
+                    <div className="absolute bottom-0 inset-x-0 p-3 sm:p-3.5 border-t border-[#262626] bg-[#0B0B0B]/90 backdrop-blur-md flex items-center justify-between">
                       <div className="min-w-0 pr-3">
-                        <p className="text-[10px] font-heading font-black text-[#E10600] uppercase tracking-wider">
+                        <p className="text-[10px] font-heading font-medium text-[#E10600] uppercase tracking-wider">
                           {current.subtitle}
                         </p>
-                        <h3 className="font-heading text-sm sm:text-base font-black text-white uppercase truncate">
+                        <h3 className="font-heading text-xs sm:text-sm md:text-base font-semibold text-white uppercase truncate">
                           {current.title}
                         </h3>
                       </div>
                       <div className="text-end shrink-0">
                         {current.salePrice ? (
                           <div className="flex items-baseline gap-1.5">
-                            <span className="font-heading text-base sm:text-lg font-black text-[#E10600]">
+                            <span className="font-heading text-sm sm:text-base md:text-lg font-semibold text-[#E10600]">
                               {current.salePrice.toLocaleString("fr-FR", {
                                 style: "currency",
                                 currency: current.currency,
@@ -208,7 +211,7 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
                             </span>
                           </div>
                         ) : (
-                          <span className="font-heading text-base sm:text-lg font-black text-white">
+                          <span className="font-heading text-sm sm:text-base md:text-lg font-semibold text-white">
                             {current.price.toLocaleString("fr-FR", {
                               style: "currency",
                               currency: current.currency,
@@ -223,28 +226,31 @@ export function DynamicHeroShowcase({ vehicles }: DynamicHeroShowcaseProps) {
             </div>
 
             {/* Interactive Model Switcher Tabs */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               {vehicles.map((v, idx) => {
                 const isActive = selectedIndex === idx;
                 return (
                   <button
                     key={v.id}
+                    type="button"
                     onClick={() => setSelectedIndex(idx)}
-                    className={`p-2.5 rounded text-left transition-all duration-150 border cursor-pointer ${
+                    aria-label={`Sélectionner le modèle ${v.title} (${v.engine})`}
+                    aria-pressed={isActive}
+                    className={`p-2 sm:p-2.5 rounded text-left transition-all duration-150 border cursor-pointer ${
                       isActive
                         ? "bg-[#171717] border-[#E10600] text-white shadow-xs"
                         : "bg-[#0B0B0B] border-[#262626] text-neutral-400 hover:text-white hover:border-neutral-600"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[9px] uppercase font-heading font-black text-[#E10600]">
+                      <span className="text-[9px] uppercase font-heading font-medium text-[#E10600]">
                         {v.engine}
                       </span>
                       {isActive && (
                         <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
                       )}
                     </div>
-                    <p className="font-heading text-xs font-bold uppercase truncate text-white">
+                    <p className="font-heading text-[11px] sm:text-xs font-medium uppercase truncate text-white">
                       {v.title}
                     </p>
                   </button>

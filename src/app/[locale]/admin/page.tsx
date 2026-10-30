@@ -19,17 +19,17 @@ export default async function AdminOverviewPage() {
   const overview = await getAdminOverview();
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto font-sans font-normal">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#222222] pb-5">
         <div>
-          <span className="text-[10px] font-heading font-black uppercase tracking-widest text-[#E10600]">
+          <span className="text-[11px] font-mono text-[#E10600]">
             Operational Command
           </span>
-          <h1 className="font-heading text-2xl sm:text-3xl font-black uppercase tracking-wide text-white">
+          <h1 className="text-xl sm:text-2xl font-medium text-white tracking-tight">
             Showroom Operations Overview
           </h1>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 mt-1">
             Real-time telemetry, incoming orders, low inventory alerts, and quotation dossiers.
           </p>
         </div>
@@ -37,14 +37,14 @@ export default async function AdminOverviewPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/admin/products"
-            className="px-3.5 py-2 rounded bg-[#E10600] hover:bg-[#B80500] text-white text-xs font-heading font-black uppercase tracking-wider transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-md bg-[#E10600] hover:bg-[#B80500] text-white text-xs font-medium transition-colors flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Vehicle</span>
           </Link>
           <Link
             href="/admin/inventory"
-            className="px-3.5 py-2 rounded bg-[#1C1C1C] hover:bg-[#252525] text-neutral-300 hover:text-white text-xs font-heading font-black uppercase tracking-wider transition-colors border border-[#2E2E2E] flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-md bg-[#1C1C1C] hover:bg-[#252525] text-neutral-300 hover:text-white text-xs font-medium transition-colors border border-[#2E2E2E] flex items-center gap-1.5"
           >
             <Boxes className="w-3.5 h-3.5" />
             <span>Stock Audit</span>
@@ -54,12 +54,12 @@ export default async function AdminOverviewPage() {
 
       {/* Low Stock Warning Banner */}
       {overview.lowStockCount > 0 && (
-        <div className="p-4 rounded border border-amber-500/40 bg-amber-500/10 text-amber-300 flex items-start gap-3">
+        <div className="p-4 rounded-md border border-amber-500/40 bg-amber-500/10 text-amber-300 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
           <div className="flex-1 text-xs">
-            <strong className="font-heading font-black uppercase tracking-wider text-amber-200 block mb-1">
+            <span className="font-medium text-amber-200 block mb-1">
               {overview.lowStockCount} Vehicle(s) At or Below Low-Stock Threshold
-            </strong>
+            </span>
             <p className="text-neutral-300">
               The following models have reached critical showroom quantities:{" "}
               {overview.lowStockProducts.map((p) => `${p.title} (${p.currentStock} left)`).join(", ")}.
@@ -67,7 +67,7 @@ export default async function AdminOverviewPage() {
           </div>
           <Link
             href="/admin/inventory"
-            className="px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-black font-heading font-black text-[11px] uppercase tracking-wider transition-colors shrink-0"
+            className="px-3 py-1.5 rounded-md bg-amber-500 hover:bg-amber-600 text-black font-medium text-xs transition-colors shrink-0"
           >
             Adjust Stock
           </Link>
@@ -77,14 +77,14 @@ export default async function AdminOverviewPage() {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1 */}
-        <div className="p-5 rounded border border-[#222222] bg-[#141414] space-y-2">
+        <div className="p-5 rounded-md border border-[#222222] bg-[#141414] space-y-2">
           <div className="flex items-center justify-between text-neutral-400">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider">
+            <span className="text-xs text-neutral-400">
               Total Recorded Revenue
             </span>
             <TrendingUp className="w-4 h-4 text-[#16803C]" />
           </div>
-          <div className="font-heading text-2xl font-black text-white">
+          <div className="text-2xl font-medium text-white">
             {overview.totalRevenue.toLocaleString("fr-FR", {
               style: "currency",
               currency: "EUR",
@@ -94,14 +94,14 @@ export default async function AdminOverviewPage() {
         </div>
 
         {/* Metric 2 */}
-        <div className="p-5 rounded border border-[#222222] bg-[#141414] space-y-2">
+        <div className="p-5 rounded-md border border-[#222222] bg-[#141414] space-y-2">
           <div className="flex items-center justify-between text-neutral-400">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider">
+            <span className="text-xs text-neutral-400">
               Active Machines in Catalog
             </span>
             <Package className="w-4 h-4 text-[#E10600]" />
           </div>
-          <div className="font-heading text-2xl font-black text-white">
+          <div className="text-2xl font-medium text-white">
             {overview.totalProductsCount}
           </div>
           <p className="text-[10px] text-neutral-500 font-mono">
@@ -110,28 +110,28 @@ export default async function AdminOverviewPage() {
         </div>
 
         {/* Metric 3 */}
-        <div className="p-5 rounded border border-[#222222] bg-[#141414] space-y-2">
+        <div className="p-5 rounded-md border border-[#222222] bg-[#141414] space-y-2">
           <div className="flex items-center justify-between text-neutral-400">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider">
+            <span className="text-xs text-neutral-400">
               Pending Work Orders
             </span>
             <ShoppingBag className="w-4 h-4 text-blue-400" />
           </div>
-          <div className="font-heading text-2xl font-black text-white">
+          <div className="text-2xl font-medium text-white">
             {overview.pendingOrdersCount}
           </div>
           <p className="text-[10px] text-neutral-500 font-mono">Workshop prep & dispatch</p>
         </div>
 
         {/* Metric 4 */}
-        <div className="p-5 rounded border border-[#222222] bg-[#141414] space-y-2">
+        <div className="p-5 rounded-md border border-[#222222] bg-[#141414] space-y-2">
           <div className="flex items-center justify-between text-neutral-400">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider">
+            <span className="text-xs text-neutral-400">
               International Quotes
             </span>
             <Globe className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="font-heading text-2xl font-black text-white">
+          <div className="text-2xl font-medium text-white">
             {overview.pendingQuotesCount}
           </div>
           <p className="text-[10px] text-neutral-500 font-mono">Awaiting freight rates</p>
@@ -143,34 +143,34 @@ export default async function AdminOverviewPage() {
         {/* Left Column: Recent Orders (7 cols) */}
         <div className="lg:col-span-7 space-y-3">
           <div className="flex items-center justify-between border-b border-[#222222] pb-3">
-            <h2 className="font-heading text-sm font-black uppercase text-white flex items-center gap-2">
+            <h2 className="text-sm font-medium text-white flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-[#E10600]" />
               <span>Recent Showroom Orders</span>
             </h2>
             <Link
               href="/admin/orders"
-              className="text-[11px] font-heading font-bold text-[#E10600] hover:underline flex items-center gap-1 uppercase"
+              className="text-xs font-medium text-[#E10600] hover:underline flex items-center gap-1"
             >
               <span>View All</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <div className="divide-y divide-[#222222] border border-[#222222] rounded bg-[#141414] overflow-hidden">
+          <div className="divide-y divide-[#222222] border border-[#222222] rounded-md bg-[#141414] overflow-hidden">
             {overview.recentOrders.length === 0 ? (
               <div className="p-6 text-center text-xs text-neutral-500">
                 No orders recorded in the workshop yet.
               </div>
             ) : (
               overview.recentOrders.map((order) => (
-                <div key={order.id} className="p-3.5 flex items-center justify-between text-xs">
+                <div key={order.id} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] font-bold text-white">
+                      <span className="font-mono text-[11px] text-white">
                         {order.orderNumber}
                       </span>
                       {order.quoteNumber && (
-                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
                           {order.quoteNumber}
                         </span>
                       )}
@@ -181,15 +181,15 @@ export default async function AdminOverviewPage() {
                     </p>
                   </div>
 
-                  <div className="text-right space-y-1">
-                    <span className="font-heading text-xs font-black text-white block">
+                  <div className="sm:text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
+                    <span className="text-xs font-medium text-white block">
                       {order.total.toLocaleString("fr-FR", {
                         style: "currency",
                         currency: "EUR",
                       })}
                     </span>
                     <span
-                      className={`inline-flex items-center px-2 py-0.2 rounded text-[9px] font-heading font-black uppercase tracking-wider ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${
                         order.status === "DELIVERED"
                           ? "bg-[#16803C]/20 text-[#16803C] border border-[#16803C]/40"
                           : order.status === "PENDING_QUOTE"
@@ -197,7 +197,7 @@ export default async function AdminOverviewPage() {
                           : "bg-[#E10600]/20 text-[#E10600] border border-[#E10600]/40"
                       }`}
                     >
-                      ● {order.status.replace(/_/g, " ")}
+                      {order.status.replace(/_/g, " ")}
                     </span>
                   </div>
                 </div>
@@ -209,20 +209,20 @@ export default async function AdminOverviewPage() {
         {/* Right Column: Recent Inventory Movements (5 cols) */}
         <div className="lg:col-span-5 space-y-3">
           <div className="flex items-center justify-between border-b border-[#222222] pb-3">
-            <h2 className="font-heading text-sm font-black uppercase text-white flex items-center gap-2">
+            <h2 className="text-sm font-medium text-white flex items-center gap-2">
               <Boxes className="w-4 h-4 text-[#16803C]" />
               <span>Live Inventory Movements</span>
             </h2>
             <Link
               href="/admin/inventory"
-              className="text-[11px] font-heading font-bold text-[#16803C] hover:underline flex items-center gap-1 uppercase"
+              className="text-xs font-medium text-[#16803C] hover:underline flex items-center gap-1"
             >
               <span>Full Audit</span>
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <div className="divide-y divide-[#222222] border border-[#222222] rounded bg-[#141414] overflow-hidden">
+          <div className="divide-y divide-[#222222] border border-[#222222] rounded-md bg-[#141414] overflow-hidden">
             {overview.recentMovements.length === 0 ? (
               <div className="p-6 text-center text-xs text-neutral-500">
                 No inventory movements logged yet.
@@ -231,11 +231,11 @@ export default async function AdminOverviewPage() {
               overview.recentMovements.map((movement) => (
                 <div key={movement.id} className="p-3 text-xs space-y-1">
                   <div className="flex items-center justify-between">
-                    <strong className="font-heading uppercase text-white text-[11px] truncate max-w-[200px]">
+                    <span className="text-white text-[11px] truncate max-w-[200px] font-medium">
                       {movement.productTitle}
-                    </strong>
+                    </span>
                     <span
-                      className={`font-mono text-xs font-black ${
+                      className={`font-mono text-xs font-medium ${
                         movement.quantityChange > 0 ? "text-[#16803C]" : "text-[#E10600]"
                       }`}
                     >

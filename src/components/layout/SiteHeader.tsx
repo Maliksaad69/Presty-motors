@@ -82,14 +82,14 @@ export function SiteHeader() {
           
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0 select-none">
-            <div className="w-8 h-8 rounded bg-[#E10600] flex items-center justify-center text-white font-heading font-black text-sm tracking-tighter shadow-md group-hover:bg-[#B80500] transition-colors">
+            <div className="w-8 h-8 rounded bg-[#E10600] flex items-center justify-center text-white font-heading font-medium text-sm tracking-tighter shadow-md group-hover:bg-[#B80500] transition-colors">
               PM
             </div>
             <div className="flex flex-col">
-              <span className="font-heading text-lg font-black tracking-tight text-white uppercase leading-none">
+              <span className="font-heading text-lg font-medium tracking-tight text-white uppercase leading-none">
                 PRESTY <span className="text-[#E10600]">MOTORS</span>
               </span>
-              <span className="text-[9px] tracking-widest uppercase font-semibold text-neutral-400 mt-0.5">
+              <span className="text-[9px] tracking-widest uppercase font-medium text-neutral-400 mt-0.5">
                 Motorsport & Showroom
               </span>
             </div>
@@ -127,11 +127,11 @@ export function SiteHeader() {
                         className="group flex flex-col justify-between p-3 rounded hover:bg-[#171717] border border-transparent hover:border-[#262626] transition-colors"
                       >
                         <div>
-                          <div className="flex items-center justify-between text-white group-hover:text-[#E10600] font-heading text-sm font-bold uppercase mb-1">
+                          <div className="flex items-center justify-between text-white group-hover:text-[#E10600] font-heading text-sm font-medium uppercase mb-1">
                             <span>{tMega("kidsBikesTitle")}</span>
                             <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#E10600]" />
                           </div>
-                          <p className="text-xs text-neutral-400 leading-relaxed">
+                          <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                             {tMega("kidsBikesDesc")}
                           </p>
                         </div>
@@ -142,11 +142,11 @@ export function SiteHeader() {
                         className="group flex flex-col justify-between p-3 rounded hover:bg-[#171717] border border-transparent hover:border-[#262626] transition-colors"
                       >
                         <div>
-                          <div className="flex items-center justify-between text-white group-hover:text-[#E10600] font-heading text-sm font-bold uppercase mb-1">
+                          <div className="flex items-center justify-between text-white group-hover:text-[#E10600] font-heading text-sm font-medium uppercase mb-1">
                             <span>{tMega("adultBikesTitle")}</span>
                             <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#E10600]" />
                           </div>
-                          <p className="text-xs text-neutral-400 leading-relaxed">
+                          <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                             {tMega("adultBikesDesc")}
                           </p>
                         </div>
@@ -155,7 +155,7 @@ export function SiteHeader() {
                       <div className="col-span-2 pt-2 border-t border-[#171717] flex items-center justify-between px-2">
                         <Link
                           href="/shop?category=motorcycles"
-                          className="text-[11px] font-heading font-black text-[#E10600] hover:underline flex items-center gap-1 uppercase tracking-wider"
+                          className="text-[11px] font-heading font-medium text-[#E10600] hover:underline flex items-center gap-1 uppercase tracking-wider"
                         >
                           <span>{tMega("viewAllBikes")}</span>
                           <ArrowRight className="w-3 h-3" />
@@ -176,10 +176,10 @@ export function SiteHeader() {
                         href="/shop?category=quad-bikes"
                         className="group block p-2.5 rounded hover:bg-[#171717] transition-colors"
                       >
-                        <div className="text-xs font-heading font-black uppercase text-white group-hover:text-[#E10600]">
+                        <div className="text-xs font-heading font-medium uppercase text-white group-hover:text-[#E10600]">
                           {tMega("sportQuadsTitle")}
                         </div>
-                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-snug font-normal">
                           {tMega("sportQuadsDesc")}
                         </p>
                       </Link>
@@ -187,10 +187,10 @@ export function SiteHeader() {
                         href="/shop?category=quad-bikes&type=youth"
                         className="group block p-2.5 rounded hover:bg-[#171717] transition-colors"
                       >
-                        <div className="text-xs font-heading font-black uppercase text-white group-hover:text-[#E10600]">
+                        <div className="text-xs font-heading font-medium uppercase text-white group-hover:text-[#E10600]">
                           {tMega("youthQuadsTitle")}
                         </div>
-                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-snug font-normal">
                           {tMega("youthQuadsDesc")}
                         </p>
                       </Link>
@@ -277,8 +277,8 @@ export function SiteHeader() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="h-8 w-8 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717]"
-                aria-label="Recherche"
+                className="h-9 w-9 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717] cursor-pointer"
+                aria-label="Recherche de motos et quads"
               >
                 {searchOpen ? <X className="w-4 h-4" /> : <Search className="w-4 h-4" />}
               </Button>
@@ -292,9 +292,9 @@ export function SiteHeader() {
               variant="ghost"
               size="icon"
               asChild
-              className="hidden sm:inline-flex h-8 w-8 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717]"
+              className="hidden sm:inline-flex h-9 w-9 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717] cursor-pointer"
             >
-              <Link href="/account" title={t("account")}>
+              <Link href="/account" title={t("account")} aria-label={t("account")}>
                 <User className="w-4 h-4" />
               </Link>
             </Button>
@@ -304,12 +304,12 @@ export function SiteHeader() {
               variant="ghost"
               size="icon"
               onClick={openCart}
-              className="relative h-8 w-8 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717]"
+              className="relative h-9 w-9 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717] cursor-pointer"
               aria-label="Panier d'achats"
             >
               <ShoppingBag className="w-4 h-4" />
               {mounted && totalCount > 0 && (
-                <span className="absolute top-1 right-1 min-w-3.5 h-3.5 px-0.5 bg-[#E10600] text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-xs">
+                <span className="absolute top-1 right-1 min-w-3.5 h-3.5 px-0.5 bg-[#E10600] text-white text-[9px] font-medium rounded-full flex items-center justify-center shadow-xs">
                   {totalCount}
                 </span>
               )}
@@ -320,10 +320,10 @@ export function SiteHeader() {
               variant="ghost"
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden h-8 w-8 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717]"
-              aria-label="Menu"
+              className="lg:hidden h-10 w-10 text-neutral-300 hover:text-[#E10600] hover:bg-[#171717] cursor-pointer"
+              aria-label="Menu principal de navigation"
             >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
@@ -339,7 +339,7 @@ export function SiteHeader() {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="lg:hidden border-t border-[#171717] bg-[#0B0B0B] text-white overflow-hidden shadow-2xl"
           >
-            <div className="px-4 py-5 space-y-4 text-xs font-heading font-black uppercase tracking-wider">
+            <div className="px-4 py-5 space-y-4 text-xs font-heading font-medium uppercase tracking-wider">
               {/* Mobile Search input */}
               <form onSubmit={handleSearchSubmit} className="pb-2">
                 <div className="relative">
@@ -352,87 +352,96 @@ export function SiteHeader() {
                   />
                   <button
                     type="submit"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-[#E10600]"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-[#E10600] p-1 cursor-pointer"
+                    aria-label="Submit search"
                   >
                     <Search className="w-4 h-4" />
                   </button>
                 </div>
               </form>
 
-              <nav className="flex flex-col space-y-1 text-sm">
+              <nav className="flex flex-col space-y-1 text-sm font-normal">
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between",
+                    "min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between",
                     pathname === "/" && "text-[#E10600] bg-[#171717]"
                   )}
                 >
                   <span>{t("home")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/shop?category=kids-motorcycles"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("kidsMotorcycles")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/shop?category=adult-motorcycles"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("adultMotorcycles")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/shop?category=quad-bikes"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("quadBikes")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/shop?category=riding-equipment"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("equipment")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
+                </Link>
+                <Link
+                  href="/shop"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                >
+                  <span>All Machines & Cars</span>
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/showroom"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("showroom")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
+                  className="min-h-[44px] py-2.5 px-3 rounded hover:bg-[#171717] hover:text-[#E10600] transition-colors flex items-center justify-between"
                 >
                   <span>{t("contact")}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />
+                  <ChevronRight className="w-4 h-4 text-neutral-500" />
                 </Link>
               </nav>
 
               <div className="pt-3 pb-1 border-t border-[#171717] space-y-2">
-                <span className="text-[11px] text-neutral-400 font-semibold uppercase tracking-wider block">
+                <span className="text-[11px] text-neutral-400 font-medium uppercase tracking-wider block">
                   {t("language")}
                 </span>
                 <LanguageSwitcher variant="expanded" />
               </div>
 
-              <div className="pt-3 flex items-center justify-between border-t border-[#171717]">
+              <div className="pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#171717]">
                 <Link
                   href="/account"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 py-2 px-3 rounded bg-[#171717] text-white hover:text-[#E10600] border border-[#262626]"
+                  className="flex items-center gap-2 py-2 px-3 rounded bg-[#171717] text-white hover:text-[#E10600] border border-[#262626] text-xs font-medium"
                 >
                   <User className="w-4 h-4 text-[#E10600]" />
                   <span>{t("account")}</span>
@@ -443,7 +452,7 @@ export function SiteHeader() {
                     setMobileMenuOpen(false);
                     openCart();
                   }}
-                  className="flex items-center gap-1.5 py-2 px-3.5 rounded bg-[#E10600] text-white hover:bg-[#B80500] font-black"
+                  className="flex items-center gap-1.5 py-2 px-3.5 rounded bg-[#E10600] text-white hover:bg-[#B80500] font-medium text-xs cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>{t("cart")} {mounted && totalCount > 0 ? `(${totalCount})` : ""}</span>

@@ -115,7 +115,7 @@ export function InteractiveProductShowcase({
         <div className="hidden sm:flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => setActiveCategory("all")}
-            className={`px-3 py-1.5 text-[11px] font-heading font-black uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
+            className={`px-3 py-1.5 text-[11px] font-heading font-medium uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
               activeCategory === "all"
                 ? "bg-[#0B0B0B] text-white shadow-xs"
                 : "bg-white text-neutral-700 hover:text-black border border-[#E2E2E2] hover:border-neutral-400"
@@ -131,7 +131,7 @@ export function InteractiveProductShowcase({
               <button
                 key={cat.slug}
                 onClick={() => setActiveCategory(cat.slug)}
-                className={`px-3 py-1.5 text-[11px] font-heading font-black uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
+                className={`px-3 py-1.5 text-[11px] font-heading font-medium uppercase tracking-wider rounded transition-all duration-150 cursor-pointer ${
                   isActive
                     ? "bg-[#E10600] text-white shadow-xs"
                     : "bg-white text-neutral-700 hover:text-black border border-[#E2E2E2] hover:border-neutral-400"
@@ -147,7 +147,7 @@ export function InteractiveProductShowcase({
         <div className="sm:hidden flex items-center justify-between gap-2">
           <button
             onClick={() => setMobileFiltersOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 h-9 px-3 bg-[#0B0B0B] text-white text-xs font-heading font-black uppercase tracking-wider rounded border border-[#262626] cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 h-9 px-3 bg-[#0B0B0B] text-white text-xs font-heading font-medium uppercase tracking-wider rounded border border-[#262626] cursor-pointer"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-[#E10600]" />
             <span>Filter Categories ({activeCategory === "all" ? "All" : categories.find(c => c.slug === activeCategory)?.name})</span>
@@ -189,7 +189,7 @@ export function InteractiveProductShowcase({
         {searchQuery && (
           <button
             onClick={() => setSearchQuery("")}
-            className="text-[11px] text-[#E10600] hover:underline cursor-pointer uppercase font-bold tracking-wider"
+            className="text-[11px] text-[#E10600] hover:underline cursor-pointer uppercase font-medium tracking-wider"
           >
             {tCat("clearSearch")}
           </button>
@@ -236,7 +236,7 @@ export function InteractiveProductShowcase({
 
                   {/* Sale Badge */}
                   {hasDiscount && (
-                    <div className="absolute top-2.5 start-2.5 z-10 bg-[#E10600] text-white text-[10px] font-heading font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
+                    <div className="absolute top-2.5 start-2.5 z-10 bg-[#E10600] text-white text-[10px] font-heading font-medium uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">
                       Promo
                     </div>
                   )}
@@ -244,7 +244,7 @@ export function InteractiveProductShowcase({
                   {/* Quick View Button on Image */}
                   <button
                     onClick={(e) => handleOpenQuickView(p, e)}
-                    className="absolute bottom-2.5 end-2.5 z-10 h-7 px-2 bg-[#0B0B0B]/85 hover:bg-[#0B0B0B] text-white text-[10px] font-heading font-bold uppercase tracking-wider rounded border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 cursor-pointer"
+                    className="absolute bottom-2.5 end-2.5 z-10 h-7 px-2 bg-[#0B0B0B]/85 hover:bg-[#0B0B0B] text-white text-[10px] font-heading font-medium uppercase tracking-wider rounded border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 cursor-pointer"
                     title={tCommon("specs")}
                   >
                     <Eye className="w-3 h-3 text-[#E10600]" />
@@ -258,18 +258,18 @@ export function InteractiveProductShowcase({
                     {/* Metadata line */}
                     <div className="flex items-center justify-between text-[10px] text-[#737373] font-mono uppercase tracking-wider mb-1">
                       <span className="truncate max-w-[65%]">{p.categoryName}</span>
-                      <span className="font-bold text-[#0B0B0B]">{p.engineCapacity || p.ageGroup || p.sku}</span>
+                      <span className="font-medium text-[#0B0B0B]">{p.engineCapacity || p.ageGroup || p.sku}</span>
                     </div>
 
                     {/* Product Title */}
                     <Link href={`/products/${p.slug}`} className="block">
-                      <h3 className="font-heading text-sm sm:text-base font-black text-[#0B0B0B] uppercase leading-snug line-clamp-1 group-hover:text-[#E10600] transition-colors">
+                      <h3 className="font-heading text-sm sm:text-base font-semibold text-[#0B0B0B] uppercase leading-snug line-clamp-1 group-hover:text-[#E10600] transition-colors">
                         {p.title}
                       </h3>
                     </Link>
 
                     {/* Short Description */}
-                    <p className="text-[11px] text-[#737373] mt-1 line-clamp-2 leading-relaxed">
+                    <p className="text-[11px] text-[#737373] mt-1 line-clamp-2 leading-relaxed font-normal">
                       {p.shortDescription}
                     </p>
 
@@ -280,7 +280,7 @@ export function InteractiveProductShowcase({
                           inStock ? "bg-[#16803C]" : "bg-neutral-300"
                         }`}
                       />
-                      <span className={inStock ? "text-[#16803C] font-semibold" : "text-[#737373]"}>
+                      <span className={inStock ? "text-[#16803C] font-medium" : "text-[#737373]"}>
                         {inStock
                           ? tCat("inStockUnits", { count: p.stock })
                           : tCommon("outOfStock")}
@@ -293,7 +293,7 @@ export function InteractiveProductShowcase({
                     <div>
                       {hasDiscount ? (
                         <div className="flex flex-col">
-                          <span className="font-heading text-base sm:text-lg font-black text-[#E10600] leading-none">
+                          <span className="font-heading text-base sm:text-lg font-semibold text-[#E10600] leading-none">
                             {p.salePrice!.toLocaleString("fr-FR", {
                               style: "currency",
                               currency: p.currency,
@@ -307,7 +307,7 @@ export function InteractiveProductShowcase({
                           </span>
                         </div>
                       ) : (
-                        <span className="font-heading text-base sm:text-lg font-black text-[#0B0B0B]">
+                        <span className="font-heading text-base sm:text-lg font-semibold text-[#0B0B0B]">
                           {p.price.toLocaleString("fr-FR", {
                             style: "currency",
                             currency: p.currency,
@@ -321,7 +321,7 @@ export function InteractiveProductShowcase({
                       <button
                         onClick={(e) => handleAddToCart(p, e)}
                         disabled={!inStock}
-                        className={`h-8 px-3 rounded font-heading font-black text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all duration-150 cursor-pointer shadow-xs active:scale-[0.98] ${
+                        className={`h-8 px-3 rounded font-heading font-medium text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all duration-150 cursor-pointer shadow-xs active:scale-[0.98] ${
                           isAdded
                             ? "bg-[#0B0B0B] text-white"
                             : inStock
@@ -359,7 +359,7 @@ export function InteractiveProductShowcase({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileFiltersOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ y: "100%" }}
@@ -371,13 +371,15 @@ export function InteractiveProductShowcase({
               <div className="flex items-center justify-between border-b border-[#E2E2E2] pb-3">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4 text-[#E10600]" />
-                  <h3 className="font-heading font-black text-sm uppercase text-[#0B0B0B]">
+                  <h3 className="font-heading font-semibold text-sm uppercase text-[#0B0B0B]">
                     Filter by Category
                   </h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setMobileFiltersOpen(false)}
-                  className="p-1.5 text-neutral-400 hover:text-black rounded"
+                  aria-label="Close category filter drawer"
+                  className="p-1.5 text-neutral-400 hover:text-black rounded cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -385,11 +387,13 @@ export function InteractiveProductShowcase({
 
               <div className="space-y-2">
                 <button
+                  type="button"
+                  aria-pressed={activeCategory === "all"}
                   onClick={() => {
                     setActiveCategory("all");
                     setMobileFiltersOpen(false);
                   }}
-                  className={`w-full py-2.5 px-4 text-xs font-heading font-bold uppercase tracking-wider rounded text-start flex items-center justify-between border ${
+                  className={`w-full py-2.5 px-4 text-xs font-heading font-medium uppercase tracking-wider rounded text-start flex items-center justify-between border cursor-pointer ${
                     activeCategory === "all"
                       ? "bg-[#0B0B0B] text-white border-[#0B0B0B]"
                       : "bg-[#F5F5F5] text-[#0B0B0B] border-[#E2E2E2]"
@@ -405,11 +409,13 @@ export function InteractiveProductShowcase({
                   return (
                     <button
                       key={cat.slug}
+                      type="button"
+                      aria-pressed={isActive}
                       onClick={() => {
                         setActiveCategory(cat.slug);
                         setMobileFiltersOpen(false);
                       }}
-                      className={`w-full py-2.5 px-4 text-xs font-heading font-bold uppercase tracking-wider rounded text-start flex items-center justify-between border ${
+                      className={`w-full py-2.5 px-4 text-xs font-heading font-medium uppercase tracking-wider rounded text-start flex items-center justify-between border cursor-pointer ${
                         isActive
                           ? "bg-[#E10600] text-white border-[#E10600]"
                           : "bg-[#F5F5F5] text-[#0B0B0B] border-[#E2E2E2]"

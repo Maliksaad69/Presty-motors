@@ -41,7 +41,7 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/80 backdrop-blur-xs"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm"
         />
 
         <div className="min-h-full flex items-center justify-center p-3 sm:p-4">
@@ -50,43 +50,44 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg bg-white text-[#0B0B0B] rounded border border-[#E2E2E2] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg bg-white text-[#0B0B0B] rounded border border-[#E2E2E2] shadow-2xl overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[85vh]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-[#171717] bg-[#0B0B0B] text-white">
+            <div className="flex items-center justify-between p-4 border-b border-[#171717] bg-[#0B0B0B] text-white shrink-0 sticky top-0 z-10 shadow-xs">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E10600]" />
-                <h3 className="font-heading text-sm font-black uppercase tracking-wider text-white">
+                <h3 className="font-heading text-sm font-semibold uppercase tracking-wider text-white">
                   {t("modalTitle")}
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 className="p-1 rounded text-neutral-400 hover:text-white hover:bg-[#171717] transition-colors cursor-pointer"
-                aria-label="Fermer"
+                aria-label="Fermer la fenêtre de réservation"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Content */}
-            <div className="p-5 sm:p-6">
+            <div className="p-5 sm:p-6 overflow-y-auto popup-scroll-light flex-1">
               {isSuccess ? (
                 <div className="text-center py-6 space-y-4">
                   <div className="w-12 h-12 mx-auto rounded-full bg-[#16803C]/10 text-[#16803C] flex items-center justify-center">
                     <Check className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="font-heading text-lg font-black uppercase text-[#0B0B0B]">
+                    <h4 className="font-heading text-lg font-semibold uppercase text-[#0B0B0B]">
                       {t("successTitle")}
                     </h4>
-                    <p className="text-xs text-[#737373] mt-1 max-w-sm mx-auto leading-relaxed">
+                    <p className="text-xs text-[#737373] mt-1 max-w-sm mx-auto leading-relaxed font-normal">
                       {t("successDesc", { name: name || "Customer" })}
                     </p>
                   </div>
                   <button
                     onClick={handleReset}
-                    className="mt-4 px-6 py-2.5 rounded bg-[#0B0B0B] text-white font-heading font-black text-xs uppercase tracking-wider hover:bg-[#171717] transition-colors cursor-pointer"
+                    className="mt-4 px-6 py-2.5 rounded bg-[#0B0B0B] text-white font-heading font-medium text-xs uppercase tracking-wider hover:bg-[#171717] transition-colors cursor-pointer"
                   >
                     Fermer
                   </button>
@@ -95,10 +96,11 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Vehicle Type Choice */}
                   <div>
-                    <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                    <label htmlFor="test-ride-machine" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1.5">
                       {t("vehicleType")}
                     </label>
                     <select
+                      id="test-ride-machine"
                       value={machineType}
                       onChange={(e) => setMachineType(e.target.value)}
                       className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] font-medium cursor-pointer"
@@ -113,10 +115,11 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                   {/* Date & Time Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                      <label htmlFor="test-ride-date" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1.5">
                         {t("date")}
                       </label>
                       <input
+                        id="test-ride-date"
                         type="date"
                         required
                         value={date}
@@ -125,10 +128,11 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                      <label htmlFor="test-ride-timeslot" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1.5">
                         {t("timeSlot")}
                       </label>
                       <select
+                        id="test-ride-timeslot"
                         value={timeSlot}
                         onChange={(e) => setTimeSlot(e.target.value)}
                         className="w-full h-9 px-3 text-xs border border-[#E2E2E2] rounded bg-white text-[#0B0B0B] focus:outline-hidden focus:border-[#E10600] font-medium cursor-pointer"
@@ -145,10 +149,11 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                   {/* Rider Details */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                      <label htmlFor="test-ride-name" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1.5">
                         {t("name")}
                       </label>
                       <input
+                        id="test-ride-name"
                         type="text"
                         required
                         placeholder="Marc Dupont"
@@ -158,10 +163,11 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-heading font-black uppercase text-[#0B0B0B] mb-1.5">
+                      <label htmlFor="test-ride-phone" className="block text-[11px] font-heading font-medium uppercase text-[#0B0B0B] mb-1.5">
                         {t("phone")}
                       </label>
                       <input
+                        id="test-ride-phone"
                         type="tel"
                         required
                         placeholder="+33 6 12 34 56 78"
@@ -173,7 +179,7 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                   </div>
 
                   {/* Notice */}
-                  <p className="text-[10px] text-[#737373] leading-relaxed pt-1">
+                  <p className="text-[10px] text-[#737373] leading-relaxed pt-1 font-normal">
                     {t("notice")}
                   </p>
 
@@ -181,7 +187,7 @@ export function TestRideModal({ isOpen, onClose }: TestRideModalProps) {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs uppercase tracking-wider transition-colors shadow-md shadow-red-700/25 cursor-pointer active:scale-[0.98]"
+                      className="w-full py-3 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs uppercase tracking-wider transition-colors shadow-md shadow-red-700/25 cursor-pointer active:scale-[0.98]"
                     >
                       {t("submit")}
                     </button>

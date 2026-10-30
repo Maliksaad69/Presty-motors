@@ -34,20 +34,20 @@ export function PromotionalBanner() {
             <div className="lg:col-span-8 space-y-4">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#E10600]/15 border border-[#E10600]/30 text-[#E10600]">
                 <Flame className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-heading font-black uppercase tracking-widest">
+                <span className="text-[10px] font-heading font-medium uppercase tracking-widest">
                   Season Opening Campaign 2025
                 </span>
               </div>
 
-              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-white leading-tight">
+              <h2 className="font-heading text-xl sm:text-2xl lg:text-3xl font-semibold uppercase tracking-tight text-white leading-tight">
                 COMPETITION READINESS: FREE WORKSHOP PDI & 15% OFF SAFETY GEAR
               </h2>
 
-              <p className="text-xs sm:text-sm text-neutral-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-neutral-300 max-w-2xl leading-relaxed font-normal">
                 Every vehicle purchased online or in our Paris showroom receives complete mechanical dynamometer tuning, personalized suspension sag setup, and exclusive savings on certified Alpinestars & Fox Racing equipment.
               </p>
 
-              <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-heading font-bold uppercase text-neutral-300">
+              <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-heading font-medium uppercase text-neutral-300">
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#E10600]" />
                   <span>Certified Technicians</span>
@@ -67,7 +67,7 @@ export function PromotionalBanner() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto lg:w-full">
                 <Link
                   href="/shop"
-                  className="w-full py-3.5 px-6 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-150 flex items-center justify-center gap-2 shadow-lg shadow-red-700/25"
+                  className="w-full py-3.5 px-6 rounded bg-[#E10600] hover:bg-[#B80500] text-white font-heading font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-150 flex items-center justify-center gap-2 shadow-lg shadow-red-700/25"
                 >
                   <span>Discover All Deals</span>
                   <ArrowRight className="w-4 h-4" />
@@ -77,7 +77,7 @@ export function PromotionalBanner() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto lg:w-full">
                 <Link
                   href="/showroom"
-                  className="w-full py-3 px-6 rounded bg-transparent hover:bg-[#0B0B0B] text-white font-heading font-bold text-xs uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full py-3 px-6 rounded bg-transparent hover:bg-[#0B0B0B] text-white font-heading font-medium text-xs uppercase tracking-wider border border-neutral-700 hover:border-white transition-colors flex items-center justify-center gap-1.5"
                 >
                   <span>Visit Paris Showroom</span>
                 </Link>

@@ -122,10 +122,13 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#222222] pb-5">
         <div>
-          <h1 className="font-heading text-2xl font-black uppercase text-white tracking-wide">
+          <span className="text-[11px] font-mono text-[#E10600]">
+            Fulfillment & Logistics
+          </span>
+          <h1 className="text-xl sm:text-2xl font-medium text-white tracking-tight">
             Workshop & Store Orders
           </h1>
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 mt-1">
             Fulfill orders, assign carrier tracking numbers, and manage showroom collections.
           </p>
         </div>
@@ -160,9 +163,9 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
       </div>
 
       {/* Orders Table */}
-      <div className="border border-[#222222] rounded bg-[#141414] overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-[#1C1C1C] border-b border-[#262626] text-[11px] font-heading font-black uppercase text-neutral-400 tracking-wider">
+      <div className="border border-[#222222] rounded bg-[#141414] overflow-x-auto popup-scroll">
+        <table className="w-full text-left text-xs min-w-[700px]">
+          <thead className="bg-[#1C1C1C] border-b border-[#262626] text-[11px] font-heading font-semibold uppercase text-neutral-400 tracking-wider">
             <tr>
               <th className="p-3.5">Reference</th>
               <th className="p-3.5">Customer</th>
@@ -183,7 +186,7 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
             ) : (
               filteredOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-[#1A1A1A] transition-colors">
-                  <td className="p-3.5 font-mono text-xs font-bold text-white">
+                  <td className="p-3.5 font-mono text-xs font-semibold text-white">
                     <span>{order.orderNumber}</span>
                     {order.quoteNumber && (
                       <span className="block text-[9px] text-amber-400 font-mono">
@@ -201,7 +204,7 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
                   </td>
 
                   <td className="p-3.5 text-neutral-300">
-                    <strong className="block text-white font-heading uppercase text-xs">
+                    <strong className="block text-white font-heading uppercase text-xs font-semibold">
                       {order.customerName}
                     </strong>
                     <span className="text-[11px] text-neutral-400">{order.customerEmail}</span>
@@ -220,7 +223,7 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
 
                   <td className="p-3.5 text-center">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-heading font-black uppercase tracking-wider ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-heading font-semibold uppercase tracking-wider ${
                         order.status === "DELIVERED"
                           ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                           : order.status === "SHIPPED"
@@ -248,7 +251,7 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
                     </span>
                   </td>
 
-                  <td className="p-3.5 text-right font-heading text-xs font-black text-white">
+                  <td className="p-3.5 text-right font-heading text-xs font-semibold text-white">
                     {order.total.toLocaleString("fr-FR", {
                       style: "currency",
                       currency: "EUR",
@@ -258,7 +261,7 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
                   <td className="p-3.5 text-right">
                     <button
                       onClick={() => openOrderModal(order)}
-                      className="px-2.5 py-1 rounded bg-[#1C1C1C] hover:bg-[#252525] text-white text-[11px] font-heading font-bold uppercase tracking-wider transition-colors border border-[#2E2E2E] cursor-pointer inline-flex items-center gap-1"
+                      className="px-2.5 py-1 rounded bg-[#1C1C1C] hover:bg-[#252525] text-white text-[11px] font-heading font-medium uppercase tracking-wider transition-colors border border-[#2E2E2E] cursor-pointer inline-flex items-center gap-1"
                     >
                       <Eye className="w-3 h-3 text-[#E10600]" />
                       <span>Manage</span>
@@ -273,11 +276,11 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
 
       {/* Order Status & Dispatch Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-xl bg-[#141414] border border-[#2E2E2E] rounded-lg shadow-2xl p-6 space-y-5 my-8">
-            <div className="flex items-center justify-between border-b border-[#262626] pb-3">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full max-w-xl bg-[#141414] border border-[#2E2E2E] rounded-lg shadow-2xl flex flex-col max-h-[88vh] sm:max-h-[85vh] overflow-hidden">
+            <div className="flex items-center justify-between border-b border-[#262626] p-4 sm:p-5 shrink-0 bg-[#141414] shadow-xs">
               <div>
-                <h3 className="font-heading text-base font-black uppercase text-white">
+                <h3 className="font-heading text-base font-semibold uppercase text-white">
                   Order Management: {selectedOrder.orderNumber}
                 </h3>
                 <p className="text-[11px] text-neutral-400">
@@ -285,108 +288,111 @@ export function OrdersManagementView({ initialOrders }: { initialOrders: OrderRo
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="text-neutral-500 hover:text-white cursor-pointer"
+                aria-label="Close order management modal"
+                className="text-neutral-500 hover:text-white cursor-pointer p-1"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {dispatchError && (
-              <div className="p-2.5 rounded border border-red-500/30 bg-red-500/10 text-red-400 text-xs">
-                {dispatchError}
-              </div>
-            )}
-
-            {/* Items Summary */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-heading font-black uppercase tracking-wider text-neutral-400 block">
-                Purchased Machines & Equipment ({selectedOrder.items.length})
-              </span>
-              <div className="p-3 rounded bg-[#1C1C1C] border border-[#262626] space-y-2 text-xs">
-                {selectedOrder.items.map((i) => (
-                  <div key={i.id} className="flex justify-between items-center text-[11px]">
-                    <div>
-                      <span className="text-white font-heading uppercase">{i.title}</span>
-                      <span className="text-neutral-500 font-mono text-[9px] ml-1.5">
-                        Qty: {i.quantity} • {i.sku}
-                      </span>
-                    </div>
-                    <span className="font-mono text-white">
-                      {i.totalPrice.toLocaleString("fr-FR", {
-                        style: "currency",
-                        currency: "EUR",
-                      })}
-                    </span>
+            <form onSubmit={handleUpdateStatus} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto popup-scroll p-4 sm:p-5 space-y-4 text-xs">
+                {dispatchError && (
+                  <div className="p-2.5 rounded border border-red-500/30 bg-red-500/10 text-red-400 text-xs">
+                    {dispatchError}
                   </div>
-                ))}
-              </div>
-            </div>
+                )}
 
-            {/* Status Transition Form */}
-            <form onSubmit={handleUpdateStatus} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-[11px] font-heading font-black uppercase text-neutral-400 mb-1">
-                  Update Order Fulfillment Status *
-                </label>
-                <select
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
-                  className="w-full h-9 px-3 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white focus:outline-none focus:border-[#E10600] font-heading font-bold"
-                >
-                  <option value={OrderStatus.PENDING}>PENDING (Order Placed)</option>
-                  <option value={OrderStatus.PROCESSING}>
-                    PROCESSING (Workshop Preparation)
-                  </option>
-                  <option value={OrderStatus.READY_FOR_PICKUP}>
-                    READY_FOR_PICKUP (Paris Showroom)
-                  </option>
-                  <option value={OrderStatus.SHIPPED}>SHIPPED (Enclosed Freight In-Transit)</option>
-                  <option value={OrderStatus.DELIVERED}>
-                    DELIVERED (Completed & Handed Over)
-                  </option>
-                  <option value={OrderStatus.CANCELLED}>CANCELLED</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-heading font-black uppercase text-neutral-400 mb-1">
-                    Carrier Name
-                  </label>
-                  <input
-                    type="text"
-                    value={carrierInput}
-                    onChange={(e) => setCarrierInput(e.target.value)}
-                    className="w-full h-8 px-2.5 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white focus:outline-none focus:border-[#E10600]"
-                  />
+                {/* Items Summary */}
+                <div className="space-y-2">
+                  <span className="text-[10px] font-heading font-semibold uppercase tracking-wider text-neutral-400 block">
+                    Purchased Machines & Equipment ({selectedOrder.items.length})
+                  </span>
+                  <div className="p-3 rounded bg-[#1C1C1C] border border-[#262626] space-y-2 text-xs">
+                    {selectedOrder.items.map((i) => (
+                      <div key={i.id} className="flex justify-between items-center text-[11px]">
+                        <div>
+                          <span className="text-white font-heading uppercase">{i.title}</span>
+                          <span className="text-neutral-500 font-mono text-[9px] ml-1.5">
+                            Qty: {i.quantity} • {i.sku}
+                          </span>
+                        </div>
+                        <span className="font-mono text-white">
+                          {i.totalPrice.toLocaleString("fr-FR", {
+                            style: "currency",
+                            currency: "EUR",
+                          })}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-heading font-black uppercase text-neutral-400 mb-1">
-                    Tracking Number
+                  <label className="block text-[11px] font-heading font-semibold uppercase text-neutral-400 mb-1">
+                    Update Order Fulfillment Status *
                   </label>
-                  <input
-                    type="text"
-                    value={trackingInput}
-                    onChange={(e) => setTrackingInput(e.target.value)}
-                    className="w-full h-8 px-2.5 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white font-mono focus:outline-none focus:border-[#E10600]"
-                  />
+                  <select
+                    value={newStatus}
+                    onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
+                    className="w-full h-9 px-3 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white focus:outline-none focus:border-[#E10600] font-heading font-medium"
+                  >
+                    <option value={OrderStatus.PENDING}>PENDING (Order Placed)</option>
+                    <option value={OrderStatus.PROCESSING}>
+                      PROCESSING (Workshop Preparation)
+                    </option>
+                    <option value={OrderStatus.READY_FOR_PICKUP}>
+                      READY_FOR_PICKUP (Paris Showroom)
+                    </option>
+                    <option value={OrderStatus.SHIPPED}>SHIPPED (Enclosed Freight In-Transit)</option>
+                    <option value={OrderStatus.DELIVERED}>
+                      DELIVERED (Completed & Handed Over)
+                    </option>
+                    <option value={OrderStatus.CANCELLED}>CANCELLED</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-heading font-semibold uppercase text-neutral-400 mb-1">
+                      Carrier Name
+                    </label>
+                    <input
+                      type="text"
+                      value={carrierInput}
+                      onChange={(e) => setCarrierInput(e.target.value)}
+                      className="w-full h-8 px-2.5 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white focus:outline-none focus:border-[#E10600]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-heading font-semibold uppercase text-neutral-400 mb-1">
+                      Tracking Number
+                    </label>
+                    <input
+                      type="text"
+                      value={trackingInput}
+                      onChange={(e) => setTrackingInput(e.target.value)}
+                      className="w-full h-8 px-2.5 rounded bg-[#1C1C1C] border border-[#2E2E2E] text-white font-mono focus:outline-none focus:border-[#E10600]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#262626] flex justify-end gap-2">
+              <div className="p-3.5 sm:p-4 border-t border-[#262626] bg-[#141414] shrink-0 flex justify-end gap-2 shadow-xs">
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
-                  className="px-4 py-2 rounded border border-[#2E2E2E] hover:bg-[#1C1C1C] text-neutral-300 text-xs font-heading font-black uppercase tracking-wider cursor-pointer"
+                  className="px-4 py-2 rounded border border-[#2E2E2E] hover:bg-[#1C1C1C] text-neutral-300 text-xs font-heading font-medium uppercase tracking-wider cursor-pointer"
                 >
                   Close
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="px-5 py-2 rounded bg-[#E10600] hover:bg-[#B80500] text-white text-xs font-heading font-black uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 rounded bg-[#E10600] hover:bg-[#B80500] text-white text-xs font-heading font-medium uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {isPending ? "Updating Order..." : "Update Status & Carrier"}
                 </button>
